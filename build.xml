@@ -1,0 +1,79 @@
+<project name="js" default="test">
+
+	<path id="js.lib">
+		<fileset dir="lib">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	<!--
+		Import optional ant tasks.
+	-->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath refid="js.lib"/>
+	</taskdef>
+
+	<!--
+		Define the Rhino Unit task.
+
+		Make sure an up to date version of bsf.jar, commong-logging.jar
+		and js.jar are in ANT_HOME and have the correct permissions, 
+		otherwise Java will use the old (and broken) built in version.
+	-->
+	<scriptdef name="rhinounit" src="lib/rhino-unit/rhinoUnitAnt.js" language="javascript">
+		<attribute name="options"/>
+		<attribute name="ignoredglobalvars"/>
+		<attribute name="haltOnFirstFailure"/>
+		<attribute name="rhinoUnitUtilPath"/>
+		<element name="fileset" type="fileset"/>
+	</scriptdef>
+
+	<!--
+		Define the JSLINT task
+	-->
+	<scriptdef name="jslint" src="lib/jslint/jslintant.js" language="javascript">
+		<classpath>
+			<path refid="js.lib"/>
+		</classpath>
+		<attribute name="options" />
+		<element name="fileset" type="fileset" />
+	</scriptdef>
+
+	<target name="init">
+		<mkdir dir="dist"/>
+	</target>
+
+	<target name="test">
+		<rhinounit options="{verbose: true, stackTrace: true}" haltOnFirstFailure="false">
+			<fileset dir="test" includes="**/*.js"/>
+		</rhinounit>
+	</target>
+
+	<target name="jslint">
+		<jslint options="{white: true, passfail: false, eqeqeq: true, nomen: true, onevar: true, plusplus: true, safe: true, undef: true}">
+			<fileset dir="src" includes="**/*.js"/>
+		</jslint>
+	</target>
+
+	<target name="dist" depends="init">
+		<copy todir="dist">
+			<fileset dir="src" includes="**/*.js"/>
+		</copy>
+
+		<apply executable="java" parallel="false" dest="dist">
+	        <fileset dir="src" includes="**/*.js"/>
+	        <arg line="-jar"/>
+    	    <arg path="lib/yuicompressor-2.3.6.jar"/>
+    	    <arg line="-o"/>
+    	    <mapper type="glob" from="*.js" to="*.min.js"/>
+			<targetfile/>
+	        <srcfile/>
+    	</apply>
+	</target>
+
+	<target name="all" depends="init, test, jslint, dist">
+	</target>
+
+	<target name="clean">
+		<delete dir="dist"/>
+	</target>
+</project>
