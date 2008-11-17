@@ -1,4 +1,11 @@
 
+/*!
+ * jFun - JavaScript Pattern Matching v0.12
+ *
+ * Licensed under the new BSD License.
+ * Copyright 2008, Bram Stein
+ * All rights reserved.
+ */
 /*global fun, buildMatch*/
 var fun = function () {
 	function matchAtom(patternAtom) {
@@ -39,7 +46,7 @@ var fun = function () {
 			// and the keys we need to check for. We put these
 			// in another object so access is very fast. The build_match
 			// function creates new subtests which we execute later.
-			subMatches = Object.map(patternObject, function (value, key) {
+			subMatches = Object.map(patternObject, function (value) {
 				patternLength += 1;
 				return buildMatch(value);
 			});
@@ -64,7 +71,9 @@ var fun = function () {
 	}
 
 	function buildMatch(pattern) {
-		if (pattern && pattern.constructor === fun.parameter.constructor) {
+		// A parameter can either be a function, or the result of invoking that
+		// function so we need to check for both.
+		if (pattern && (pattern === fun.parameter || pattern.constructor.name === fun.parameter().constructor.name)) {
 			return function (value, bindings) {
 				return bindings.push(value) > 0;
 			};
@@ -87,13 +96,9 @@ var fun = function () {
 			return matchFunction(pattern);
 		}
 	}
-	
 
 	return function () {
-		// we save the environment (in case the function is bound)
-		// and precompile the patterns
-		var thisObj = this,
-			patterns = Array.slice(arguments).map(function (value, i) {
+		var patterns = Array.slice(arguments, 0).map(function (value, i) {
 				var len = value.length;
 				return {
 					m: buildMatch(value.slice(0, len - 1)), 
@@ -102,11 +107,11 @@ var fun = function () {
 			});	
 
 		return function () {
-			var value = Array.slice(arguments), result = [], i = 0, len = patterns.length;
+			var value = Array.slice(arguments, 0), result = [], i = 0, len = patterns.length;
 
 			for (; i < len; i += 1) {
 				if (patterns[i].m(value, result)) {
-					return patterns[i].c.apply(thisObj, result);
+					return patterns[i].c.apply(this, result);
 				}
 				result = [];
 			}
@@ -116,12 +121,63 @@ var fun = function () {
 	};
 }();
 
-fun.parameter = function () {
-	function Parameter() {}
-	return new Parameter();
-}();
+/**
+ * Parameter
+ */
+fun.parameter = function (name, orElse) {
+	function Parameter(n, o) { 
+		this.name = n;
+		this.orElse = o;
+	}
+	return new Parameter(name, orElse);
+};
 
 fun.wildcard = function () {
 	function Wildcard() {}
 	return new Wildcard();
+}();
+
+/**
+ * Extract
+ */
+var extract = function () {
+	function bindVariables(pattern, value, result) {
+		if (pattern && pattern.constructor.name === fun.parameter().constructor.name) {
+			result[pattern.name] = pattern.orElse ? value || pattern.orElse : value;
+		}
+		else if (pattern && pattern.constructor === fun.wildcard.constructor) {
+			// we ignore wildcards
+		}
+		// it would be nice if we could safely extend Object.prototype
+		// and collapse the code for Object and Array into one.
+		else if (Object.isObject(pattern) && Object.isObject(value)) {
+			Object.forEach(pattern, function (v, key) {
+				if (key in value) {
+					bindVariables(v, value[key], result);
+				}
+				else if (v.hasOwnProperty('orElse')) {
+					result[v.name] = v.orElse;
+				}
+			});
+		}
+		else if (Object.isArray(pattern) && Object.isArray(value)) {
+			Array.forEach(pattern, function (v, key) {
+				if (key in value) {
+					bindVariables(v, value[key], result);
+				}
+				else if (v.hasOwnProperty('orElse')) {
+					result[v.name] = v.orElse;
+				}
+			});
+		}
+		else if (pattern !== undefined) {
+			throw new TypeError('The pattern should only contain variables.');
+		}
+	}
+
+	return function (pattern, value, result) {
+		result = result || {};
+		bindVariables(pattern, value, result);
+		return result;
+	};
 }();

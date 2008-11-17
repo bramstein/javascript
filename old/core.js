@@ -6,7 +6,9 @@
  * Copyright 2008, Bram Stein
  * All rights reserved.
  */
+
 (function () {
+/*
 	Object.extend = function (obj) {
 		var i = 1, key, len = arguments.length;
 		for (; i < len; i += 1) {
@@ -144,7 +146,8 @@
 			return initial;
 		}
 	});
-
+*/
+/*
 	Object.extend(Array.prototype, {
 		append: function () {
 			var i = 0, len = arguments.length;
@@ -303,8 +306,10 @@
 			return initial;
 		}
 	});
+*/
 
 	/*jslint eqeqeq: false */
+/*
 	[Boolean, String, Function].forEach(function (value) {
 		Object.extend(value.prototype, {
 			equals: function (v) {
@@ -334,8 +339,9 @@
 				this.multiline === v.multiline;
 		}
 	});
+*/
 	/*jslint eqeqeq: true */
-
+/*
 	['reduce', 'reduceRight', 'equals', 'contains', 'append', 'top', 'filter', 'map', 'forEach', 'some', 'every', 'indexOf', 'lastIndexOf', 'join', 'sort', 'reverse', 'push', 'pop', 'shift', 'unshift', 'splice', 'concat', 'slice'].forEach(function (func) {
 		if (!(func in Array) && func in Array.prototype) {
 			Array[func] = function (obj) {
@@ -343,7 +349,8 @@
 			};
 		}
 	});
-
+*/
+/*
 	Object.extend(Function.prototype, {
 		bind: function (obj) {
 			var method = this;
@@ -361,12 +368,7 @@
 				return method.apply(this, args.concat(Array.slice(arguments, 0)));
 			};
 		},
-		/**
-		 * Adapted from "Default arguments for functions."
-		 * Copyright (c) 2008 Ariel Flesler - aflesler(at)gmail(dot)com | http://flesler.blogspot.com
-		 * Licensed under BSD (http://www.opensource.org/licenses/bsd-license.php)
-		 * Date: 1/9/2008 
-		 */
+
 		defaults: function () {
 			var method = this,
 				args = arguments;
@@ -379,9 +381,6 @@
 				return method.apply(this, arguments);
 			};
 		},
-		/**
-		 * Adapted from Mathieu 'p01' Henri - http://www.p01.org/
-		 */
 		chain: function (method) {
 			method = method || this;
 			return function () {
@@ -392,17 +391,5 @@
 			};
 		}
 	});
-
-	Object.extend(Math, {
-		ceilInt: function (value, precision) {
-			var t = Math.pow(10, precision || 1);
-			return Math.ceil(value / t) * t;
-		},
-		log10: function (value) {
-			return Math.log(value) / Math.log(10);
-		},
-		digits: function (value) {
-			return Math.floor(Math.log10(Math.abs(value !== 0 ? value : 1))) + 1;
-		}
-	});
+*/
 })();

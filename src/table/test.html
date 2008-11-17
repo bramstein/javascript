@@ -1,0 +1,130 @@
+<html>
+<head>
+	<title></title>
+<script type="text/javascript">
+window.onload = function() {
+	var ths = document.getElementsByTagName('TH');
+	for (var i=0; i<ths.length; i++) {
+		ths[i].innerHTML = ths[i].cellIndex;
+	}
+}
+
+function computeTableHeaderCellIndexes(t) {
+	var i = 0, k = 0, j = 0, l,
+		matrix = [],
+		lookup = [],
+		rowSpan = 1,
+		colSpan = 1,
+		rowIndex = 0,
+		cell = null,
+		cells = [],
+		firstAvailCol,
+		thead = t.getElementsByTagName('THEAD')[0],
+		rows = thead.getElementsByTagName('TR');
+
+	for (i = 0; i < rows.length; i++) {
+
+		rowIndex = rows[i].rowIndex;
+		cells = rows[i].cells;
+
+		if (lookup[rowIndex] === undefined) {
+			lookup[rowIndex] = [];
+		}
+		if (matrix[rowIndex] === undefined) { 
+			matrix[rowIndex] = [];
+		}
+
+		for (j = 0; j < cells.length; j += 1) {
+
+			cell = cells[j];
+			rowSpan = cell.rowSpan || 1;
+			colSpan = cell.colSpan || 1;
+
+			for (k = 0; k < matrix[rowIndex].length + 1; k += 1) {
+				if (matrix[rowIndex][k] === undefined) {
+					firstAvailCol = k;
+					break;
+				}
+			}
+
+			lookup[rowIndex][cell.cellIndex] = firstAvailCol;
+
+			for (k = rowIndex; k < rowIndex + rowSpan; k += 1) {
+				if (matrix[k] === undefined) { 
+					matrix[k] = [];
+				}
+				for (l = firstAvailCol; l < firstAvailCol + colSpan; l += 1) {
+					matrix[k][l] = true;
+				}
+			}
+		}
+	}
+	console.log(lookup);
+	return lookup;
+}
+
+var c = null;
+
+
+function getActualCellIndex(cell) {
+	var table = cell.parentNode.parentNode.parentNode;
+	if(!c) {
+		c = computeTableHeaderCellIndexes(table);
+	}
+	return c[cell.parentNode.rowIndex][cell.cellIndex];
+}
+
+function test() {
+	var ths = document.getElementsByTagName('TH');
+	for (var i=0; i<ths.length; i++) {
+		ths[i].innerHTML = getActualCellIndex(ths[i]);
+	}
+
+}
+</script>
+<style>
+th {
+	vertical-align:top;
+	text-align:left;
+	width:50px;
+}
+</style>
+</head>
+<body>
+Actual cellIndex property values are shown:
+<table border="1" id="t1">
+<thead>
+	<tr>
+		<th rowspan="2">&nbsp;</th>
+
+		<th>&nbsp;</th>
+		<th colspan="2">&nbsp;</th>
+<!--		<th>&nbsp;</th>-->
+		<th>&nbsp;</th>
+	</tr>
+	<tr>
+		<th colspan="2">&nbsp;</th>
+		<th rowspan="3">&nbsp;</th>
+		<th>&nbsp;</th>
+
+	</tr>
+	<tr>
+		<th colspan="2">&nbsp;</th>
+		<th>&nbsp;</th>
+		<th>&nbsp;</th>
+	</tr>
+	<tr>
+		<th>&nbsp;</th>
+		<th>&nbsp;</th>
+
+		<th>&nbsp;</th>
+		<th>&nbsp;</th>
+	</tr>
+</thead>
+</table>
+
+<br>
+<A HREF="#" onClick="test();return false;">Re-compute and Label computed cellIndexes</A>
+</body>
+</html>
+

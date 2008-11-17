@@ -1,4 +1,6 @@
-eval(loadFile("src/core/core.js"));
+eval(loadFile("src/core/object.js"));
+eval(loadFile("src/core/array.js"));
+eval(loadFile("src/core/function.js"));
 eval(loadFile("src/core/fun.js"));
 
 var $;
@@ -11,8 +13,10 @@ testCases(test,
 	},
 
 	function checkParameterType() {
-		assert.that(typeof $, eq('object'));
-		assert.that($.constructor.name, eq('Parameter'));
+		assert.that(typeof $, eq('function'));
+		assert.that(typeof $(), eq('object'));
+		assert.that($().constructor.name, eq('Parameter'));
+		assert.that($('a').name, eq('a'));
 	},
 
 	function checkWildcardType() {
@@ -91,6 +95,33 @@ testCases(test,
 		assert.that(f([1, 2, 4]), isFalse());
 	},
 
+	function checkEmptyArray() {
+		var isEmpty = fun(
+			[[], function () { return true; }],
+			[_, function () { return false; }]
+		);
+
+		assert.that(isEmpty([]), isTrue());
+		assert.that(isEmpty([1,2]), isFalse());
+	},
+
+	function checkEmptyObject() {
+		var isEmpty = fun(
+			[{}, function () { return true; }],
+			[_, function () { return false;}]
+		);
+		assert.that(isEmpty({}), isTrue());
+		assert.that(isEmpty({hello: 'world'}), isFalse());
+	},
+
+	function checkNamedParameter() {
+		var t = fun(
+			[$('a'), function(b) { return b; }]
+		);
+
+		assert.that(t('c'), eq('c'));
+	},
+
 	function checkSimpleFunction() {
 		var f = fun(
 			[Date, function(d) { return true; }],
@@ -121,9 +152,60 @@ testCases(test,
 			[Vector($, $), function(x, y) { return 'vec: ' + x + ', ' + y; }],
 			[Point($, $),  function(x, y) { return 'point: ' + x + ', ' + y; }]
 		);
+
 		assert.that(f(Vector(10,10)), eq('vec: 10, 10'));
 		assert.that(f(Point(20,20)), eq('point: 20, 20'));
 	},
+
+	/**
+	 * Extract
+	 */
+
+
+	function checkExtractAtoms() {
+		assert.that(extract($('a'), 1).a, eq(1));
+		assert.that(extract($('a'), 'str').a, eq('str'));
+		assert.that(extract($('a'), null).a, eq(null));
+		assert.that(extract($('a'), undefined).a, eq(undefined));
+		assert.that(extract($('a'), false).a, isFalse());
+		assert.that(extract($('a', true), false).a, isTrue());
+		assert.that(extract($('a'), true).a, isTrue());
+	},
+
+	function checkExtractUnnamedVariable() {
+		shouldThrowException(function() {
+			extract($, 1);
+		});
+	},
+
+	function checkExtractArray() {
+		assert.that(extract([$('a')], [1]).a, eq(1));
+	},
+
+	function checkExtractSparseArray() {
+		assert.that(extract([, , $('a')], [1, 2, 3]).a, eq(3));
+		assert.that(extract([, , $('a')], [1]).a, eq(undefined));
+	},
+
+	function checkExtractObject() {
+		assert.that(extract({key: $('a')}, {key: 'str'}).a, eq('str'));
+		assert.that(extract({family: {father: $('f')}}, {family: {father: 'Bob'}}).f, eq('Bob'));
+	},
+
+	function checkExtractSparseObject() {
+		assert.that(extract({key: $('a')}, {key: 'b', str: 'hello world', t: 'test'}).a, eq('b'));
+	},
+
+	function checkExtractNameClash() {
+		assert.that(extract([$('a'), $('a')], [1, 2]).a, eq(2));
+	},
+
+	function checkExtractWildcard() {
+		assert.that(extract([_, _, $('a')], [1, 2, 3]).a, eq(3));
+		assert.that(extract({key: _, test: $('a')}, {key: 'b', test: 'y'}).a, eq('y'));
+		assert.that(extract({key: _, test: $('a')}, {test: 'y'}).a, eq('y'));
+	},
+
 
 	function tearDown() {
 		$ = null;

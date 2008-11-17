@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/xhtml; charset=utf-8" />
+		<script type="text/javascript" src="core/core.js"></script>
+		<script type="text/javascript" src="core/fun.js"></script>
+		<script type="text/javascript" src="core/arrow.js"></script>
+	<!--	<script type="text/javascript" src="core/simplearrowlets.js"></script>-->
+		<script type="text/javascript">
+<![CDATA[
+/*
+			var t = timer_e(100);
+			//showStream(t);
+			var t2 = lift_e(function (v) {
+				return Math.floor(v / 1000);
+			}, t);
+
+			//var t3 = hold_e(t2);
+			var b = new Behaviour(t2, 0);
+			var b2 = lift_b(function (v) {
+				return v % 10;
+			}, b);
+			showStream(b2);
+*/
+
+			function EventArrow(eventname) {
+				if (! (this instanceof EventArrow)) {
+					return new EventArrow(eventname);
+				}
+				this.eventname = eventname;
+			}
+	
+			EventArrow.prototype = new Arrow(function (target, p, k) {
+				var f = this;
+				function cancel() {
+					target.removeEventListener(f.eventname, handler, false);
+				}
+				function handler(event) {
+					p.advance(cancel);
+					cancel();
+					k(event, p);
+				}
+				p.addCanceller(cancel);
+				target.addEventListener(f.eventname, handler, false);
+			});
+
+			var c = 0;
+
+			function clickTarget(e) {
+				var target = e.target;
+				c += 1;
+				target.textContent = "Click " + c;
+				return target;
+			}
+
+			function clickTargetA(target) {
+				c += 1;
+				target.textContent = "Click " + c;
+				return target;
+			}
+
+			function start() {
+				var target = document.getElementById('target');
+				var status = document.getElementById('status');
+				var p = EventArrow('click').
+						next(clickTarget).
+						next(EventArrow('click')).
+						next(clickTarget).
+						//next(EventArrow('click')).
+						next(clickTargetA).
+						run(target);
+			//	p.next(function () {
+			//		status.textContent += '|';
+			//	}).run();
+			}
+
+
+			function add1(x) {
+				return x + 1;
+			}
+
+		var currentValue = 0;
+
+	var $ = fun.parameter;
+	var _ = fun.wildcard;
+
+
+		var current = add1.Arrow();
+		var size = 950;
+
+		function report(x) {
+			currentValue = x;
+			console.log(x);
+		}
+
+		for (var i = 0; i < size; i += 1) {	
+			current = current.next(add1.Arrow());
+		}
+
+		current = current.next(report.Arrow());
+
+		current.run(1);
+			//var add2 = add1.next(add1);
+]]>
+		</script>
+	</head>
+	<body onload="start();">
+		<div id="target">
+			Hello world
+		</div>
+		<div id="status">
+		</div>
+	</body>
+</html>
