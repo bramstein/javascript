@@ -24,6 +24,10 @@
 				typeof value !== 'function') || 
 				Object.isBoolean(value);
 		},
+		isNumber: function (value) {
+			// perhaps NaN should not be considered a number..
+			return typeof value === 'number';
+		},
 		isBoolean: function (value) {
 			return value !== null && 
 				typeof value === 'boolean';

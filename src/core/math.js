@@ -1,8 +1,6 @@
 
 /*global fun*/
 (function () {
-	var $ = fun.parameter;
-
 	function Interval(from, to) {
 		if (! (this instanceof Interval)) {
 			return new Interval(from, to);
@@ -11,57 +9,54 @@
 		this.to = to;
 	}
 
-	/*jslint white: false*/
 	Object.extend(Interval.prototype, {
-		add: fun(
-			[Interval($, $), function (f, t) {
-				return Interval(this.from + f, this.to + t);
-			}],
-			[Number, function (x) {
-				return Interval(this.from + x, this.to + x);
-			}]
-		),
-		subtract: fun(
-			[Interval($, $), function (f, t) {
-				return Interval(this.from - t, this.to - f);
-			}],
-			[Number, function (x) {
-				return Interval(this.from - x, this.to - x);
-			}]
-		),
-		multiply: fun(
-			[Interval($, $), function (f, t) {
-				var r = [this.from * f, this.from * t, this.to * f, this.to * t];
-				return Interval(Math.min.apply(null, r), Math.max.apply(null, r));
-			}],
-			[Number, function (x) {
-				return Interval(this.from * x, this.to * x);
-			}]
-		),
-		divide: fun(
-			[Interval($, $), function (f, t) {
-				return this.multiply(Interval(1 / t, 1 / f));
-			}],
-			[Number, function (x) {
+		add: function (x) {
+			if (Object.isNumber(x)) {
+				return new Interval(this.from + x, this.to + x);
+			}
+			else {
+				return new Interval(this.from + x.from, this.to + x.to);
+			}
+		},
+		subtract: function (x) {
+			if (Object.isNumber(x)) {
+				return new Interval(this.from - x, this.to - x);
+			}
+			else {
+				return new Interval(this.from - x.from, this.to - x.to);
+			}
+		},
+		multiply: function (x) {
+			if (Object.isNumber(x)) {
+				return new Interval(this.from * x, this.to * x);
+			}
+			else {
+				var r = [this.from * x.from, this.from * x.to, this.to * x.from, this.to * x.to];
+				return new Interval(Math.min.apply(null, r), Math.max.apply(null, r));
+			}
+		},
+		divide: function (x) {
+			if (Object.isNumber(x)) {
 				return this.multiply(1 / x);
-			}]
-		),
-		isIn: fun(
-			[Interval($, $), function (f, t) {
-				return f <= this.from && this.to <= t;
-			}],
-			[Number, function (x) {
-				return this.from <= x && x <= this.to;
-			}]
-		),
-		equals: function (i) {
-			return this.from === i.from && this.to === i.to;	
+			}
+			else {
+				return this.multiply(new Interval(1 / x.to, 1 / x.from));
+			}
+		},
+		subset: function (x) {
+			return x.from <= this.from && this.to <= x.to;
+		},
+		isIn: function (x) {
+			return this.from <= x && x <= this.to;
+		},
+		equals: function (x) {
+			return this.from === x.from && this.to === x.to;	
 		},
 		isEmpty: function () {
 			return !(this.from <= this.to);
 		},
-		distance: function (i) {
-			return Math.max(Math.abs(this.from - i.from), Math.abs(this.to - i.to));
+		distance: function (x) {
+			return Math.max(Math.abs(this.from - x.from), Math.abs(this.to - x.to));
 		},
 		length: function () {
 			return this.to - this.from;
