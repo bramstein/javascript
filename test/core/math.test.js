@@ -21,16 +21,41 @@ testCases(test,
 		assert.that(Interval(0,10).isIn(1), isTrue());
 		assert.that(Interval(0,10).isIn(0), isTrue());
 		assert.that(Interval(0,10).isIn(10), isTrue());
+	},
 
-		assert.that(Interval(5,7).isIn(Interval(0,10)), isTrue());
-		assert.that(Interval(5,11).isIn(Interval(0,10)), isFalse());
-		assert.that(Interval(1,1).isIn(Interval(1,1)), isTrue());
-		assert.that(Interval(5,9).isIn(Interval(6,9)), isFalse());
+	function checkIntervalSubset() {
+                assert.that(Interval(5,7).isSubset(Interval(0,10)), isTrue());
+                assert.that(Interval(5,11).isSubset(Interval(0,10)), isFalse());
+                assert.that(Interval(1,1).isSubset(Interval(1,1)), isTrue());
+                assert.that(Interval(5,9).isSubset(Interval(6,9)), isFalse());
 	},
 
 	function checkIntervalLength() {
 		assert.that(Interval(0,10).length(), eq(10));
 		assert.that(Interval(1,1).length(), eq(0));
+	},
+
+	function checkAbs() {
+		// test empty interval
+		assert.that(Interval(10,1).abs().from, eq(1));
+		assert.that(Interval(10,1).abs().to, eq(0));
+
+		// test positive from
+		assert.that(Interval(1,10).abs().from, eq(1));
+		assert.that(Interval(1,10).abs().to, eq(10));
+
+		// test negative to
+		assert.that(Interval(-10, -1).abs().from, eq(10));
+		assert.that(Interval(-10, -1).abs().to, eq(1));
+
+		// test other
+		assert.that(Interval(-2, 10).abs().from, eq(0));
+		assert.that(Interval(-2, 10).abs().to, eq(10));
+	},
+
+	function checkNegate() {
+		assert.that(Interval(-2, 10).negate().from, eq(2));
+		assert.that(Interval(-2, 10).negate().to, eq(-10));
 	},
 
 	function checkIntervalAdd() {

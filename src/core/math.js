@@ -10,6 +10,21 @@
 	}
 
 	Object.extend(Interval.prototype, {
+		negate: function () {
+			return new Interval(-this.from, -this.to);
+		},
+		abs: function () {
+			if (this.isEmpty()) {
+				return new Interval(1, 0);
+			}
+			if (Math.isPositive(this.from)) {
+				return new Interval(this.from, this.to);
+			}
+			if (Math.isNegative(this.to)) {
+				return this.negate();
+			}
+			return new Interval(0, Math.max(-this.from, this.to));
+		},
 		add: function (x) {
 			if (Object.isNumber(x)) {
 				return new Interval(this.from + x, this.to + x);
@@ -43,14 +58,14 @@
 				return this.multiply(new Interval(1 / x.to, 1 / x.from));
 			}
 		},
-		subset: function (x) {
-			return x.from <= this.from && this.to <= x.to;
+		isSubset: function (x) {
+			return this.isEmpty() || (!this.isEmpty() && x.from <= this.from && this.to <= x.to);
 		},
 		isIn: function (x) {
-			return this.from <= x && x <= this.to;
+			return !this.isEmpty() && this.from <= x && x <= this.to;
 		},
 		equals: function (x) {
-			return this.from === x.from && this.to === x.to;	
+			return (this.isEmpty() && x.isEmpty()) || (!x.isEmpty() && this.from === x.from && this.to === x.to);
 		},
 		isEmpty: function () {
 			return !(this.from <= this.to);
