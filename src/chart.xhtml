@@ -9,6 +9,7 @@
 		<script type="text/javascript" src="core/function.js"></script>
 		<script type="text/javascript" src="core/fun.js"></script>
 		<script type="text/javascript" src="core/math.js"></script>
+		<script type="text/javascript" src="chart/coordinate.js"></script>
 		<script type="text/javascript" src="chart/chart.js"></script>
 		<script type="text/javascript">
 		<![CDATA[
@@ -17,14 +18,22 @@
 			var m = Math.Interval(10,10);
 
 			function f(x, y) {
-				return x.subset(y);
+				var pi = 2 * Math.PI;
+				var factor = pi / 200;
+				//return x.multiply(factor).sin().multiply(100).subtract(100);//(y.multiply(100));//.add(y.multiply(0.01));
+
+				//var xk = x.multiply(x);
+				//var yk = y.multiply(y);
+				//return xk.add(yk);
+				return x.add(y);
 			}
 
 			function quadtree(data, x, y, w, h, depth) {
-				if (f(x, y)) {
-					if (x.length() <= 1 && y.length() <= 1) {
-						var rx = Math.round((x.from + x.to) / 2);
-						var ry = Math.round((y.from + y.to) / 2);	
+				var F = f(x, y);
+				if (F.from <= 0 && 0 <= F.to) {
+					if (x.length() < 1 && y.length() < 1) {
+						var rx = Math.ceil((x.from + x.to) / 2);
+						var ry = Math.ceil((y.from + y.to) / 2);	
 						var i = (ry * w + rx) * 4;
 						data[i] = 255;
 						data[i + 1] = 0;

@@ -3,3 +3,4 @@ old/*
 dist/*
 *~
 *.swp
+*.orig
