@@ -15,36 +15,83 @@
 		<![CDATA[
 			var ctx = null;
 
-			var m = Math.Interval(10,10);
+			//var m = Math.Interval(10,10);
+
+		//	var xrange = new Math.Interval(-Math.PI, Math.PI);
+		//	var yrange = new Math.Interval(-1, 1);
+
+			var xrange = new Math.Interval(0, 8);
+			var yrange = new Math.Interval(0, 8);
+			var scalex, scaley;
+			var pixelSizeX = 0;
+			var pixelSizeY = 0;
 
 			function f(x, y) {
 				var pi = 2 * Math.PI;
 				var factor = pi / 200;
-				//return x.multiply(factor).sin().multiply(100).subtract(100);//(y.multiply(100));//.add(y.multiply(0.01));
-
-				//var xk = x.multiply(x);
-				//var yk = y.multiply(y);
-				//return xk.add(yk);
-				return x.add(y);
+				//return Math.Interval.cos(x.multiply(factor)).add(y.add(new Math.Interval(-150, -150)).multiply(0.01));
+				//return Math.Interval.sin(x);
+				return x.add(x);
 			}
 
 			function quadtree(data, x, y, w, h, depth) {
 				var F = f(x, y);
+
+				//console.log(x + "  " + y);
+
+				//console.log(F.from + "  " + F.to);
+
 				if (F.from <= 0 && 0 <= F.to) {
-					if (x.length() < 1 && y.length() < 1) {
-						var rx = Math.ceil((x.from + x.to) / 2);
-						var ry = Math.ceil((y.from + y.to) / 2);	
+					if (x.width() < pixelSizeX && y.width() < pixelSizeY) {
+						var cx = (x.from + x.to) / 2;
+						var tx = cx + Math.abs(xrange.from) ;
+
+						var cy = (y.from + y.to) / 2;
+						var ty = cy + Math.abs(yrange.from);
+
+					//	console.log(tx + "  " + ty);
+
+						var rx = tx * (w / xrange.width());
+						var ry = ty * (h / yrange.width());
+
+					//	var rx = Math.ceil(((x.from * xrange.width() + xrange.from) + (x.to * xrange.width() + xrange.from)) / 2);
+					//	var ry = Math.ceil(((y.from * yrange.width() + yrange.from) + (y.to * yrange.width() + yrange.from)) / 2);
+					//	var rx = Math.ceil((x.from + x.to) / 2);
+					//	var ry = Math.ceil((y.from + y.to) / 2);
+					//	console.log(rx + "  " + ry);
+/*
 						var i = (ry * w + rx) * 4;
 						data[i] = 255;
 						data[i + 1] = 0;
 						data[i + 2] = 0;
 						data[i + 3] = 255;
+*/
 					}
 					else {
 						subdivide(data, x, y, w, h, depth);
 					}
 				}
+				else {
+					var fx = x.from * (w / xrange.width());
+					var tx = x.to * (w / xrange.width());
+
+					var fy = y.from * (h / yrange.width());
+					var ty = y.to * (h / yrange.width());
+						
+					for (var i = fy; i < ty; i += 1) {
+						for (var j = fx; j < tx; j += 1) {
+							console.log(i  + "  " + j);
+							var p = (i * w + j) * 4;
+							data[p] = 255;
+							data[p + 1] = 255;
+							data[p + 2] = 255;
+							data[p + 3] = 255;
+						}
+					}
+				}
 			}
+
+		
 
 			function subdivide(data, x, y, w, h, depth) {
 				var xk = (x.from + x.to) / 2;
@@ -64,13 +111,27 @@
 				{
 					ctx = canvas.getContext('2d');
 
+					ctx.fillStyle = "rgb(0, 0, 255)";
+					ctx.fillRect(0,0, canvas.width, canvas.height);
+
 					var image = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
 					var w = image.width, 
 						h = image.height,
 						data = image.data;
 
-					quadtree(data, Math.Interval(0, canvas.width), Math.Interval(0, canvas.height), w, h, 0);
+					
+
+					scalex = w / xrange.width();
+					scaley = h / yrange.width();
+
+					pixelSizeX = xrange.width() / w;
+					pixelSizeY = yrange.width() / h;
+
+					console.log(pixelSizeX + " " + pixelSizeY);
+					console.log(scalex + "  " + scaley);
+
+					quadtree(data, xrange, yrange, w, h, 0);
 
 					ctx.putImageData(image, 0, 0);
 				}
@@ -86,6 +147,6 @@
 		</style>
 	</head>
 	<body onload="draw();">
-		<canvas id="canvas-context" width="200" height="200"></canvas>
+		<canvas id="canvas-context" width="400" height="300"></canvas>
 	</body>
 </html>
