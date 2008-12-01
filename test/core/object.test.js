@@ -66,6 +66,34 @@ testCases(test,
 		assert.that(Object.extend({hello: 'world'}, {hello: 'planet'}).hello, eq('planet'));
 	},
 
+	function checkObjectExtendToString() {
+		function Test() {
+			this.hello = "world";
+		}
+		
+		Object.extend(Test.prototype, {
+			toString: function () {
+				return this.hello;
+			}
+		});	
+
+		assert.that(new Test().toString(), eq("world"));
+	},
+
+	function checkObjectExtendValueOf() {
+		function Test() {
+			this.value = false;
+		}
+
+		Object.extend(Test.prototype, {
+			valueOf: function () {
+				return this.value;
+			}
+		});
+
+		assert.that(new Test().valueOf(), isFalse());
+	},
+
 	function checkIsEmpty() {
 		assert.that(Object.isEmpty({}), isTrue());
 		assert.that(Object.isEmpty({hello: 'world'}), isFalse());

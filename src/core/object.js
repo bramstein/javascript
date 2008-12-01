@@ -5,8 +5,9 @@
 		var i = 1, key, len = arguments.length;
 		for (; i < len; i += 1) {
 			for (key in arguments[i]) {
-				// make sure we do not override built-in functions
-				if (arguments[i].hasOwnProperty(key) && (!obj[key] || obj.propertyIsEnumerable(key))) {
+				// make sure we do not override built-in methods but toString and valueOf
+				if (arguments[i].hasOwnProperty(key) && 
+					(!obj[key] || obj.propertyIsEnumerable(key) || key === 'toString' || key === 'valueOf')) {
 					obj[key] = arguments[i][key];
 				}
 			}
@@ -155,6 +156,7 @@
 			return this == v || isNaN(this) && isNaN(v);
 		}
 	});
+	/*jslint eqeqeq: true */
 
 	Object.extend(Date.prototype, {
 		equals: function (v) {
@@ -171,5 +173,4 @@
 				this.multiline === v.multiline;
 		}
 	});
-	/*jslint eqeqeq: true */
 })();
