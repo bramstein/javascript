@@ -1,6 +1,8 @@
 
 /*global fun*/
 (function () {
+	var decimalSeparator = (1.5).toFixed(1)[1];
+
 	Object.extend(Math, {
 		ceilInt: function (x, precision) {
 			var t = Math.pow(10, precision || 1);
@@ -24,27 +26,30 @@
 		isEven: function (x) {
 			return x % 2 === 0;
 		},
-		precision: function (x) {
-			var decimals = 0;
-			var difference;
 
-			do {
-				difference = Math.round(x);
-				
-				difference -= x;
-				x = difference * 10;
-				decimals += 1;
-				console.log(difference);
-			}
-			while (difference !== 0);
-/*
-			tmp -= x;
-			while (Math.round(x % 10) === 0) {
-				x *= 10;
-				decimals++;
-			}
-*/
-			return decimals;
+		// These loosely use the Mathematica definitions of accuracy and
+		// precision. The decimal separator is based on the locale so
+		// it is extracted from a known number and then used to parse
+		// further numbers. If anyone knows an algebraic way of calculating
+		// these numbers, I'd like to know.
+
+		/**
+		 * The number of signification decimal digits to the right
+		 * of the decimal point in x.
+		 */
+		accuracy: function (x) {
+			var str = x.toString(),
+				position = str.indexOf(decimalSeparator);
+			return position === -1 ? 0 : str.length -  (position + 1);
+		},
+
+		/**
+		 * The total number of signification decimal digits in x.
+		 */
+		precision: function (x) {
+			var str = x.toString(),
+				position = str.indexOf(decimalSeparator);
+			return position === -1 ? str.length : str.length - 1;
 		}
 	});
 })();
