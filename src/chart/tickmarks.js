@@ -42,16 +42,22 @@ var tickmarks = function () {
 			result = [],
 			x = rangeMin;
 
-			self.log(d);
-
 			for (; x < rangeMax + 0.5 * d; x += d) {
-				result.push(Math.round(x, 2));
+				result.push(x);
 			}
 		return result;				
 	}
 
+	function tight(interval, n) {
+		var result = loose(interval, n);
+		result[0] = interval.from;
+		result[result.length - 1] = interval.to;
+		return result;	
+	}
+
 	return {
 		nicenum: nicenum,
-		loose: loose
+		loose: loose,
+		tight: tight
 	};
 }();

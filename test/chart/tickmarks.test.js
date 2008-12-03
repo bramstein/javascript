@@ -27,6 +27,14 @@ testCases(test,
 		self.log(tickmarks.loose(new Interval(0.105, 0.543), 5));
 	},
 
+	function testLooseNegative() {
+		self.log(tickmarks.loose(new Interval(-50,50), 10));
+	},
+
+	function testTight() {
+		self.log(tickmarks.tight(new Interval(105, 543), 5));
+	},
+
 	function tearDown() {
 	}
 );
