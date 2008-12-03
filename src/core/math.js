@@ -1,7 +1,7 @@
 
 /*global fun*/
 (function () {
-	var decimalSeparator = (1.5).toFixed(1)[1];
+	var decimalSeparator = (1.5).toString()[1];
 
 	Object.extend(Math, {
 		ceilInt: function (x, precision) {
@@ -10,12 +10,6 @@
 		},
 		log10: function (x) {
 			return Math.log(x) / Math.log(10);
-		},
-		digits: function (x) {
-			return Math.floor(Math.log10(Math.abs(x !== 0 ? x : 1))) + 1;
-		},
-		characters: function (x) {
-			return x.toString().length;
 		},
 		isNegative: function (x) {
 			return x < 0;
@@ -47,9 +41,27 @@
 		 * The total number of signification decimal digits in x.
 		 */
 		precision: function (x) {
-			var str = x.toString(),
+			var str = Math.abs(x).toString(),
 				position = str.indexOf(decimalSeparator);
 			return position === -1 ? str.length : str.length - 1;
+		},
+
+		/**
+		 * The number of signification decimal digits to the left of
+		 * the decimal point in x.
+		 */
+		digits: function (x) {
+			//return Math.floor(Math.log10(Math.abs(x !== 0 ? x : 1))) + 1;
+			var str = Math.abs(x).toString(),
+				position = str.indexOf(decimalSeparator);
+			return position === -1 ? str.length : position;
+		},
+
+		/**
+		 * The total number of characters in x.
+		 */
+		characters: function (x) {
+			return x.toString().length;
 		}
 	});
 })();
