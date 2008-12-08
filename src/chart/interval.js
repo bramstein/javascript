@@ -9,8 +9,8 @@ function Interval(from, to) {
 }
 
 (function () {
-	var PI_from = 13176794/(1<<22),
-		PI_to = 13176795/(1<<22),
+	var PI_from = 13176794 / (1 << 22),
+		PI_to = 13176795 / (1 << 22),
 		PI_twice = new Interval(PI_from * 2, PI_to * 2),
 		PI_half = new Interval(PI_from / 2, PI_to / 2);
 
@@ -135,8 +135,8 @@ function Interval(from, to) {
 		//		return x.subtract(y * n);
 		//	}
 		//	else {
-				n = Math.floor(x.from / (Math.isNegative(x.from) ? y.from : y.to));
-				return x.subtract(y.multiply(n));
+			n = Math.floor(x.from / (Math.isNegative(x.from) ? y.from : y.to));
+			return x.subtract(y.multiply(n));
 		//	}
 		},
 		cos: function (x) {

@@ -8,8 +8,11 @@
 			var t = Math.pow(10, precision || 1);
 			return Math.ceil(x / t) * t;
 		},
+		log2: function (x) {
+			return Math.log(x) / Math.LN2;
+		},
 		log10: function (x) {
-			return Math.log(x) / Math.log(10);
+			return Math.log(x) / Math.LN10;
 		},
 		isNegative: function (x) {
 			return x < 0;
@@ -19,6 +22,11 @@
 		},
 		isEven: function (x) {
 			return x % 2 === 0;
+		},
+		randomInt: function (from, to) {
+			from -= 0.449;
+			to += 0.499;
+			return Math.round(from + (to - from) * Math.random());
 		},
 
 		// These loosely use the Mathematica definitions of accuracy and

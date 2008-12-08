@@ -42,9 +42,9 @@ var tickmarks = function () {
 			result = [],
 			x = rangeMin;
 
-			for (; x < rangeMax + 0.5 * d; x += d) {
-				result.push(x);
-			}
+		for (; x < rangeMax + 0.5 * d; x += d) {
+			result.push(x);
+		}
 		return result;				
 	}
 

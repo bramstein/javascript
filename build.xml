@@ -62,7 +62,7 @@
 		<apply executable="java" parallel="false" dest="dist">
 	        <fileset dir="src" includes="**/*.js"/>
 	        <arg line="-jar"/>
-    	    <arg path="lib/yuicompressor-2.3.6.jar"/>
+    	    <arg path="lib/yuicompressor-2.4.2.jar"/>
     	    <arg line="-o"/>
     	    <mapper type="glob" from="*.js" to="*.min.js"/>
 			<targetfile/>
