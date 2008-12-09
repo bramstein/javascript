@@ -15,6 +15,19 @@
 
 		<script type="text/javascript">
 		<![CDATA[
+			var data = [];
+			var length = 100;
+			for (var i = 0; i < length; i += 1) {
+				if (i % 523 === 0 || i % 245 === 0) {
+					data[i] = Math.randomInt(0,5);
+				}  
+				else {
+					data[i] = Math.randomInt(0,1);
+				}
+			}
+
+			
+
 			var ctx = null;
 
 			function draw() {
@@ -24,12 +37,13 @@
 				if (canvas.getContext) {
 					ctx = canvas.getContext('2d');
 
-					ctx.lineWidth = 10;
+					ctx.lineWidth = 1;					
 					ctx.save();
-					ctx.scale(0.0005, 0.5);
-					
-					ctx.lineTo(10000, 10);
-					ctx.lineTo(20000, 50);
+
+					ctx.scale(1000/length, 15);
+					for (var i = 0; i < length; i += 1) {
+						ctx.lineTo(i, data[i]);
+					}
 					ctx.restore();
 					ctx.stroke();
 				}
@@ -145,6 +159,6 @@
 		</style>
 	</head>
 	<body onload="draw();">
-		<canvas id="canvas-context" width="400" height="200"></canvas>
+		<canvas id="canvas-context" width="1000" height="200"></canvas>
 	</body>
 </html>
