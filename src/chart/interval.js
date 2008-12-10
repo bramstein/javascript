@@ -1,15 +1,3 @@
-
-/*
-function Interval(from, to) {
-	if (! (this instanceof Interval)) {
-		return new Interval(from, to);
-	}
-	this.from = from;
-	this.to = to;
-}
-*/
-var cache = {};
-
 var Interval = function () {
 	var PI_from = 13176794 / (1 << 22),
 		PI_to = 13176795 / (1 << 22),
@@ -66,6 +54,50 @@ var Interval = function () {
 		},
 		eq: function (a, b) {
 			return (Interval.empty(a) && Interval.empty(b)) || (!Interval.empty(b) && a.from === b.from && a.to === b.to);
+		},
+		lt: function (a, b) {
+			if (!Interval.empty(a)) {
+				if (a.to < b.from) {
+					return true;
+				}
+				else if (a.from >= b.to) {
+					return false;
+				}
+			}
+			throw new RangeError("First value can not be empty.");
+		},
+		gt: function (a, b) {
+			if (!Interval.empty(a)) {
+				if (a.from > b.to) {
+					return true;
+				}
+				else if (a.to <= b.from) {
+					return false;
+				}
+			}
+			throw new RangeError("First value can not be empty.");
+		},
+		le: function (a, b) {
+			if (!Interval.empty(a)) {
+				if (a.to <= b.from) {
+					return true;
+				}
+				else if (a.from <= b.to) {
+					return false;
+				}
+			}
+			throw new RangeError("First value can not be empty.");		
+		},
+		ge: function (a, b) {
+			if (!Interval.empty(a)) {
+				if (a.from >= b.to) {
+					return true;
+				}
+				else if (a.to < b.from) {
+					return false;
+				}
+			}
+			throw new RangeError("First value can not be empty.");
 		},
 		width: function (a) {
 			return a.to - a.from;

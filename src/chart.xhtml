@@ -76,7 +76,7 @@
 
 			function f(x, y) {
 			//	return Interval.sin(x.divide(32)).multiply(50).add(y).add(-100);
-				var s = Interval.cos({from: x.from / 32, to: x.to / 32});
+				var s = Interval.sin({from: x.from / 32, to: x.to / 32});
 				s.from *= 50;
 				s.to *= 50;
 			
@@ -131,6 +131,8 @@
 					if (Interval.width(x) < 1 && Interval.width(y) < 1) {
 						var cx = Math.ceil((x.from + x.to) / 2);
 						var cy = Math.ceil((y.from + y.to) / 2);
+					
+						fillRect(x, y, w, h, data, 0, 0, 255);
 						plotPixel(cx, cy, w, h, data, 255, 0, 0);
 					}
 					else {
@@ -186,6 +188,6 @@
 		</style>
 	</head>
 	<body onload="draw();">
-		<canvas id="canvas-context" width="1000" height="200"></canvas>
+		<canvas id="canvas-context" width="400" height="200"></canvas>
 	</body>
 </html>
