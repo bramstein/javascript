@@ -15,6 +15,7 @@
 
 		<script type="text/javascript">
 		<![CDATA[
+/*
 			var data = [];
 			var length = 100;
 			for (var i = 0; i < length; i += 1) {
@@ -48,16 +49,43 @@
 					ctx.stroke();
 				}
 			}
+*/
 
-/*
-			var xrange = new Interval(-10, 10);
-			var yrange = new Interval(0, 20);
+			var xrange = {from: -10, to: 10};
+			var yrange = {from: 0, to: 20};
 			var scalex, scaley;
 			var pixelSizeX = 0;
 			var pixelSizeY = 0;
 
+			function memo(f) {  
+				return function () {  
+					var args = [arguments[0].from, arguments[0].to];  
+					f.memo = f.memo || {};  
+					if (args in f.memo) {
+						return f.memo[args];
+					}
+					else {
+						return f.memo[args] = f.apply(this, arguments);
+						
+					}
+					//return (args in f.memo)? f.memo[args] : f.memo[args] = f.apply(this, args);  
+				};  
+			}  
+
+			var mcos = memo(Interval.cos);
+
 			function f(x, y) {
-				return Interval.sin(x.divide(32)).multiply(50).add(y).add(-100);
+			//	return Interval.sin(x.divide(32)).multiply(50).add(y).add(-100);
+				var s = Interval.cos({from: x.from / 32, to: x.to / 32});
+				s.from *= 50;
+				s.to *= 50;
+			
+				s = Interval.add(s, y);
+				
+				s.from -= 100;
+				s.to -= 100;
+
+				return s;
 				
 			//	return x.multiply(x).add(y).add(-100);
 			}
@@ -100,7 +128,7 @@
 				var F = f(x, y);
 
 				if (F.from <= 0 && 0 <= F.to) {
-					if (x.width() < 1 && y.width() < 1) {
+					if (Interval.width(x) < 1 && Interval.width(y) < 1) {
 						var cx = Math.ceil((x.from + x.to) / 2);
 						var cy = Math.ceil((y.from + y.to) / 2);
 						plotPixel(cx, cy, w, h, data, 255, 0, 0);
@@ -120,10 +148,10 @@
 				var xk = (x.from + x.to) / 2;
 				var yk = (y.from + y.to) / 2;
 
-				quadtree(data, new Interval(x.from, xk), new Interval(y.from, yk), w, h);
-				quadtree(data, new Interval(x.from, xk), new Interval(yk, y.to), w, h);
-				quadtree(data, new Interval(xk, x.to), new Interval(yk, y.to), w, h);
-				quadtree(data, new Interval(xk, x.to), new Interval(y.from, yk), w, h);
+				quadtree(data, {from: x.from, to: xk}, {from: y.from, to: yk}, w, h);
+				quadtree(data, {from: x.from, to: xk}, {from: yk, to: y.to}, w, h);
+				quadtree(data, {from: xk, to: x.to}, {from: yk, to: y.to}, w, h);
+				quadtree(data, {from: xk, to: x.to}, {from: y.from, to: yk}, w, h);
 			}
 
 			function draw() {
@@ -144,12 +172,11 @@
 						data = image.data;
 
 
-					quadtree(data, new Interval(0, w), new Interval(0, h), w, h);
+					quadtree(data, {from: 0, to: w}, {from: 0, to: h}, w, h);
 
 					ctx.putImageData(image, 0, 0);
 				}
 			}
-*/
 		]]>
 		</script>
 		<style>
