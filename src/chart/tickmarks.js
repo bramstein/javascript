@@ -1,4 +1,5 @@
 
+/*global Interval*/
 var tickmarks = function () {
 	function nicenum(x, round) {
 		var exp = Math.floor(Math.log10(x)),
@@ -34,7 +35,7 @@ var tickmarks = function () {
 	}
 
 	function loose(interval, n) {
-		var range = nicenum(interval.width(), false),
+		var range = nicenum(Interval.width(interval), false),
 			d = nicenum(range / (n - 1), true),
 			rangeMin = Math.floor(interval.from  / d) * d,
 			rangeMax = Math.ceil(interval.to / d) * d,
