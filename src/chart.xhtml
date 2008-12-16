@@ -11,6 +11,8 @@
 		<script type="text/javascript" src="core/math.js"></script>
 		<script type="text/javascript" src="chart/interval.js"></script>
 		<script type="text/javascript" src="chart/coordinate.js"></script>
+		<script type="text/javascript" src="chart/axis.js"></script>
+		<script type="text/javascript" src="chart/renderer.js"></script>
 		<script type="text/javascript" src="chart/chart.js"></script>
 
 		<script type="text/javascript">
@@ -50,7 +52,7 @@
 				}
 			}
 */
-
+/*
 			var xrange = {from: -10, to: 10};
 			var yrange = {from: 0, to: 20};
 			var scalex, scaley;
@@ -99,10 +101,10 @@
 
 			function fillRect(x, y, w, h, data, r, g, b) {
 				if (x.from >= 0 && x.to <= w && y.from >= 0 && y.to <= h) {
-					var yf = Math.floor(y.from);
-					var yt = Math.ceil(y.to);
-					var xf = Math.floor(x.from);
-					var xt = Math.ceil(x.to);
+					var yf = Math.round(y.from);
+					var yt = Math.round(y.to);
+					var xf = Math.round(x.from);
+					var xt = Math.round(x.to);
 
 					for (var i = yf; i < yt; i += 1) {
 						for (var j = xf; j < xt; j += 1) {
@@ -129,10 +131,10 @@
 
 				if (F.from <= 0 && 0 <= F.to) {
 					if (Interval.width(x) < 1 && Interval.width(y) < 1) {
-						var cx = Math.ceil((x.from + x.to) / 2);
-						var cy = Math.ceil((y.from + y.to) / 2);
+						var cx = Math.floor((x.from + x.to) / 2);
+						var cy = Math.floor((y.from + y.to) / 2);
 					
-						fillRect(x, y, w, h, data, 0, 0, 255);
+					//	fillRect(x, y, w, h, data, 0, 0, 255);
 						plotPixel(cx, cy, w, h, data, 255, 0, 0);
 					}
 					else {
@@ -140,7 +142,7 @@
 					}
 				}
 				else {
-					//fillRect(x, y, w, h, data, 255, 255, 255);
+				//	fillRect(x, y, w, h, data, 0, 255, 0);
 				}
 			}
 
@@ -179,6 +181,58 @@
 					ctx.putImageData(image, 0, 0);
 				}
 			}
+*/
+			var xrange = {from: -100, to: 100};
+			var yrange = {from: -10, to: 10};
+
+			function draw() {
+/*
+				var canvas = document.getElementById('canvas-context');
+		
+				if(canvas.getContext) {
+					ctx = canvas.getContext('2d');
+
+					ctx.scale(1, -1);
+					ctx.translate(0, -canvas.height);
+					ctx.strokeStyle = 'rgb(0,0,0)';
+					
+
+					ctx.save();
+					ctx.scale(canvas.width / Interval.width(xrange), canvas.height / Interval.width(yrange));
+					ctx.translate(-xrange.from, -yrange.from);
+					ctx.lineWidth = 1 / 200;
+
+					
+					ctx.beginPath();
+					ctx.moveTo(xrange.from, 0);
+					ctx.lineTo(xrange.to, 0);
+					ctx.closePath();
+					ctx.stroke();				
+
+					ctx.lineWidth = 1 / 20;
+					ctx.beginPath();
+					ctx.moveTo(0, yrange.from);
+					ctx.lineTo(0, yrange.to);
+					ctx.closePath();
+					ctx.stroke();
+					
+					ctx.lineWidth = 1 / 20;
+					ctx.beginPath();
+					ctx.moveTo(0, 0);
+					ctx.lineTo(100, 10);
+					ctx.closePath();
+					ctx.stroke();
+					
+
+					ctx.restore();
+
+					
+
+					var horizontalAxis = axis({from: xrange.from, to: xrange.to, numMajorTicks: 10, numMinorTicks: 6});
+					var verticalAxis = axis({from: yrange.from, to: yrange.to, numMajorTicks: 10});
+				}
+*/
+			}
 		]]>
 		</script>
 		<style>
@@ -188,6 +242,6 @@
 		</style>
 	</head>
 	<body onload="draw();">
-		<canvas id="canvas-context" width="400" height="200"></canvas>
+		<canvas id="canvas-context" width="400" height="400"></canvas>
 	</body>
 </html>

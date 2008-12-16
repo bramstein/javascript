@@ -26,6 +26,11 @@ testCases(test,
 	},
 
 
+	function checkIsEmpty() {
+		assert.that([].isEmpty(), isTrue());
+		assert.that([1].isEmpty(), isFalse());
+	},
+
 	function checkArrayTop() {
 		assert.that([].top(), eq(undefined));
 		assert.that([1].top(), eq(1));

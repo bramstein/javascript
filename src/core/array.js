@@ -2,6 +2,9 @@
 
 (function () {
 	Object.extend(Array.prototype, {
+		isEmpty: function () {
+			return this.length < 1;
+		},
 		append: function () {
 			var i = 0, len = arguments.length;
 			// interestingly enough, push() beats both
@@ -159,7 +162,7 @@
 		}
 	});
 
-	['reduce', 'reduceRight', 'equals', 'contains', 'append', 'top', 'filter', 'map', 'forEach', 'some', 'every', 'indexOf', 'lastIndexOf', 'join', 'sort', 'reverse', 'push', 'pop', 'shift', 'unshift', 'splice', 'concat', 'slice'].forEach(function (func) {
+	['isEmpty', 'reduce', 'reduceRight', 'equals', 'contains', 'append', 'top', 'filter', 'map', 'forEach', 'some', 'every', 'indexOf', 'lastIndexOf', 'join', 'sort', 'reverse', 'push', 'pop', 'shift', 'unshift', 'splice', 'concat', 'slice'].forEach(function (func) {
 		if (!(func in Array) && func in Array.prototype) {
 			Array[func] = function (obj) {
 				return this.prototype[func].apply(obj, Array.prototype.slice.call(arguments, 1));
