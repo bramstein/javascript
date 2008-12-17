@@ -1,5 +1,5 @@
 /*
- * var c = chart(ctx);
+ * var c = renderer(ctx);
  * c.beginPath().
  *	moveTo(10, 12).
  *  lineTo(50, 20).
@@ -11,10 +11,9 @@ var renderer = function () {
 	var path = {};
 	var shape = {};
 
-	return function (canvas) {
-		var context = null;
-
-		canvas = document.getElementById(canvas);
+	return function (identifier) {
+		var context = null,
+			canvas = document.getElementById(identifier);
 
 		if (canvas && canvas.getContext !== undefined && canvas.getContext('2d') !== undefined) {
 			context = canvas.getContext('2d');
@@ -81,10 +80,12 @@ var renderer = function () {
 				return shape.rect(x, y, s, s);
 			};
 
-
 			if (context.fillText && context.measureText) {
 				shape.text = function (x, y, str) {
-					context.fillText(x, y, str);
+					context.save();
+					context.scale(1, -1);
+					context.fillText(str, x, - y);
+					context.restore();
 					return shape;
 				};
 			}
@@ -92,9 +93,7 @@ var renderer = function () {
 				shape.text = function (x, y, str) {
 					context.save();
 					context.scale(1, -1);
-					context.translate(0, -canvas.height);
-					context.translate(x, y);
-				//	context.translate(x, y);
+					context.translate(x, -y);
 					context.mozDrawText(str);
 					context.restore();
 					return shape;
@@ -104,7 +103,7 @@ var renderer = function () {
 			return shape;
 		}
 		else {
-			throw new TypeError('Canvas context was not found.');
+			throw new TypeError('The canvas element identifier was not found, or the canvas context is not available.');
 		}
 	};
 }();
