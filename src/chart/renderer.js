@@ -81,7 +81,19 @@ var renderer = function () {
 			};
 
 			if (context.fillText && context.measureText) {
-				shape.text = function (x, y, str) {
+				shape.text = function (x, y, str, options) {
+					var xOffset = 0;				
+
+					options = options || {};
+			
+					if (options.textAlign) {
+						context.textAlign = options.textAlign;
+					}
+				
+					if (options.font) {
+						context.font = options.font;
+					}
+
 					context.save();
 					context.scale(1, -1);
 					context.fillText(str, x, - y);
@@ -90,16 +102,34 @@ var renderer = function () {
 				};
 			}
 			else if (context.mozDrawText && context.mozMeasureText) {
-				shape.text = function (x, y, str) {
+				shape.text = function (x, y, str, options) {
+					var xOffset = 0;
+			
+					options = options || {};
+
+					if (options.textAlign) {
+						xOffset = -context.mozMeasureText(str);
+	
+						if (options.textAlign === "center") {
+							xOffset /= 2;
+						}
+						else if (options.textAlign === "left" || options.textAlign === "start") {
+							xOffset = 0;
+						}
+					}
+
+					if (options.font) {
+						context.mozTextStyle = options.font;
+					}
+
 					context.save();
 					context.scale(1, -1);
-					context.translate(x, -y);
+					context.translate(x + xOffset, -y);
 					context.mozDrawText(str);
 					context.restore();
 					return shape;
 				};
 			}
-
 			return shape;
 		}
 		else {
