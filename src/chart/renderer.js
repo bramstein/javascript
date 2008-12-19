@@ -11,13 +11,27 @@ var renderer = function () {
 	var path = {};
 	var shape = {};
 
-	return function (identifier) {
+	return function (identifier, horizontalRange, verticalRange) {
 		var context = null,
 			canvas = document.getElementById(identifier);
 
 		if (canvas && canvas.getContext !== undefined && canvas.getContext('2d') !== undefined) {
 			context = canvas.getContext('2d');
+/*
+			if (!horizontalRange) {
+				horizontalRange = {
+					from: 0,
+					to: canvas.width
+				};
+			}
 
+			if (!verticalRange) {
+				verticalRange = {
+					from: 0,
+					to: canvas.height
+				};
+			}
+*/
 			// Invert the y axis so the 0, 0 point is in the
 			// lower left corner of the canvas.
 			context.scale(1, -1);

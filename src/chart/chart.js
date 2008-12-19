@@ -2,7 +2,8 @@
 /*global fun*/
 var chart = function () {
 
-	return function (context) {
+	return function (elementIdentifier) {
+		var r = renderer(elementIdentifier);
 
 	};
 }();
