@@ -1,4 +1,7 @@
 
+/**
+ * Numerical Axis.
+ */
 /*global Interval*/
 var axis = function () {
 	function niceNumber(x, round) {
@@ -54,8 +57,7 @@ var axis = function () {
 	}	
 
 	return function (options) {
-		var orientation,
-			minorTicks = [],
+		var minorTicks = [],
 			majorTicks = [],
 			from, to, tmp = [];
 
@@ -84,7 +86,7 @@ var axis = function () {
 
 		if (majorTicks.isEmpty()) {
 			if (minorTicks.isEmpty()) {
-				// not specified, so we assume the number of ticks is set to 10
+				// unspecified, so we assume the number of ticks is set to 10
 				tmp = calculateTicks(options, 10);
 				from = tmp[0];
 				to = tmp[tmp.length - 1];
@@ -98,15 +100,26 @@ var axis = function () {
 			from = majorTicks[0];
 			to = majorTicks[majorTicks.length - 1];
 		}
-
-		orientation = (options.orientation === 'horizontal' || options.orientation === 'vertical') ? options.orientation : 'horizontal';
 		
 		return {
-			orientation: orientation,
 			minorTicks: minorTicks,
 			majorTicks: majorTicks,
 			from: from,
 			to: to
 		};
-	};
+	}.defaults({});
+}();
+
+var category = function () {
+	return function (options) {
+		if (options.categories !== undefined) {
+			return {
+				majorTicks: options.categories,
+				minorTicks: [],
+				from: 1,
+				to: 0
+			};
+		}		
+		throw new TypeError('A category axis must at least contain one category');
+	}.defaults({});
 }();

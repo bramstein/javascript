@@ -8,12 +8,17 @@
 		<script type="text/javascript" src="core/array.js"></script>
 		<script type="text/javascript" src="core/function.js"></script>
 		<script type="text/javascript" src="core/fun.js"></script>
+		<script type="text/javascript" src="core/property.js"></script>
 		<script type="text/javascript" src="core/math.js"></script>
+		<script type="text/javascript" src="jlayout/jlayout.js"></script>
+		<script type="text/javascript" src="chart/properties.js"></script>
 		<script type="text/javascript" src="chart/interval.js"></script>
 		<script type="text/javascript" src="chart/coordinate.js"></script>
 		<script type="text/javascript" src="chart/axis.js"></script>
-		<script type="text/javascript" src="chart/renderer.js"></script>
+		<script type="text/javascript" src="chart/graphics.js"></script>
 		<script type="text/javascript" src="chart/chart.js"></script>
+		<script type="text/javascript" src="chart/composite-chart.js"></script>
+		<script type="text/javascript" src="chart/canvas.js"></script>
 
 		<script type="text/javascript">
 		<![CDATA[
@@ -182,9 +187,10 @@
 				}
 			}
 */
+/*
 			var xrange = {from: -100, to: 100};
 			var yrange = {from: -10, to: 10};
-
+*/
 			function draw() {
 /*
 				var canvas = document.getElementById('canvas-context');
@@ -231,14 +237,35 @@
 					var horizontalAxis = axis({from: xrange.from, to: xrange.to, numMajorTicks: 10, numMinorTicks: 6});
 					var verticalAxis = axis({from: yrange.from, to: yrange.to, numMajorTicks: 10});
 				}
+
+
+var c = canvas(g, {
+    horizontalAxis: axis({
+        from: 0,
+        to: 10,
+        numMajorTicks: 10
+    }),
+    verticalAxis: axis({
+        from: 0,
+        to: 10,
+        numMajorTicks: 10
+    })
+});
+
 */
 			}
 		]]>
 		</script>
 		<style>
+			body {
+				font-size: 10em;
+			}
+
 			#canvas-context {
 				border: 1px solid black;
 			}
+
+
 		</style>
 	</head>
 	<body onload="draw();">
