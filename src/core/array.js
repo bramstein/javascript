@@ -14,7 +14,7 @@
 			}
 			return this;
 		},
-		top: function () {
+		peek: function () {
 			return this[this.length - 1];
 		},
 		equals: function (a) {

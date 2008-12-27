@@ -1,5 +1,5 @@
 
-/*global bounds, insets, graphics*/
+/*global bounds, insets, graphics, jLayout, container*/
 var chart = function () {
 	return function (elementIdentifier, axes, ratio, width, height) {
 		var g = graphics(elementIdentifier),

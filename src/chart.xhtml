@@ -11,6 +11,7 @@
 		<script type="text/javascript" src="core/property.js"></script>
 		<script type="text/javascript" src="core/math.js"></script>
 		<script type="text/javascript" src="jlayout/jlayout.js"></script>
+		<script type="text/javascript" src="../lib/sylvester.js"></script>
 		<script type="text/javascript" src="chart/properties.js"></script>
 		<script type="text/javascript" src="chart/interval.js"></script>
 		<script type="text/javascript" src="chart/coordinate.js"></script>
@@ -187,11 +188,46 @@
 				}
 			}
 */
-/*
+
 			var xrange = {from: -100, to: 100};
 			var yrange = {from: -10, to: 10};
-*/
+
 			function draw() {
+				var ha = axis({from: -100, to: 100, numMajorTicks: 10, numMinorTicks: 5});
+				var va = axis({from: 0, to: 10, numMajorTicks: 10, numMinorTicks: 5});
+				var g = graphics('canvas-context');
+				var c = canvas(g, {horizontalAxis: ha, verticalAxis: va});
+
+				c.bounds({width: 300, height: 300, x: 50, y: 50});
+				c.drawAxes();
+
+/*
+				var g = graphics('canvas-context');
+
+				g.beginViewport(0, 0, 400, 400, {from: 0, to: 1}, {from: 0, to: 1}).
+					beginViewport(0, 0, 1, 1, {from: 0, to: 200}, {from: 0, to: 200}).
+						beginViewport(100, 100, 100, 100, {from: -5, to: 5}, {from: -5, to: 5}).
+							rect(-4, -4, 8, 8).
+							stroke().
+							circle(0, 0 , 3).
+							stroke().
+							text(-5, -5, "hello world").
+							beginPath().
+								moveTo(0,0).
+								lineTo(1,1).
+							closePath().
+							stroke().
+						closeViewport().
+						roundedRect(0, 0, 100, 100, 10).
+						stroke().
+					closeViewport().
+					rect(0, 0, 0.8, 0.8).
+					stroke().
+				closeViewport();
+*/
+
+						
+
 /*
 				var canvas = document.getElementById('canvas-context');
 		
@@ -200,45 +236,37 @@
 
 					ctx.scale(1, -1);
 					ctx.translate(0, -canvas.height);
+					ctx.translate(0.5, 0.5);
 					ctx.strokeStyle = 'rgb(0,0,0)';
 					
 
 					ctx.save();
 					ctx.scale(canvas.width / Interval.width(xrange), canvas.height / Interval.width(yrange));
 					ctx.translate(-xrange.from, -yrange.from);
-					ctx.lineWidth = 1 / 200;
+					//ctx.lineWidth = 1 / 200;
 
 					
 					ctx.beginPath();
 					ctx.moveTo(xrange.from, 0);
-					ctx.lineTo(xrange.to, 0);
-					ctx.closePath();
-					ctx.stroke();				
+					ctx.lineTo(xrange.to, 0);			
 
-					ctx.lineWidth = 1 / 20;
-					ctx.beginPath();
 					ctx.moveTo(0, yrange.from);
 					ctx.lineTo(0, yrange.to);
-					ctx.closePath();
-					ctx.stroke();
 					
-					ctx.lineWidth = 1 / 20;
-					ctx.beginPath();
 					ctx.moveTo(0, 0);
 					ctx.lineTo(100, 10);
-					ctx.closePath();
-					ctx.stroke();
-					
+					ctx.closePath();	
 
 					ctx.restore();
 
-					
+					ctx.stroke();
 
 					var horizontalAxis = axis({from: xrange.from, to: xrange.to, numMajorTicks: 10, numMinorTicks: 6});
 					var verticalAxis = axis({from: yrange.from, to: yrange.to, numMajorTicks: 10});
+
 				}
-
-
+*/
+/*
 var c = canvas(g, {
     horizontalAxis: axis({
         from: 0,

@@ -51,7 +51,7 @@ var axis = function () {
 			x = minRange;
 
 		for (; x < maxRange + 0.5 * step; x += step) {
-			result.push(x.toFixed(nfrac));
+			result.push(Number(x.toFixed(nfrac)));
 		}
 		return result;				
 	}	
@@ -61,8 +61,8 @@ var axis = function () {
 			majorTicks = [],
 			from, to, tmp = [];
 
-		if (options.from === undefined || options.to === undefined) {
-			throw new TypeError("An axis should at least contain a from and to interval.");
+		if (options.from === undefined || options.to === undefined || Interval.empty(options)) {
+			throw new TypeError("An axis should a valid, non-empty interval.");
 		}
 
 		if (options.numMajorTicks !== undefined) {
@@ -73,6 +73,10 @@ var axis = function () {
 		}
 
 		if (options.numMinorTicks !== undefined) {
+			// TODO: I'm not sure if the assumption that minor ticks also have to be "nice" 
+			// numbers is correct. Assuming the major ticks are "nice" we can easily
+			// calculate the minor ticks. The calculate ticks function might be holding
+			// us back here.
 			majorTicks.forEach(function (v, i) {
 				minorTicks.append(calculateTicks({
 					from: v,

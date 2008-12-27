@@ -31,9 +31,9 @@ testCases(test,
 		assert.that([1].isEmpty(), isFalse());
 	},
 
-	function checkArrayTop() {
-		assert.that([].top(), eq(undefined));
-		assert.that([1].top(), eq(1));
+	function checkArrayPeek() {
+		assert.that([].peek(), eq(undefined));
+		assert.that([1].peek(), eq(1));
 	},
 
 	function checkArrayAppend() {

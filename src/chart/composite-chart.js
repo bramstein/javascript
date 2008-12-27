@@ -1,5 +1,5 @@
 
-/*global bounds, insets*/
+/*global bounds, insets, container*/
 var compositeChart = function () {
 
 	return function (layout) {

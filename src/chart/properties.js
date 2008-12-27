@@ -1,3 +1,4 @@
+/*global property*/
 var bounds = property('bounds', {
 	width: 0,
 	height: 0,
