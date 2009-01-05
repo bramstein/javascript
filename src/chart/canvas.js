@@ -1,6 +1,45 @@
 
 /*global bounds, insets, maximum, Interval*/
 var canvas = function () {
+	function drawAxis(graphics, range, majorTicks, minorTicks, orientation) {
+		var sign = range.to <= 0 ? -1 : 1;
+
+		if (orientation === 'horizontal') {
+			graphics.
+				beginPath().
+					moveTo(range.horizontal.from, 0).
+					lineTo(range.horizontal.to, 0).
+				stroke();
+
+			majorTicks.forEach(function (i) {
+				if (i !== 0 || options.verticalAxis.from >= 0 || options.verticalAxis.to <= 0) {
+					graphics.beginPath().
+						moveTo(i, 0).
+						lineTo(i, hTickLength * -hSign).
+					closePath().
+					stroke().
+					text(i, (hTickLength * 1.35) * -hSign, i, {
+						textAlign: 'center', 
+						textBaseLine: (Math.isNegative(hSign) ? 'bottom' : 'top')
+					});
+				}
+			});
+		}
+		else {
+			graphics.
+				beginPath().
+					moveTo(0, range.vertical.from).
+					lineTo(0, range.vertical.to).
+				stroke();
+		}
+	}
+
+	function drawPolarAxis(graphics, bounds, axis, orientation) {
+	}
+
+	function drawGrid(graphics, bounds, axis, orientation) {
+	}
+
 	return function (graphics, options) {
 		var that = {},
 			ratio = 1,
@@ -45,6 +84,95 @@ var canvas = function () {
 				return result;
 			},
 			drawAxes: function () {
+				var b = that.bounds(),
+					tick = {len: 15, horizontal: 0, vertical: 0},
+					axes = ['horizontal', 'vertical'],
+					range = { 
+						horizontal: {from: 0, to: 10},
+						vertical: {from: 0, to: 1}
+					},
+					sign = {
+						horizontal: 1,
+						vertical: 1
+					};
+
+
+				if (options.polarAxis !== undefined) {
+				}
+				else if (options.horizontalAxis !== undefined && options.verticalAxis !== undefined) {
+					tick['horizontal'] = b.width - b.x;
+					tick['vertical'] = b.height - b.y;
+
+					axes.forEach(function (n) {
+						range[n] = !Interval.empty(options[n + 'Axis']) ? {from: options[n + 'Axis'].from, to: options[n + 'Axis'].to} : range[n];
+						tick[n] = tick.len * (Interval.width(range[n]) / tick[n]);
+						sign[n] = range[n].to <= 0 ? -1 : 1;
+					});
+
+
+					graphics.beginViewport(b.x, b.y, b.width, b.height, range.horizontal, range.vertical);
+
+					var t = graphics.itransform_length(5, 5);
+					tick['horizontal'] = t.e(2);
+					tick['vertical'] = t.e(1);
+					//console.log(graphics.itransform_length(5, 5));
+					graphics.
+						beginPath().
+							moveTo(range['horizontal'].from, 0).
+							lineTo(range['horizontal'].to, 0).
+						stroke();
+
+					console.log(tick);
+
+					options.horizontalAxis.majorTicks.forEach(function (s, i, a) {
+						if (typeof s === 'number' && !isNaN(s)) {
+							if (s !== 0 || options.verticalAxis.from >= 0 || options.verticalAxis.to <= 0) {
+								graphics.beginPath().
+									moveTo(s, 0).
+									lineTo(s, tick['horizontal'] * -sign['horizontal']).
+								closePath().
+								stroke().
+								text(s, (tick['horizontal'] * 1.35) * -sign['horizontal'], s, {
+									textAlign: 'center', 
+									textBaseLine: (Math.isNegative(sign['horizontal']) ? 'bottom' : 'top')
+								});
+							}
+						}
+						else {
+							var p = (Interval.width(range['horizontal']) / a.length) * i;
+							console.log((Interval.width(range['horizontal']) / a.length) * i);
+							console.log(s);
+							graphics.beginPath().
+									moveTo(p, 0).
+									lineTo(p, tick['horizontal'] * -sign['horizontal']).
+								closePath().
+								stroke().
+								text(p, (tick['horizontal'] * 1.35) * -sign['horizontal'], s, {
+									textAlign: 'left', 
+									textBaseLine: (Math.isNegative(sign['horizontal']) ? 'bottom' : 'top')
+								});
+						}
+					});
+
+				//	console.log(tick);
+
+				//	axes.forEach(function (n) {
+				//		drawAxis(graphics, range, options[n + 'Axis'], n);
+				//	});
+				}
+
+
+//				graphics.beginViewport(b.x, b.y, b.width, b.height, options.horizontalAxis !== undefined ? options.horizontalAxis : options.polarAxis, options.verticalAxis);
+
+/*
+				['horizontal', 'vertical'].forEach(function (n) {
+				//	tickLength[n] = tickLength.len * Interval.width(xrange);
+					drawAxis(graphics, options[n + 'Axis'], n);
+				});
+*/
+
+				graphics.closeViewport();
+/*
 				var tickLength = 0.15,
 					hTickLength = tickLength * ((that.bounds().width - that.bounds().x) / Interval.width(options.horizontalAxis)),
 					vTickLength = tickLength * ((that.bounds().height - that.bounds().y) / Interval.width(options.verticalAxis));
@@ -70,10 +198,9 @@ var canvas = function () {
 							lineTo(i, hTickLength * -hSign).
 						closePath().
 						stroke().
-						text(i, (hTickLength * 1.35) * -hSign, i.toString(), {
+						text(i, (hTickLength * 1.35) * -hSign, i, {
 							textAlign: 'center', 
-							textBaseLine: (Math.isNegative(hSign) ? 'bottom' : 'top'), 
-							numerical: true
+							textBaseLine: (Math.isNegative(hSign) ? 'bottom' : 'top')
 						});
 					}
 				});
@@ -90,7 +217,7 @@ var canvas = function () {
 						text(
 							(vTickLength * 1.35) * -vSign, 
 							i, 
-							i.toString(), {
+							i, {
 								textAlign: (Math.isNegative(vSign) ? 'left' : 'right'), 
 								textBaseLine: 'middle'
 							}
@@ -117,8 +244,8 @@ var canvas = function () {
 						stroke();
 					}
 				});
-
-				
+*/
+				/*
 
 				graphics.color('rgb(255,0,0)');
 				var p = graphics.beginPath();
@@ -131,8 +258,8 @@ var canvas = function () {
 				});
 				p.stroke();
 				//p.closePath().stroke();
-
-				graphics.closeViewport();
+*/
+//				graphics.closeViewport();
 
 
 			},

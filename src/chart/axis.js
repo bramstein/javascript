@@ -54,55 +54,75 @@ var axis = function () {
 			result.push(Number(x.toFixed(nfrac)));
 		}
 		return result;				
-	}	
+	}
+
+	function isNumeric(a) {
+		return a.every(function (i) {
+			return typeof i === 'number' && !isNaN(i);
+		});
+	}
 
 	return function (options) {
 		var minorTicks = [],
 			majorTicks = [],
 			from, to, tmp = [];
 
-		if (options.from === undefined || options.to === undefined || Interval.empty(options)) {
-			throw new TypeError("An axis should a valid, non-empty interval.");
-		}
-
-		if (options.numMajorTicks !== undefined) {
-			majorTicks = calculateTicks(options, options.numMajorTicks);
-		}
-		else  if (options.majorTicks !== undefined && Object.isArray(options.majorTicks)) {
-			majorTicks = options.majorTicks;
-		}
-
-		if (options.numMinorTicks !== undefined) {
-			// TODO: I'm not sure if the assumption that minor ticks also have to be "nice" 
-			// numbers is correct. Assuming the major ticks are "nice" we can easily
-			// calculate the minor ticks. The calculate ticks function might be holding
-			// us back here.
-			majorTicks.forEach(function (v, i) {
-				minorTicks.append(calculateTicks({
-					from: v,
-					to: (i !== (majorTicks.length - 1) ? majorTicks[i + 1] : v)
-				}, options.numMinorTicks));
-			});
-		}
-		else if (options.minorTicks !== undefined && Object.isArray(options.minorTicks)) {
-			minorTicks = options.minorTicks;
-		}
-
-		if (majorTicks.isEmpty()) {
-			if (minorTicks.isEmpty()) {
-				// unspecified, so we assume the number of ticks is set to 10
-				tmp = calculateTicks(options, 10);
-				from = tmp[0];
-				to = tmp[tmp.length - 1];
+		if ((options.from === undefined || options.to === undefined || Interval.empty(options)) && options.majorTicks === undefined && options.numMajorTicks === undefined) {
+			from = 1;
+			to = 0;
+			if (options.categories !== undefined && Object.isArray(options.categories) && options.categories.length > 0) {
+				majorTicks = options.categories;
 			}
 			else {
-				from = minorTicks[0];
-				to = minorTicks[minorTicks.length - 1];
+				throw new TypeError('A category axis must at least contain one category.');
 			}
 		}
 		else {
-			from = majorTicks[0];
-			to = majorTicks[majorTicks.length - 1];
+			if (options.numMajorTicks !== undefined && options.from !== undefined && options.to !== undefined) {
+				majorTicks = calculateTicks(options, options.numMajorTicks);
+			}
+			else  if (options.majorTicks !== undefined && Object.isArray(options.majorTicks) && isNumeric(options.majorTicks)) {
+				majorTicks = options.majorTicks;
+			}
+			else {
+				throw new TypeError('A numeric axis should be specified by either numMajorTicks, or a numeric majorTicks array.');
+			}
+
+			if (options.numMinorTicks !== undefined) {
+				// TODO: I'm not sure if the assumption that minor ticks also have to be "nice" 
+				// numbers is correct. Assuming the major ticks are "nice" we can easily
+				// calculate the minor ticks. The calculate ticks function might be holding
+				// us back here.
+				majorTicks.forEach(function (v, i) {
+					minorTicks.append(calculateTicks({
+						from: v,
+						to: (i !== (majorTicks.length - 1) ? majorTicks[i + 1] : v)
+					}, options.numMinorTicks));
+				});
+			}
+			else if (options.minorTicks !== undefined && Object.isArray(options.minorTicks) && isNumeric(options.minorTicks)) {
+				minorTicks = options.minorTicks;
+			}
+			else {
+				// minor ticks are optional, so we don't throw an error.
+			}
+
+			if (majorTicks.isEmpty()) {
+				if (minorTicks.isEmpty()) {
+					// unspecified, so we assume the number of ticks is set to 10
+					tmp = calculateTicks(options, 10);
+					from = tmp[0];
+					to = tmp[tmp.length - 1];
+				}
+				else {
+					from = minorTicks[0];
+					to = minorTicks[minorTicks.length - 1];
+				}
+			}
+			else {
+				from = majorTicks[0];
+				to = majorTicks[majorTicks.length - 1];
+			}
 		}
 		
 		return {
@@ -113,7 +133,7 @@ var axis = function () {
 		};
 	}.defaults({});
 }();
-
+/*
 var category = function () {
 	return function (options) {
 		if (options.categories !== undefined) {
@@ -127,3 +147,4 @@ var category = function () {
 		throw new TypeError('A category axis must at least contain one category');
 	}.defaults({});
 }();
+*/

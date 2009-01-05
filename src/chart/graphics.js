@@ -24,6 +24,19 @@ var graphics = function () {
 			}, $V([x, y, 1]));
 		}
 
+		function itransform(x, y) {
+			return transformation.reduceRight(function (i, item) {
+				return item.inverse().multiply(i);
+			}, $V([x, y, 1]));
+		}
+
+		function itransform_length(w, h) {
+			var o = itransform(0, 0),
+				r = itransform(w, h);
+			r = r.subtract(o);
+			return r;
+		}
+
 		function transform_length(w, h) {
 			var o = transform(0, 0),
 				r = transform(w, h);
@@ -52,6 +65,14 @@ var graphics = function () {
 					return shape;
 				};
 			});
+
+			shape.itransform = function (x, y) {
+				return itransform(x, y);
+			};
+
+			shape.itransform_length = function (w, h) {
+				return itransform_length(w, h);
+			};
 
 			path.closePath = function () {
 				context.closePath();
@@ -196,7 +217,8 @@ var graphics = function () {
 					var xOffset = 0,
 						yOffset = 0,
 						p = transform(x, y),
-						previousFont = context.mozTextStyle;
+						previousFont = context.mozTextStyle,
+						numerical = (typeof str === 'number' && !isNaN(str));
 			
 					options = options || {};
 
@@ -205,8 +227,8 @@ var graphics = function () {
 					}
 
 					if (options.textAlign) {
-						if (options.numerical && Math.isNegative(Number(str))) {
-							xOffset = -context.mozMeasureText(Math.abs(Number(str)));
+						if (numerical && Math.isNegative(str)) {
+							xOffset = -context.mozMeasureText(Math.abs(str));
 							xOffset -= context.mozMeasureText('-') * 2;
 						}
 						else {
@@ -226,7 +248,9 @@ var graphics = function () {
 
 						if (options.textBaseLine === 'middle') {
 							yOffset /= 2;
-							yOffset -= 1.5;
+							// This is a bit of a fudge factor,
+							// to make up for not having a proper height.
+							yOffset *= 0.80;
 						}
 						else if (options.textBaseLine === 'bottom') {
 							yOffset = 0;
@@ -235,7 +259,6 @@ var graphics = function () {
 
 					context.save();
 					context.scale(1, -1);
-					//context.translate(-0.5, -0.5);
 					context.translate(p.e(1) + xOffset, -p.e(2) + yOffset);
 					context.mozDrawText(str);
 					context.restore();
