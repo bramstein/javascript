@@ -85,7 +85,7 @@ var canvas = function () {
 			},
 			drawAxes: function () {
 				var b = that.bounds(),
-					tick = {len: 15, horizontal: 0, vertical: 0},
+					tick = {len: 0.02, horizontal: 0, vertical: 0},
 					axes = ['horizontal', 'vertical'],
 					range = { 
 						horizontal: {from: 0, to: 10},
@@ -100,31 +100,25 @@ var canvas = function () {
 				if (options.polarAxis !== undefined) {
 				}
 				else if (options.horizontalAxis !== undefined && options.verticalAxis !== undefined) {
-					tick['horizontal'] = b.width - b.x;
-					tick['vertical'] = b.height - b.y;
-
 					axes.forEach(function (n) {
 						range[n] = !Interval.empty(options[n + 'Axis']) ? {from: options[n + 'Axis'].from, to: options[n + 'Axis'].to} : range[n];
-						tick[n] = tick.len * (Interval.width(range[n]) / tick[n]);
 						sign[n] = range[n].to <= 0 ? -1 : 1;
 					});
+					tick['horizontal'] = Interval.width(range.vertical) * tick.len;
+					tick['vertical'] = Interval.width(range.horizontal) * tick.len;
 
 
 					graphics.beginViewport(b.x, b.y, b.width, b.height, range.horizontal, range.vertical);
 
-					var t = graphics.itransform_length(5, 5);
-					tick['horizontal'] = t.e(2);
-					tick['vertical'] = t.e(1);
-					//console.log(graphics.itransform_length(5, 5));
 					graphics.
 						beginPath().
 							moveTo(range['horizontal'].from, 0).
 							lineTo(range['horizontal'].to, 0).
 						stroke();
 
-					console.log(tick);
-
 					options.horizontalAxis.majorTicks.forEach(function (s, i, a) {
+						var size = (Interval.width(range['horizontal']) / (a.length));
+
 						if (typeof s === 'number' && !isNaN(s)) {
 							if (s !== 0 || options.verticalAxis.from >= 0 || options.verticalAxis.to <= 0) {
 								graphics.beginPath().
@@ -139,20 +133,37 @@ var canvas = function () {
 							}
 						}
 						else {
-							var p = (Interval.width(range['horizontal']) / a.length) * i;
-							console.log((Interval.width(range['horizontal']) / a.length) * i);
-							console.log(s);
-							graphics.beginPath().
-									moveTo(p, 0).
-									lineTo(p, tick['horizontal'] * -sign['horizontal']).
-								closePath().
-								stroke().
-								text(p, (tick['horizontal'] * 1.35) * -sign['horizontal'], s, {
-									textAlign: 'left', 
+							graphics.
+								text(size * i + (size / 2), (tick['horizontal'] * 1.35) * -sign['horizontal'], s, {
+									textAlign: 'center', 
 									textBaseLine: (Math.isNegative(sign['horizontal']) ? 'bottom' : 'top')
 								});
 						}
 					});
+
+					graphics.
+						beginPath().
+							moveTo(0, range['vertical'].from).
+							lineTo(0, range['vertical'].to).
+						stroke();
+
+				options.verticalAxis.majorTicks.forEach(function (i) {
+					if (i !== 0 || options.horizontalAxis.from >= 0 || options.horizontalAxis.to <= 0) {
+						graphics.beginPath().
+							moveTo(0, i).
+							lineTo(tick['vertical'] * -sign['vertical'], i).
+						closePath().
+						stroke().
+						text(
+							(tick['vertical'] * 1.35) * -sign['vertical'], 
+							i, 
+							i, {
+								textAlign: (Math.isNegative(sign['vertical']) ? 'left' : 'right'), 
+								textBaseLine: 'middle'
+							}
+						);
+					}
+				});
 
 				//	console.log(tick);
 
