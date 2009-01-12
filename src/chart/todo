@@ -1,0 +1,23 @@
+-fix tiny ticks on strange aspect ratio's.
+-implement preferred size for all components.
+-implement insets for all components
+-change font style to size, family instead of string
+-reduce code duplication in axis drawing code.
+-move canvas beginViewport/endViewport outside of axes drawing code
+-implement polar axes.
+-add title and subtitle
+-see if color can be moved into stroke and fill
+-add legend
+-test composite chart
++figure out what to do when one (or both) of the axes do not start at zero (implemented.)
++filtered minor ticks with major ticks removing duplicates
++calculate minimum and maximum canvas size correctly.
++changed text to support fill and stroke as well
++account for the aspect ratio when calculating the tick size.
++test vertical category axis (fixed, working now).
++add endPath and closePath and remove stroke and fill from path.
++remove itransform & itransform_length from graphics.
+-server side support with Rhino and a simple implementation of Canvas
+-drawing into canvas buffer and dynamically inserting an image through a data URL.
+-test text drawing API on Firefox3.1
+-look into labels for numeric axes?

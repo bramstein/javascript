@@ -89,15 +89,28 @@ var axis = function () {
 			}
 
 			if (options.numMinorTicks !== undefined) {
-				// TODO: I'm not sure if the assumption that minor ticks also have to be "nice" 
+				// I'm not sure if the assumption that minor ticks also have to be "nice" 
 				// numbers is correct. Assuming the major ticks are "nice" we can easily
-				// calculate the minor ticks. The calculate ticks function might be holding
-				// us back here.
+				// calculate the minor ticks.
+				/*
 				majorTicks.forEach(function (v, i) {
 					minorTicks.append(calculateTicks({
 						from: v,
 						to: (i !== (majorTicks.length - 1) ? majorTicks[i + 1] : v)
 					}, options.numMinorTicks));
+				});
+				*/
+				majorTicks.forEach(function (v, i) {
+					var interval = {
+							from: v,
+							to: (i !== (majorTicks.length - 1) ? majorTicks[i + 1] : v)
+						},
+						step = Interval.width(interval) / (options.numMinorTicks + 1),
+						j = interval.from;
+
+					for (; j < interval.to; j += step) {
+						minorTicks.push(j);
+					}
 				});
 			}
 			else if (options.minorTicks !== undefined && Object.isArray(options.minorTicks) && isNumeric(options.minorTicks)) {
@@ -124,7 +137,15 @@ var axis = function () {
 				to = majorTicks[majorTicks.length - 1];
 			}
 		}
-		
+
+		// filter out the minor ticks that are also major ticks as
+		// there is no point in drawing them.
+		if (!minorTicks.isEmpty() && !majorTicks.isEmpty()) {
+			minorTicks = minorTicks.filter(function (i) {
+				return !majorTicks.contains(i);
+			});
+		}
+
 		return {
 			minorTicks: minorTicks,
 			majorTicks: majorTicks,
@@ -133,18 +154,3 @@ var axis = function () {
 		};
 	}.defaults({});
 }();
-/*
-var category = function () {
-	return function (options) {
-		if (options.categories !== undefined) {
-			return {
-				majorTicks: options.categories,
-				minorTicks: [],
-				from: 1,
-				to: 0
-			};
-		}		
-		throw new TypeError('A category axis must at least contain one category');
-	}.defaults({});
-}();
-*/

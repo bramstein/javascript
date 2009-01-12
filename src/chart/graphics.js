@@ -11,30 +11,19 @@
 var graphics = function () {
 	var path = {};
 	var shape = {};
+	var text = {};
 
 	return function (identifier, horizontalRange, verticalRange) {
 		var context = null,
 			canvas = document.getElementById(identifier),
 			fontHeight = /([0-9]*)px/i,
-			transformation = [];
+			transformation = [],
+			textBuffer = [];
 
 		function transform(x, y) {
 			return transformation.reduceRight(function (i, item) {
 				return item.multiply(i);
 			}, $V([x, y, 1]));
-		}
-
-		function itransform(x, y) {
-			return transformation.reduceRight(function (i, item) {
-				return item.inverse().multiply(i);
-			}, $V([x, y, 1]));
-		}
-
-		function itransform_length(w, h) {
-			var o = itransform(0, 0),
-				r = itransform(w, h);
-			r = r.subtract(o);
-			return r;
 		}
 
 		function transform_length(w, h) {
@@ -58,24 +47,24 @@ var graphics = function () {
 			['stroke', 'fill'].forEach(function (n) {
 				shape[n] = function () {
 					context[n].apply(context, arguments);
-					return shape;
-				};
-				path[n] = function () {
-					context[n].apply(context, arguments);
+
+					if (!textBuffer.isEmpty()) {
+						textBuffer.forEach(function (args) {
+							args.push(n);
+							text.draw.apply(shape, args);
+						});
+						textBuffer = [];
+					}
 					return shape;
 				};
 			});
 
-			shape.itransform = function (x, y) {
-				return itransform(x, y);
-			};
-
-			shape.itransform_length = function (w, h) {
-				return itransform_length(w, h);
-			};
-
 			path.closePath = function () {
 				context.closePath();
+				return shape;
+			};
+
+			path.endPath = function () {
 				return shape;
 			};
 
@@ -135,8 +124,14 @@ var graphics = function () {
 				return shape.rect(x, y, s, s);
 			};
 
+			shape.text = function () {
+				textBuffer.push(Array.slice(arguments));
+				return shape;
+			};
+
 			shape.clear = function () {
 				context.clearRect(0, 0, canvas.width, canvas.height);
+				textBuffer = [];
 				return shape;
 			};
 
@@ -147,18 +142,13 @@ var graphics = function () {
 					x_scale = 1,
 					y_scale = 1;
 
-				xrange = xrange || {from: 0, to: width - x};
-				yrange = yrange || {from: 0, to: height - y};
+				xrange = xrange || {from: 0, to: Interval.width(view_xrange)};
+				yrange = yrange || {from: 0, to: Interval.width(view_yrange)};
 
 				x_scale = Interval.width(view_xrange) / Interval.width(xrange);
 				y_scale = Interval.width(view_yrange) / Interval.width(yrange);
 
-				// set up clipping area in screen coordinates by transforming the given coordinates
-				// to screen coordinates. Then we translate--again in screen coordinates--which is fine,
-				// as long as we remember to save and restore the transformation state.
 				context.save();
-			//	shape.rect(x, y, width, height);
-			//	context.clip();
 				context.translate(origin.e(1), origin.e(2));
 			
 				transformation.push($M([
@@ -172,11 +162,12 @@ var graphics = function () {
 			shape.closeViewport = function () {
 				transformation.pop();
 				context.restore();
+				textBuffer = [];
 				return shape;
 			};
 
-			if (context.fillText && context.measureText) {
-				shape.text = function (x, y, str, options) {
+			if (context.fillText && context.measureText && context.strokeText) {
+				text.draw = function (x, y, str, options, type) {
 					var p = transform(x, y);		
 					options = options || {};
 			
@@ -190,7 +181,12 @@ var graphics = function () {
 
 					context.save();
 					context.scale(1, -1);
-					context.fillText(str, p.e(1), -p.e(2));
+					if (type === 'stroke') {
+						context.strokeText(str, p.e(1), -p.e(2));
+					}
+					else if (type === 'fill') {
+						context.fillText(str, p.e(1), -p.e(2));
+					}
 					context.restore();
 					return shape;
 				};
@@ -206,20 +202,23 @@ var graphics = function () {
 					if (options && options.font) {
 						context.font = options.font;
 					}
-					result.width = context.measureText(str).width;
-					result.height = Number(fontHeight.exec(context.font)[1]) || 10;
+					if (str) {
+						result.width = context.measureText(str).width;
+						result.height = Number(fontHeight.exec(context.font)[1]) || 10;
+					}
 					context.font = previousFont;
 					return result;
 				};
 			}
-			else if (context.mozDrawText && context.mozMeasureText) {
-				shape.text = function (x, y, str, options) {
+			else if (context.mozDrawText && context.mozMeasureText && context.mozPathText) {
+				text.draw = function(x, y, str, options, type) {
 					var xOffset = 0,
 						yOffset = 0,
 						p = transform(x, y),
 						previousFont = context.mozTextStyle,
-						numerical = (typeof str === 'number' && !isNaN(str));
-			
+						numerical = (typeof str === 'number' && !isNaN(str)),
+						size = shape.textSize(str, options);
+	
 					options = options || {};
 
 					if (options.font) {
@@ -227,14 +226,14 @@ var graphics = function () {
 					}
 
 					if (options.textAlign) {
-						if (numerical && Math.isNegative(str)) {
+						if (numerical && Math.isNegative(str) && options.textAlign === 'center') {
 							xOffset = -context.mozMeasureText(Math.abs(str));
 							xOffset -= context.mozMeasureText('-') * 2;
 						}
 						else {
-							xOffset = -context.mozMeasureText(str);
+							xOffset = -size.width;
 						}
-	
+
 						if (options.textAlign === "center") {
 							xOffset /= 2;
 						}
@@ -244,13 +243,10 @@ var graphics = function () {
 					}
 
 					if (options.textBaseLine) {
-						yOffset = (Number(fontHeight.exec(context.mozTextStyle)[1]) || 11);
-
+						yOffset = size.height;
+				
 						if (options.textBaseLine === 'middle') {
 							yOffset /= 2;
-							// This is a bit of a fudge factor,
-							// to make up for not having a proper height.
-							yOffset *= 0.80;
 						}
 						else if (options.textBaseLine === 'bottom') {
 							yOffset = 0;
@@ -259,11 +255,26 @@ var graphics = function () {
 
 					context.save();
 					context.scale(1, -1);
+					if (options.anchor && options.anchor === true) {
+						context.arc(p.e(1), -p.e(2), 1, 0, Math.PI * 2, false);
+						context.fill();
+					}
+					if (options.box && options.box === true) {
+						context.rect(p.e(1) + xOffset, -p.e(2) + yOffset, size.width, -size.height);
+						context.stroke();
+					}
+
 					context.translate(p.e(1) + xOffset, -p.e(2) + yOffset);
-					context.mozDrawText(str);
+
+					if (type === 'stroke') {
+						context.mozPathText(str);
+						context.stroke();
+					}
+					else if (type === 'fill') {			
+						context.mozDrawText(str);
+					}			
 					context.restore();
 					context.mozTextStyle = previousFont;
-					return shape;
 				};
 
 				shape.textSize = function (str, options) {
@@ -281,14 +292,19 @@ var graphics = function () {
 					if (options && options.font) {
 						context.mozTextStyle = options.font;
 					}
-					
-					result.width = context.mozMeasureText(str);
-					result.height = Number(fontHeight.exec(context.mozTextStyle)[1]) || 11;
+					if (str) {
+						result.width = context.mozMeasureText(str);
+						result.height = (Number(fontHeight.exec(context.mozTextStyle)[1]) || 11) * 0.85;
+					}
 					context.mozTextStyle = previousFont;
 					return result;
 				};
 			}
-
+			else {
+				// not supported
+				text.draw = function () {
+				};
+			}
 
 			// Invert the y axis so the 0, 0 point is in the
 			// lower left corner of the canvas.
@@ -299,11 +315,10 @@ var graphics = function () {
 			context.strokeStyle = 'rgb(170,170,170)';
 			context.fillStyle = 'rgb(20,20,20)';
 
-
-			if (context.font !== undefined) {
+			if (!context.font) {
 				context.font = '11px sans-serif';
 			}
-			if (context.mozTextStyle !== undefined) {
+			if (!context.mozTextStyle) {
 				context.mozTextStyle = '11px sans-serif';
 			}
 			return shape;

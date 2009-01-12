@@ -20,6 +20,7 @@
 		<script type="text/javascript" src="chart/chart.js"></script>
 		<script type="text/javascript" src="chart/composite-chart.js"></script>
 		<script type="text/javascript" src="chart/canvas.js"></script>
+		<script type="text/javascript" src="chart/title.js"></script>
 
 		<script type="text/javascript">
 		<![CDATA[
@@ -193,17 +194,18 @@
 			var yrange = {from: -10, to: 10};
 
 			function draw() {
-				//var ha = axis({from: -1, to: 1, numMajorTicks: 10, numMinorTicks: 5});
-				var ha = axis({categories: ['jan', 'feb', 'mar', 'apr', 'june', 'july', 'aug', 'sep', 'oct', 'nov', 'dec']});
-				var va = axis({from: 0, to: 100, numMajorTicks: 10, numMinorTicks: 5});
-				var g = graphics('canvas-context');
-				var c = canvas(g, {horizontalAxis: ha, verticalAxis: va});
+				var ha = axis({from:1, to: 2, numMajorTicks: 10, numMinorTicks: 3});
+				//var ha = axis({categories: ['jan', 'feb', 'mar', 'apr', 'june', 'july', 'dec']});
+				//var va = axis({from: -10, to: 2, numMajorTicks: 10, numMinorTicks: 3});
+				var va = axis({categories: ['jan', 'feb', 'mar', 'apr']});
 
-				c.bounds({width: 300, height: 300, x: 50, y: 50});
-				c.drawAxes();
-
-				
-
+				var ch = chart('canvas-context', ha, va, 'My Graph');
+				//ch.bounds({width: 300, height: 300, x: 40, y: 40});
+				ch.bounds(ch.minimumSize());
+				ch.bounds({x: 40, y: 40});
+				ch.doLayout();
+				ch.draw();
+				console.log(ch.bounds());
 /*
 				var g = graphics('canvas-context');
 

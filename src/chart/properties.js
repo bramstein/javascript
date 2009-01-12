@@ -20,10 +20,17 @@ var maximum = property('maximumSize', {
 	y: 0
 });
 
+var preferred = property('preferredSize', {
+	width: 0,
+	height: 0,
+	x: 0,
+	y: 0
+});
+
 var container = function (that, layout) {
 	['minimum', 'maximum', 'preferred'].forEach(function (n) {
 		that[n + 'Size'] = function () {
-			return layout[n]();
+			return layout[n](that);
 		};
 	});
 
