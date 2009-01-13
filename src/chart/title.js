@@ -24,20 +24,20 @@ var title = function () {
 				return that.minimumSize();
 			},
 			minimumSize: function () {
-				var titleSize = graphics.textSize(title, options);
+				var titleSize = graphics.textSize(title, options),
 					subtitleSize = graphics.textSize(subtitle, options),
 					insets = that.insets();
 				
 				return {
 					width: Math.max(titleSize.width, subtitleSize.width) + insets.left + insets.right,
-					height: titleSize.height + subtitleSize.height + insets.top + insets.bottom
+					height: titleSize.height + subtitleSize.height + (subtitleSize.height * 0.8) + insets.top + insets.bottom
 				};
 			},
 			draw: function () {
 				var b = that.bounds();
-				console.log(b);
 				graphics.beginViewport(b.x, b.y, b.width, b.height);
-				graphics.text(b.width / 2, b.height / 2, title, { textAlign: 'center', textBaseLine: 'middle'}).fill();
+				graphics.text(b.width / 2, b.height - that.insets().top, title, Object.extend(options, { textAlign: 'center', textBaseLine: 'top'})).fill();
+				graphics.text(b.width / 2, that.insets().bottom, subtitle, Object.extend(options, {textAlign: 'center', textBaseLine: 'bottom', font: {weight: 'normal', style: 'italic' }})).fill();
 				graphics.closeViewport();
 			}
 		});

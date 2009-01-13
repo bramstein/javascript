@@ -3,8 +3,26 @@
 var canvas = function () {
 	return function (graphics, options) {
 		var that = {},
-			spacing = options.spacing || 10;
-		
+			spacing = {
+				horizontal: options.hspace || 10,
+				vertical: options.vspace || 15
+			},
+			ratio = {
+				horizontal: 1,
+				vertical: 1
+			};
+
+		if (options.horizontalAxis !== undefined && options.verticalAxis !== undefined && options.ratio === undefined) {
+			if (options.horizontalAxis.majorTicks.length !== 0 && options.verticalAxis.majorTicks.length !== 0) {
+				ratio.horizontal = options.horizontalAxis.majorTicks.length;
+				ratio.vertical = options.verticalAxis.majorTicks.length;
+			}
+		}
+		else if (options.ratio !== undefined) {
+			ratio.horizontal = options.ratio.horizontal || 1;
+			ratio.vertical = options.ratio.vertical || 1;
+		}
+
 		that = bounds(that);
 		that = insets(that);
 		that = maximum(that);
@@ -15,6 +33,17 @@ var canvas = function () {
 			isVisible: function () {
 				return true;
 			},
+			preferredSize: function () {
+				var minimum = that.minimumSize();
+
+				if (ratio.horizontal < ratio.vertical) {
+					minimum.width *= ratio.vertical / ratio.horizontal;
+				}
+				else if (ratio.vertical < ratio.horizontal) {
+					minimum.height *= ratio.horizontal / ratio.vertical;
+				}
+				return minimum;
+			},
 			minimumSize: function () {
 				var result = {
 					width: 0,
@@ -24,14 +53,14 @@ var canvas = function () {
 					options.verticalAxis.majorTicks.forEach(function (t) {
 						result.height += graphics.textSize(t).height;
 					});
-					result.height += (options.verticalAxis.majorTicks.length - 1) * spacing;
+					result.height += (options.verticalAxis.majorTicks.length - 1) * spacing['vertical'];
 				}
 
 				if (options.horizontalAxis) {
 					options.horizontalAxis.majorTicks.forEach(function (t) {
 						result.width += graphics.textSize(t).width;
 					});
-					result.width += (options.horizontalAxis.majorTicks.length - 1) * spacing;
+					result.width += (options.horizontalAxis.majorTicks.length - 1) * spacing['horizontal'];
 				}
 				return result;
 			},
@@ -58,13 +87,14 @@ var canvas = function () {
 					axes.forEach(function (n) {
 						range[n] = !Interval.empty(options[n + 'Axis']) ? {from: options[n + 'Axis'].from, to: options[n + 'Axis'].to} : range[n];
 					});
+
 					// Adjusted for the aspect ratio (height / width) where the height always equals 1.
 					tick['horizontal'] = (Interval.width(range.vertical) * tick.len);
 					tick['vertical'] = (Interval.width(range.horizontal) * tick.len) * (b.height / b.width);
 
 					sign['horizontal'] = range['vertical'].to <= 0 ? -1 : 1;
 					sign['vertical'] = range['horizontal'].to <= 0 ? -1 : 1;
-	
+
 					// If the axes do not start at zero or contain zero,
 					// this will adjust the opposite axis to draw at the
 					// correct location.
@@ -99,7 +129,7 @@ var canvas = function () {
 						var size = (Interval.width(range['horizontal']) / (a.length));
 
 						if (typeof s === 'number' && !isNaN(s)) {
-							if (s !== offset['vertical'] || options.verticalAxis.from >= offset['vertical'] || options.verticalAxis.to <= offset['vertical']) {
+							if (s !== offset['vertical'] || range['vertical'].from >= 0 || range['vertical'].to <= 0) {
 								graphics.beginPath().
 									moveTo(s, offset['horizontal']).
 									lineTo(s, offset['horizontal'] + tick['horizontal'] * -sign['horizontal']).
@@ -145,7 +175,7 @@ var canvas = function () {
 
 						if (typeof s === 'number' && !isNaN(s)) {
 							// don't draw the tick or the label where the axes cross
-							if (s !== offset['horizontal'] || options.horizontalAxis.from >= offset['horizontal'] || options.horizontalAxis.to <= offset['horizontal']) {
+							if (s !== offset['horizontal'] || range['horizontal'].from >= 0 || range['horizontal'].to <= 0) {
 								graphics.beginPath().
 									moveTo(offset['vertical'], s).
 									lineTo(offset['vertical'] + tick['vertical'] * -sign['vertical'], s).
@@ -184,9 +214,6 @@ var canvas = function () {
 
 					graphics.closeViewport();
 				}
-			},
-			preferredSize: function () {
-				return bounds();
 			}
 		});
 		return that;

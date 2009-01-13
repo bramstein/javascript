@@ -13,10 +13,37 @@ var graphics = function () {
 	var shape = {};
 	var text = {};
 
-	return function (identifier, horizontalRange, verticalRange) {
+	function parseFont(options) {
+		var r = {
+			size: 11,
+			family: 'sans-serif',
+			toString: function () {
+				return this.style + " " + this.variant + " " + this.weight + " " + this.size + "px " + this.family;
+			}
+		};
+
+		if (options) {
+			Object.forEach({ 
+				style: ['normal', 'italic', 'oblique'],
+				variant: ['normal', 'small-caps'],
+				weight: ['normal', 'bold', 'bolder', 'lighter']
+			}, function (n, k) {
+				r[k] = n.contains(options[k]) && options[k] || n[0];
+			});
+			if (options.size) {
+				r.size = (typeof options.size === 'number' && !isNaN(options.size) && options.size) || r.size;
+			}
+
+			if (options.family) {
+				r.family = options.family || r.family;
+			}
+		}
+		return r;
+	}
+
+	return function (identifier) {
 		var context = null,
 			canvas = document.getElementById(identifier),
-			fontHeight = /([0-9]*)px/i,
 			transformation = [],
 			textBuffer = [];
 
@@ -176,7 +203,7 @@ var graphics = function () {
 					}
 				
 					if (options.font) {
-						context.font = options.font;
+						context.font = parseFont(options).toString();
 					}
 
 					context.save();
@@ -199,35 +226,36 @@ var graphics = function () {
 						},
 						previousFont = context.font;
 
-					if (options && options.font) {
-						context.font = options.font;
+					if (options && options.font && (options.font.size || options.font.family)) {
+						context.font = options.font.size || 11 + "px " + options.family || 'sans-serif';
 					}
-					if (str) {
+
+					if (str !== undefined) {
 						result.width = context.measureText(str).width;
-						result.height = Number(fontHeight.exec(context.font)[1]) || 10;
+						result.height = options.font && options.font.size || 11;
 					}
 					context.font = previousFont;
 					return result;
 				};
 			}
 			else if (context.mozDrawText && context.mozMeasureText && context.mozPathText) {
-				text.draw = function(x, y, str, options, type) {
+				text.draw = function (x, y, str, options, type) {
 					var xOffset = 0,
 						yOffset = 0,
 						p = transform(x, y),
 						previousFont = context.mozTextStyle,
 						numerical = (typeof str === 'number' && !isNaN(str)),
-						size = shape.textSize(str, options);
-	
+						size = shape.textSize(str, options);	
+
 					options = options || {};
 
 					if (options.font) {
-						context.mozTextStyle = options.font;
+						context.mozTextStyle = parseFont(options.font).toString();
 					}
 
 					if (options.textAlign) {
 						if (numerical && Math.isNegative(str) && options.textAlign === 'center') {
-							xOffset = -context.mozMeasureText(Math.abs(str));
+							xOffset = -context.mozMeasureText(Math.abs(str).toLocaleString());
 							xOffset -= context.mozMeasureText('-') * 2;
 						}
 						else {
@@ -265,13 +293,12 @@ var graphics = function () {
 					}
 
 					context.translate(p.e(1) + xOffset, -p.e(2) + yOffset);
-
 					if (type === 'stroke') {
-						context.mozPathText(str);
+						context.mozPathText(str.toLocaleString());
 						context.stroke();
 					}
 					else if (type === 'fill') {			
-						context.mozDrawText(str);
+						context.mozDrawText(str.toLocaleString());
 					}			
 					context.restore();
 					context.mozTextStyle = previousFont;
@@ -282,19 +309,21 @@ var graphics = function () {
 							width: 0,
 							height: 0
 						},
-						previousFont = context.mozTextStyle;
+						previousFont = context.mozTextStyle,
+						font = parseFont(options && options.font);
 
 					// TODO: Figure out why the initial font size is 16px instead
 					// of 10 as the mozilla documentation claims and why the 
 					// mozTextStyle property is initially empty. Another good 
 					// question would be why a context save/restore does not 
 					// correctly reset the font attributes.
+					//if (options && options.font && (options.font.size || options.font.family)) {
 					if (options && options.font) {
-						context.mozTextStyle = options.font;
+						context.mozTextStyle = font.toString();
 					}
-					if (str) {
-						result.width = context.mozMeasureText(str);
-						result.height = (Number(fontHeight.exec(context.mozTextStyle)[1]) || 11) * 0.85;
+					if (str !== undefined) {
+						result.width = context.mozMeasureText(str.toLocaleString());
+						result.height = font.size * 0.85;
 					}
 					context.mozTextStyle = previousFont;
 					return result;

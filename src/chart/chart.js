@@ -1,16 +1,31 @@
 
-/*global bounds, insets, graphics, jLayout, container*/
+/*global bounds, insets, graphics, jLayout, container, title, canvas*/
 var chart = function () {
-	return function (elementIdentifier, ha, va, str) {
+	return function (elementIdentifier, ha, va, titleString, subtitleString) {
 		var g = graphics(elementIdentifier),
-			c = canvas(g, {horizontalAxis: ha, verticalAxis: va}),
-			t = title(g, {title: str }),
+
+			c = canvas(g, {
+				horizontalAxis: ha,
+				verticalAxis: va
+			}),
+
+			t = title(g, {
+				title: titleString,
+				subtitle: subtitleString,
+				font: {
+					size: 12,
+					weight: 'bold'
+				}
+			}),
+
 			layout = jLayout.border({
 				vgap: 5,
 				hgap: 5,
 				center: c,
 				south: t
 			});
+
+		t.insets({top: 10, bottom: 10});
 
 		var that = {
 			draw: function () {

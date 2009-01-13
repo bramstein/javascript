@@ -194,18 +194,16 @@
 			var yrange = {from: -10, to: 10};
 
 			function draw() {
-				var ha = axis({from:1, to: 2, numMajorTicks: 10, numMinorTicks: 3});
-				//var ha = axis({categories: ['jan', 'feb', 'mar', 'apr', 'june', 'july', 'dec']});
-				//var va = axis({from: -10, to: 2, numMajorTicks: 10, numMinorTicks: 3});
-				var va = axis({categories: ['jan', 'feb', 'mar', 'apr']});
+				//var ha = axis({from: 10, to: 20, numMajorTicks: 10, numMinorTicks: 3});
+				var ha = axis({categories: ['jan', 'feb', 'mar', 'apr', 'june', 'july', 'dec']});
+				var va = axis({from: -1400, to: 10000, numMajorTicks: 10, numMinorTicks: 0});
+				//var va = axis({categories: ['jan', 'feb', 'mar', 'apr']});
 
-				var ch = chart('canvas-context', ha, va, 'My Graph');
-				//ch.bounds({width: 300, height: 300, x: 40, y: 40});
-				ch.bounds(ch.minimumSize());
-				ch.bounds({x: 40, y: 40});
+				var ch = chart('canvas-context', ha, va, 'Sales 2008', 'Monthly average');
+				ch.bounds(ch.preferredSize());
+				ch.bounds({x: 50, y: 50});
 				ch.doLayout();
 				ch.draw();
-				console.log(ch.bounds());
 /*
 				var g = graphics('canvas-context');
 
