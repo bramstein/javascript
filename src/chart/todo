@@ -1,3 +1,4 @@
+-look into labels for numeric axes
 -implement preferred size for all components.
 -implement insets for all components
 -reduce code duplication in axis drawing code.
@@ -5,6 +6,7 @@
 -implement polar axes.
 -add legend
 -test composite chart
++fixed category axis with numbers
 +added colors from default to canvas
 +fixed category axes with opposite axis not starting at zero (labels were hanging, which might be inconvenient).
 +fixed long labels (all labels have equal size per axis, and the size is the maximum of the individual labels).
@@ -28,4 +30,3 @@
 -server side support with Rhino and a simple implementation of Canvas
 -drawing into canvas buffer and dynamically inserting an image through a data URL.
 -test text drawing API on Firefox3.1
--look into labels for numeric axes?

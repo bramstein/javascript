@@ -71,7 +71,9 @@ var axis = function () {
 			from = 1;
 			to = 0;
 			if (options.categories !== undefined && Object.isArray(options.categories) && options.categories.length > 0) {
-				majorTicks = options.categories;
+				majorTicks = options.categories.map(function (v) {
+					return v.toString();
+				});
 			}
 			else {
 				throw new TypeError('A category axis must at least contain one category.');
