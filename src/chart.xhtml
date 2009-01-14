@@ -12,11 +12,13 @@
 		<script type="text/javascript" src="core/math.js"></script>
 		<script type="text/javascript" src="jlayout/jlayout.js"></script>
 		<script type="text/javascript" src="../lib/sylvester.js"></script>
+		<script type="text/javascript" src="chart/defaults.js"></script>
 		<script type="text/javascript" src="chart/properties.js"></script>
 		<script type="text/javascript" src="chart/interval.js"></script>
 		<script type="text/javascript" src="chart/coordinate.js"></script>
 		<script type="text/javascript" src="chart/axis.js"></script>
 		<script type="text/javascript" src="chart/graphics.js"></script>
+		<script type="text/javascript" src="chart/text.mozilla.js"></script>
 		<script type="text/javascript" src="chart/chart.js"></script>
 		<script type="text/javascript" src="chart/composite-chart.js"></script>
 		<script type="text/javascript" src="chart/canvas.js"></script>
@@ -194,12 +196,14 @@
 			var yrange = {from: -10, to: 10};
 
 			function draw() {
-				//var ha = axis({from: 10, to: 20, numMajorTicks: 10, numMinorTicks: 3});
-				var ha = axis({categories: ['jan', 'feb', 'mar', 'apr', 'june', 'july', 'dec']});
-				var va = axis({from: -1400, to: 10000, numMajorTicks: 10, numMinorTicks: 0});
+				//var ha = axis({from: -10, to: 20, numMajorTicks: 20, numMinorTicks: 3});
+				var ha = axis({categories: ['jan', 'feb', 'mar', 'apr', 'may', 'june', 'july']});
+				var va = axis({from: -1400 , to: 10000, numMajorTicks: 16, numMinorTicks: 0});
 				//var va = axis({categories: ['jan', 'feb', 'mar', 'apr']});
 
 				var ch = chart('canvas-context', ha, va, 'Sales 2008', 'Monthly average');
+
+				//console.log(ch.preferredSize());
 				ch.bounds(ch.preferredSize());
 				ch.bounds({x: 50, y: 50});
 				ch.doLayout();
@@ -300,6 +304,6 @@ var c = canvas(g, {
 		</style>
 	</head>
 	<body onload="draw();">
-		<canvas id="canvas-context" width="400" height="400"></canvas>
+		<canvas id="canvas-context" width="600" height="600"></canvas>
 	</body>
 </html>

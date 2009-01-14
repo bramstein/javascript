@@ -24,8 +24,8 @@ var title = function () {
 				return that.minimumSize();
 			},
 			minimumSize: function () {
-				var titleSize = graphics.textSize(title, options),
-					subtitleSize = graphics.textSize(subtitle, options),
+				var titleSize = graphics.textSize(title, options.font),
+					subtitleSize = graphics.textSize(subtitle, options.font),
 					insets = that.insets();
 				
 				return {
@@ -36,8 +36,8 @@ var title = function () {
 			draw: function () {
 				var b = that.bounds();
 				graphics.beginViewport(b.x, b.y, b.width, b.height);
-				graphics.text(b.width / 2, b.height - that.insets().top, title, Object.extend(options, { textAlign: 'center', textBaseLine: 'top'})).fill();
-				graphics.text(b.width / 2, that.insets().bottom, subtitle, Object.extend(options, {textAlign: 'center', textBaseLine: 'bottom', font: {weight: 'normal', style: 'italic' }})).fill();
+				graphics.text(b.width / 2, b.height - that.insets().top, title, Object.extend(options, { textAlign: 'center', textBaseLine: 'top'})).fill(defaults.color.title);
+				graphics.text(b.width / 2, that.insets().bottom, subtitle, Object.extend(options, {textAlign: 'center', textBaseLine: 'bottom', font: {weight: 'normal', style: 'italic' }})).fill(defaults.color.subtitle);
 				graphics.closeViewport();
 			}
 		});

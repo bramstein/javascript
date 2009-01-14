@@ -7,13 +7,13 @@
  * closePath().
  * fill();
  */
-/*global document, $V, $M, Interval*/
+/*global document, $V, $M, Interval, defaults*/
 var graphics = function () {
 	var path = {};
 	var shape = {};
 	var text = {};
 
-	function parseFont(options) {
+	var parseFont = function (font) {
 		var r = {
 			size: 11,
 			family: 'sans-serif',
@@ -22,24 +22,25 @@ var graphics = function () {
 			}
 		};
 
-		if (options) {
-			Object.forEach({ 
+		font = font || {};
+
+		Object.forEach({ 
 				style: ['normal', 'italic', 'oblique'],
 				variant: ['normal', 'small-caps'],
 				weight: ['normal', 'bold', 'bolder', 'lighter']
 			}, function (n, k) {
-				r[k] = n.contains(options[k]) && options[k] || n[0];
+				r[k] = n.contains(font[k]) && font[k] || n[0];
 			});
-			if (options.size) {
-				r.size = (typeof options.size === 'number' && !isNaN(options.size) && options.size) || r.size;
-			}
 
-			if (options.family) {
-				r.family = options.family || r.family;
-			}
+		if (font.size) {
+			r.size = (typeof font.size === 'number' && !isNaN(font.size) && font.size) || r.size;
+		}
+
+		if (font.family) {
+			r.family = font.family || r.family;
 		}
 		return r;
-	}
+	};
 
 	return function (identifier) {
 		var context = null,
@@ -72,16 +73,27 @@ var graphics = function () {
 			});
 
 			['stroke', 'fill'].forEach(function (n) {
-				shape[n] = function () {
-					context[n].apply(context, arguments);
+				shape[n] = function (c) {
+					var fillStyle = context.fillStyle,
+						strokeStyle = context.strokeStyle;
+
+					if (c) {
+						context.fillStyle = c;
+						context.strokeStyle = c;
+					}
+					context[n].apply(context, []);
 
 					if (!textBuffer.isEmpty()) {
 						textBuffer.forEach(function (args) {
-							args.push(n);
-							text.draw.apply(shape, args);
+							defaults.text[n].apply(shape, args);
 						});
 						textBuffer = [];
 					}
+					if (c) {
+						context.fillStyle = fillStyle;
+						context.strokeStyle = strokeStyle;
+					}
+
 					return shape;
 				};
 			});
@@ -151,10 +163,17 @@ var graphics = function () {
 				return shape.rect(x, y, s, s);
 			};
 
-			shape.text = function () {
-				textBuffer.push(Array.slice(arguments));
+			shape.text = function (x, y, str, options) {
+				var p = transform(x, y);
+				options.font = parseFont(options.font);
+				textBuffer.push([context, p.e(1), p.e(2), str, options]);
 				return shape;
-			};
+			}.defaults(0, 0, "", {});
+
+			shape.textSize = function (str, font) {
+				font = parseFont(font);
+				return defaults.text.size(context, str, font);
+			}.defaults("", {});
 
 			shape.clear = function () {
 				context.clearRect(0, 0, canvas.width, canvas.height);
@@ -193,156 +212,14 @@ var graphics = function () {
 				return shape;
 			};
 
-			if (context.fillText && context.measureText && context.strokeText) {
-				text.draw = function (x, y, str, options, type) {
-					var p = transform(x, y);		
-					options = options || {};
-			
-					if (options.textAlign) {
-						context.textAlign = options.textAlign;
-					}
-				
-					if (options.font) {
-						context.font = parseFont(options).toString();
-					}
-
-					context.save();
-					context.scale(1, -1);
-					if (type === 'stroke') {
-						context.strokeText(str, p.e(1), -p.e(2));
-					}
-					else if (type === 'fill') {
-						context.fillText(str, p.e(1), -p.e(2));
-					}
-					context.restore();
-					return shape;
-				};
-
-				shape.textSize = function (str, options) {
-					// TODO: test this
-					var result = {
-							width: 0,
-							height: 0
-						},
-						previousFont = context.font;
-
-					if (options && options.font && (options.font.size || options.font.family)) {
-						context.font = options.font.size || 11 + "px " + options.family || 'sans-serif';
-					}
-
-					if (str !== undefined) {
-						result.width = context.measureText(str).width;
-						result.height = options.font && options.font.size || 11;
-					}
-					context.font = previousFont;
-					return result;
-				};
-			}
-			else if (context.mozDrawText && context.mozMeasureText && context.mozPathText) {
-				text.draw = function (x, y, str, options, type) {
-					var xOffset = 0,
-						yOffset = 0,
-						p = transform(x, y),
-						previousFont = context.mozTextStyle,
-						numerical = (typeof str === 'number' && !isNaN(str)),
-						size = shape.textSize(str, options);	
-
-					options = options || {};
-
-					if (options.font) {
-						context.mozTextStyle = parseFont(options.font).toString();
-					}
-
-					if (options.textAlign) {
-						if (numerical && Math.isNegative(str) && options.textAlign === 'center') {
-							xOffset = -context.mozMeasureText(Math.abs(str).toLocaleString());
-							xOffset -= context.mozMeasureText('-') * 2;
-						}
-						else {
-							xOffset = -size.width;
-						}
-
-						if (options.textAlign === "center") {
-							xOffset /= 2;
-						}
-						else if (options.textAlign === "left" || options.textAlign === "start") {
-							xOffset = 0;
-						}
-					}
-
-					if (options.textBaseLine) {
-						yOffset = size.height;
-				
-						if (options.textBaseLine === 'middle') {
-							yOffset /= 2;
-						}
-						else if (options.textBaseLine === 'bottom') {
-							yOffset = 0;
-						}
-					}
-
-					context.save();
-					context.scale(1, -1);
-					if (options.anchor && options.anchor === true) {
-						context.arc(p.e(1), -p.e(2), 1, 0, Math.PI * 2, false);
-						context.fill();
-					}
-					if (options.box && options.box === true) {
-						context.rect(p.e(1) + xOffset, -p.e(2) + yOffset, size.width, -size.height);
-						context.stroke();
-					}
-
-					context.translate(p.e(1) + xOffset, -p.e(2) + yOffset);
-					if (type === 'stroke') {
-						context.mozPathText(str.toLocaleString());
-						context.stroke();
-					}
-					else if (type === 'fill') {			
-						context.mozDrawText(str.toLocaleString());
-					}			
-					context.restore();
-					context.mozTextStyle = previousFont;
-				};
-
-				shape.textSize = function (str, options) {
-					var result = {
-							width: 0,
-							height: 0
-						},
-						previousFont = context.mozTextStyle,
-						font = parseFont(options && options.font);
-
-					// TODO: Figure out why the initial font size is 16px instead
-					// of 10 as the mozilla documentation claims and why the 
-					// mozTextStyle property is initially empty. Another good 
-					// question would be why a context save/restore does not 
-					// correctly reset the font attributes.
-					//if (options && options.font && (options.font.size || options.font.family)) {
-					if (options && options.font) {
-						context.mozTextStyle = font.toString();
-					}
-					if (str !== undefined) {
-						result.width = context.mozMeasureText(str.toLocaleString());
-						result.height = font.size * 0.85;
-					}
-					context.mozTextStyle = previousFont;
-					return result;
-				};
-			}
-			else {
-				// not supported
-				text.draw = function () {
-				};
-			}
-
 			// Invert the y axis so the 0, 0 point is in the
 			// lower left corner of the canvas.
 			context.scale(1, -1);
 			context.translate(0, -canvas.height);
 			context.translate(0.5, 0.5);
 			context.lineWidth = 1.0;
-			context.strokeStyle = 'rgb(170,170,170)';
-			context.fillStyle = 'rgb(20,20,20)';
+			//context.strokeStyle = 'rgb(170,170,170)';
+			//context.fillStyle = 'rgb(20,20,20)';
 
 			if (!context.font) {
 				context.font = '11px sans-serif';

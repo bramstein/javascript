@@ -11,10 +11,12 @@ var compositeChart = function () {
 			
 		Object.extend(that, {
 			draw: function (g) {
+				var b = that.bounds();
+				g.beginViewport(b.x, b.y, b.width, b.height);
 				layout.items().forEach(function (item) {
-					// set the local coordinate system
 					item.draw(g);
 				});
+				g.closeViewport();
 				return that;
 			}
 		});

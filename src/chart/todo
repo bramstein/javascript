@@ -1,12 +1,18 @@
 -implement preferred size for all components.
 -implement insets for all components
--category axes with opposite axis not starting at zero
 -reduce code duplication in axis drawing code.
 -move canvas beginViewport/endViewport outside of axes drawing code
 -implement polar axes.
--see if color can be moved into stroke and fill
 -add legend
 -test composite chart
++added colors from default to canvas
++fixed category axes with opposite axis not starting at zero (labels were hanging, which might be inconvenient).
++fixed long labels (all labels have equal size per axis, and the size is the maximum of the individual labels).
++fixed aspect ratio
++added draw grid options for canvas
++changed fill and stroke to reset the color after stroking or filling.
++moved color into fill and stroke (accepts a string, identical to CSS)
++moved text drawing API's into defaults.
 +add title and subtitle
 +nice number formatting on numeric axes (not sure if toLocaleString is widely supported.)
 +change font style to size, family instead of string

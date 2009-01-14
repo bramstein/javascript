@@ -6,7 +6,11 @@ var chart = function () {
 
 			c = canvas(g, {
 				horizontalAxis: ha,
-				verticalAxis: va
+				verticalAxis: va,
+				ratio: {
+					horizontal: 1,
+					vertical: 1
+				}
 			}),
 
 			t = title(g, {
