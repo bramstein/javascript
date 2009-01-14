@@ -1,0 +1,7 @@
+
+var defaults = {
+	text: {
+		draw
+	}
+
+};
