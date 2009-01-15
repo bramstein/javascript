@@ -2,6 +2,7 @@
 /*global defaults*/
 (function () {
 	function stroke(context, str) {
+		context.beginPath();
 		context.mozPathText(str);
 		context.stroke();
 	}
@@ -15,7 +16,7 @@
 			yOffset = 0,
 			previousFont = context.mozTextStyle,
 			numerical = (typeof str === 'number' && !isNaN(str)),
-			size = defaults.text.size(context, str, options.font)
+			size = defaults.text.size(context, str, options.font),
 			fillStyle = context.fillStyle;
 
 		context.mozTextStyle = options.font.toString();
@@ -50,6 +51,7 @@
 
 		context.save();
 		context.scale(1, -1);
+
 		if (options.anchor && options.anchor === true) {
 			context.beginPath();
 			context.arc(x, -y, 1, 0, Math.PI * 2, false);

@@ -39,6 +39,7 @@ var title = function () {
 				graphics.text(b.width / 2, b.height - that.insets().top, title, Object.extend(options, { textAlign: 'center', textBaseLine: 'top'})).fill(defaults.color.title);
 				graphics.text(b.width / 2, that.insets().bottom, subtitle, Object.extend(options, {textAlign: 'center', textBaseLine: 'bottom', font: {weight: 'normal', style: 'italic' }})).fill(defaults.color.subtitle);
 				graphics.closeViewport();
+				graphics.rect(b.x, b.y, b.width, b.height).stroke('rgb(0, 255, 0)');
 			}
 		});
 

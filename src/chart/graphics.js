@@ -71,17 +71,50 @@ var graphics = function () {
 					return path;
 				};
 			});
+/*
+			shape.stroke = function (c) {
+				var previous = context.strokeStyle;
+
+				if (c) {
+					context.strokeStyle = c;
+				}
+				context.stroke();
+				
+				if (c) {
+					context.strokeStyle = previous;
+				}
+				console.log(context.strokeStyle);
+			};
+
+			shape.fill = function (c) {
+				var previous = context.fillStyle;
+
+				if (c) {
+					context.fillStyle = c;
+				}
+				if (!textBuffer.isEmpty()) {
+					textBuffer = [];
+				}
+				else {
+					console.log("sdfsd");
+					context.fill();
+				}
+				
+				if (c) {
+					context.fillStyle = previous;
+				}
+				console.log(context.fillStyle);
+			};
+*/
 
 			['stroke', 'fill'].forEach(function (n) {
 				shape[n] = function (c) {
-					var fillStyle = context.fillStyle,
-						strokeStyle = context.strokeStyle;
+					var p = n + 'Style',
+						previous = context[p];
 
 					if (c) {
-						context.fillStyle = c;
-						context.strokeStyle = c;
+						context[p] = c;
 					}
-					context[n].apply(context, []);
 
 					if (!textBuffer.isEmpty()) {
 						textBuffer.forEach(function (args) {
@@ -89,9 +122,12 @@ var graphics = function () {
 						});
 						textBuffer = [];
 					}
+					else {
+						context[n].apply(context, []);
+					}
+
 					if (c) {
-						context.fillStyle = fillStyle;
-						context.strokeStyle = strokeStyle;
+						context[p] = previous;
 					}
 
 					return shape;
@@ -110,12 +146,6 @@ var graphics = function () {
 			shape.beginPath = function () {
 				context.beginPath();
 				return path;
-			};
-
-			shape.color = function (c) {
-				context.fillStyle = c;
-				context.strokeStyle = c;
-				return shape;
 			};
 
 			shape.rect = function (x, y, width, height) {
@@ -196,12 +226,16 @@ var graphics = function () {
 
 				context.save();
 				context.translate(origin.e(1), origin.e(2));
-			
+						
+
 				transformation.push($M([
 						[x_scale, 0, -xrange.from * x_scale],
 						[0, y_scale, -yrange.from * y_scale],
 						[0, 0, 1]
 					]));
+
+				textBuffer = [];
+
 				return shape;
 			};
 
@@ -218,8 +252,8 @@ var graphics = function () {
 			context.translate(0, -canvas.height);
 			context.translate(0.5, 0.5);
 			context.lineWidth = 1.0;
-			//context.strokeStyle = 'rgb(170,170,170)';
-			//context.fillStyle = 'rgb(20,20,20)';
+			context.strokeStyle = 'rgb(255,255,255)';
+			context.fillStyle = 'rgb(255,255,255)';
 
 			if (!context.font) {
 				context.font = '11px sans-serif';

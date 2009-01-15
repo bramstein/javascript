@@ -10,7 +10,8 @@ var chart = function () {
 				ratio: {
 					horizontal: 1,
 					vertical: 1
-				}
+				},
+				grid: true
 			}),
 
 			t = title(g, {
@@ -23,8 +24,8 @@ var chart = function () {
 			}),
 
 			layout = jLayout.border({
-				vgap: 5,
-				hgap: 5,
+				vgap: 0,
+				hgap: 0,
 				center: c,
 				south: t
 			});
@@ -38,6 +39,7 @@ var chart = function () {
 				c.draw();
 				t.draw();
 				g.closeViewport();
+				g.rect(b.x, b.y, b.width, b.height).stroke('rgb(0,0,255)');
 			}
 		};
 

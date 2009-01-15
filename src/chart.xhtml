@@ -196,8 +196,8 @@
 			var yrange = {from: -10, to: 10};
 
 			function draw() {
-				//var ha = axis({from: -10, to: 20, numMajorTicks: 20, numMinorTicks: 3});
-				var ha = axis({categories: ['jan', 'feb', 'mar', 2000, 'apr', 'may', 'june', 'july']});
+				var ha = axis({from: -10, to: 20, numMajorTicks: 20, numMinorTicks: 3});
+				//var ha = axis({categories: ['jan', 'feb', 'mar', 'apr', 'may', 'june', 'july']});
 				var va = axis({from: -1400 , to: 10000, numMajorTicks: 10, numMinorTicks: 0});
 				//var va = axis({categories: ['jan', 'feb', 'mar', 'apr']});
 
@@ -208,7 +208,7 @@
 
 				//console.log(ch.preferredSize());
 				ch.bounds(ch.preferredSize());
-				ch.bounds({x: 50, y: 50});
+				ch.bounds({x: 10, y: 10});
 				ch.doLayout();
 				ch.draw();
 /*
