@@ -11,7 +11,7 @@ var chart = function () {
 					horizontal: 1,
 					vertical: 1
 				},
-				grid: true
+				grid: false
 			}),
 
 			t = title(g, {

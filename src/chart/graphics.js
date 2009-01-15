@@ -49,15 +49,19 @@ var graphics = function () {
 			textBuffer = [];
 
 		function transform(x, y) {
-			return transformation.reduceRight(function (i, item) {
+			var t = transformation.reduceRight(function (i, item) {
 				return item.multiply(i);
-			}, $V([x, y, 1]));
+			}, $V([x, y, 1])); 
+			//console.log((Math.round(t.e(1)) + 0.5) + " " + (Math.round(t.e(2)) + 0.5));
+			return t;
+			//return $V([Math.round(t.e(1)) + 0.5, Math.round(t.e(2)) + 0.5]);
 		}
 
 		function transform_length(w, h) {
 			var o = transform(0, 0),
 				r = transform(w, h);
 			r = r.subtract(o);
+			//return $V([Math.round(r.e(1)) + 0.5, Math.round(r.e(2)) + 0.5]);
 			return r;
 		}
 
@@ -71,41 +75,6 @@ var graphics = function () {
 					return path;
 				};
 			});
-/*
-			shape.stroke = function (c) {
-				var previous = context.strokeStyle;
-
-				if (c) {
-					context.strokeStyle = c;
-				}
-				context.stroke();
-				
-				if (c) {
-					context.strokeStyle = previous;
-				}
-				console.log(context.strokeStyle);
-			};
-
-			shape.fill = function (c) {
-				var previous = context.fillStyle;
-
-				if (c) {
-					context.fillStyle = c;
-				}
-				if (!textBuffer.isEmpty()) {
-					textBuffer = [];
-				}
-				else {
-					console.log("sdfsd");
-					context.fill();
-				}
-				
-				if (c) {
-					context.fillStyle = previous;
-				}
-				console.log(context.fillStyle);
-			};
-*/
 
 			['stroke', 'fill'].forEach(function (n) {
 				shape[n] = function (c) {
@@ -155,6 +124,10 @@ var graphics = function () {
 				context.rect(p.e(1), p.e(2), d.e(1), d.e(2));
 				context.closePath();
 				return shape;
+			};
+
+			shape.line = function (x1, y1, x2, y2) {
+				
 			};
 
 			shape.circle = function (x, y, radius) {
@@ -226,8 +199,7 @@ var graphics = function () {
 
 				context.save();
 				context.translate(origin.e(1), origin.e(2));
-						
-
+				
 				transformation.push($M([
 						[x_scale, 0, -xrange.from * x_scale],
 						[0, y_scale, -yrange.from * y_scale],
@@ -250,10 +222,12 @@ var graphics = function () {
 			// lower left corner of the canvas.
 			context.scale(1, -1);
 			context.translate(0, -canvas.height);
-			context.translate(0.5, 0.5);
+		//	context.translate(0.5, 0.5);
 			context.lineWidth = 1.0;
 			context.strokeStyle = 'rgb(255,255,255)';
 			context.fillStyle = 'rgb(255,255,255)';
+
+			console.log(context);
 
 			if (!context.font) {
 				context.font = '11px sans-serif';

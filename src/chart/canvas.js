@@ -154,7 +154,6 @@ var canvas = function () {
 						maxWidth = Math.max(graphics.textSize(t).width, maxWidth);
 					});
 					result.width = options.horizontalAxis.majorTicks.length * maxWidth;
-					//result.width *= options.horizontalAxis.majorTicks.length;
 					result.width += (options.horizontalAxis.majorTicks.length - 1) * spacing['horizontal'];
 				}
 				result.width += that.insets().left + that.insets().right;

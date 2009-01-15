@@ -3,6 +3,8 @@
 -reduce code duplication in axis drawing code.
 -implement polar axes.
 -add legend
+-add line shape which can draw crisp lines automatically by rounding to 0.5
+-implement rounding for crisp lines (https://developer.mozilla.org/en/Canvas_tutorial/Applying_styles_and_colors#A_lineWidth_example --- vertical lines should shift 0.5 in their horizontal position, horizontal lines should shift 0.5 in their vertical position)
 -test composite chart
 +implemented insets for all components
 +moved canvas beginViewport/endViewport outside of axes drawing code
@@ -28,6 +30,7 @@
 +test vertical category axis (fixed, working now).
 +add endPath and closePath and remove stroke and fill from path.
 +remove itransform & itransform_length from graphics.
+-look into alternative text API's for IE and Opera
 -server side support with Rhino and a simple implementation of Canvas
 -drawing into canvas buffer and dynamically inserting an image through a data URL.
 -test text drawing API on Firefox3.1
