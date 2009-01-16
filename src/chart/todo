@@ -1,11 +1,18 @@
 -look into labels for numeric axes
--implement preferred size for all components.
 -reduce code duplication in axis drawing code.
 -implement polar axes.
+-implement canvas minimum size
+-look into vertical tick lengths again (slightly off, might be caused by rounding)
 -add legend
--add line shape which can draw crisp lines automatically by rounding to 0.5
--implement rounding for crisp lines (https://developer.mozilla.org/en/Canvas_tutorial/Applying_styles_and_colors#A_lineWidth_example --- vertical lines should shift 0.5 in their horizontal position, horizontal lines should shift 0.5 in their vertical position)
 -test composite chart
+-reenable clipping on viewports
++added ellipse code to graphics
++added correct insets to canvas (might need some more work to save more screen space, but good enough for now)
++implemented preferred size for all components.
++changed canvas to only draw crisp lines
++reimplemented rect to draw crisp lines
++added line shape which draws crisp lines
++fixed ratio again (was slightly incorrect, hopefully got it right now)
 +implemented insets for all components
 +moved canvas beginViewport/endViewport outside of axes drawing code
 +cleaned up canvas code a bit

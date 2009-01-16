@@ -49,20 +49,15 @@ var graphics = function () {
 			textBuffer = [];
 
 		function transform(x, y) {
-			var t = transformation.reduceRight(function (i, item) {
+			return transformation.reduceRight(function (i, item) {
 				return item.multiply(i);
-			}, $V([x, y, 1])); 
-			//console.log((Math.round(t.e(1)) + 0.5) + " " + (Math.round(t.e(2)) + 0.5));
-			return t;
-			//return $V([Math.round(t.e(1)) + 0.5, Math.round(t.e(2)) + 0.5]);
+			}, $V([x, y, 1]));
 		}
 
 		function transform_length(w, h) {
 			var o = transform(0, 0),
 				r = transform(w, h);
-			r = r.subtract(o);
-			//return $V([Math.round(r.e(1)) + 0.5, Math.round(r.e(2)) + 0.5]);
-			return r;
+			return r.subtract(o);
 		}
 
 		if (canvas && canvas.getContext !== undefined && canvas.getContext('2d') !== undefined) {
@@ -118,16 +113,48 @@ var graphics = function () {
 			};
 
 			shape.rect = function (x, y, width, height) {
-				var p = transform(x, y);
-				var d = transform_length(width, height);
+				var p = transform(x, y),
+					d = transform_length(width, height);
+				x = p.e(1);
+				y = p.e(2);
+				width = d.e(1);
+				height = d.e(2);
+	
 				context.beginPath();
-				context.rect(p.e(1), p.e(2), d.e(1), d.e(2));
+				context.moveTo(Math.round(x) - 0.5, Math.round(y));
+				context.lineTo(Math.round(x) - 0.5, Math.round(y + height));
+
+				context.moveTo(Math.round(x) - 1, Math.round(y) - 0.5);
+				context.lineTo(Math.round(x + width) - 1, Math.round(y) - 0.5);
+				
+				context.moveTo(Math.round(x), Math.round(y + height) - 0.5);
+				context.lineTo(Math.round(x + width), Math.round(y + height) - 0.5);
+
+				context.moveTo(Math.round(x + width) - 0.5, Math.round(y + height) - 0.5);
+				context.lineTo(Math.round(x + width) - 0.5, Math.round(y) - 0.5);
 				context.closePath();
 				return shape;
 			};
 
 			shape.line = function (x1, y1, x2, y2) {
-				
+				var p1 = transform(x1, y1),
+					p2 = transform(x2, y2);
+
+				context.beginPath();
+				if (x1 === x2) {
+					context.moveTo(Math.round(p1.e(1)) - 0.5, Math.round(p1.e(2)));
+					context.lineTo(Math.round(p2.e(1)) - 0.5, Math.round(p2.e(2)));
+				}
+				else if (y2 === y2) {
+					context.moveTo(Math.round(p1.e(1)), Math.round(p1.e(2)) - 0.5);
+					context.lineTo(Math.round(p2.e(1)), Math.round(p2.e(2)) - 0.5);
+				}
+				else {
+					context.moveTo(p1.e(1), p1.e(2));
+					context.lineTo(p2.e(1), p2.e(2));
+				}
+				context.closePath();
+				return shape;
 			};
 
 			shape.circle = function (x, y, radius) {
@@ -136,6 +163,19 @@ var graphics = function () {
 				context.beginPath();
 				context.arc(p.e(1), p.e(2), r, 0, Math.PI * 2, false);
 				context.closePath();
+				return shape;
+			};
+
+			shape.ellipse = function (x, y, hr, vr) {
+				var p = transform(x, y),
+					r = transform_length(hr, vr);
+				context.save();
+				context.translate(p.e(1), p.e(2));
+				context.beginPath();
+				context.scale(1, r.e(2) / r.e(1));
+				context.arc(0, 0, r.e(1), 0, Math.PI * 2, false);
+				context.closePath();
+				context.restore();
 				return shape;
 			};
 
@@ -169,7 +209,7 @@ var graphics = function () {
 			shape.text = function (x, y, str, options) {
 				var p = transform(x, y);
 				options.font = parseFont(options.font);
-				textBuffer.push([context, p.e(1), p.e(2), str, options]);
+				textBuffer.push([context, Math.round(p.e(1)) - 0.5, Math.round(p.e(2)), str, options]);
 				return shape;
 			}.defaults(0, 0, "", {});
 
@@ -198,7 +238,7 @@ var graphics = function () {
 				y_scale = Interval.width(view_yrange) / Interval.width(yrange);
 
 				context.save();
-				context.translate(origin.e(1), origin.e(2));
+				context.translate(Math.round(origin.e(1)), Math.round(origin.e(2)));
 				
 				transformation.push($M([
 						[x_scale, 0, -xrange.from * x_scale],
@@ -222,7 +262,6 @@ var graphics = function () {
 			// lower left corner of the canvas.
 			context.scale(1, -1);
 			context.translate(0, -canvas.height);
-		//	context.translate(0.5, 0.5);
 			context.lineWidth = 1.0;
 			context.strokeStyle = 'rgb(255,255,255)';
 			context.fillStyle = 'rgb(255,255,255)';

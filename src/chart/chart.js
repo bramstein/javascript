@@ -11,7 +11,7 @@ var chart = function () {
 					horizontal: 1,
 					vertical: 1
 				},
-				grid: false
+				grid: true
 			}),
 
 			t = title(g, {
@@ -30,7 +30,7 @@ var chart = function () {
 				south: t
 			});
 
-		t.insets({top: 10, bottom: 10});
+		t.insets({top: 10});
 
 		var that = {
 			draw: function () {

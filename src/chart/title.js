@@ -30,7 +30,7 @@ var title = function () {
 				
 				return {
 					width: Math.max(titleSize.width, subtitleSize.width) + insets.left + insets.right,
-					height: titleSize.height + subtitleSize.height + (subtitleSize.height * 0.8) + insets.top + insets.bottom
+					height: titleSize.height + subtitleSize.height + (subtitleSize.height * 0.6) + insets.top + insets.bottom
 				};
 			},
 			draw: function () {
@@ -39,7 +39,7 @@ var title = function () {
 				graphics.text(b.width / 2, b.height - that.insets().top, title, Object.extend(options, { textAlign: 'center', textBaseLine: 'top'})).fill(defaults.color.title);
 				graphics.text(b.width / 2, that.insets().bottom, subtitle, Object.extend(options, {textAlign: 'center', textBaseLine: 'bottom', font: {weight: 'normal', style: 'italic' }})).fill(defaults.color.subtitle);
 				graphics.closeViewport();
-				graphics.rect(b.x, b.y, b.width, b.height).stroke('rgb(0, 255, 0)');
+			//	graphics.rect(b.x, b.y, b.width, b.height).stroke('rgb(0, 255, 0)');
 			}
 		});
 
