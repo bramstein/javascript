@@ -192,105 +192,20 @@
 			}
 */
 
-			var xrange = {from: -100, to: 100};
-			var yrange = {from: -10, to: 10};
-
 			function draw() {
-				var ha = axis({from: -2, to: 10, numMajorTicks: 20, numMinorTicks: 0});
+				var ha = axis({from: -2, to: 10, ticks: {major: 20, minor: 0}, label: 'Ranking'});
 				//var ha = axis({categories: ['jan', 'feb', 'mar', 'apr', 'may', 'june', 'july']});
-				var va = axis({from: -1400 , to: 10000, numMajorTicks: 10, numMinorTicks: 0});
-				//var va = axis({categories: ['jan', 'feb', 'mar', 'apr']});
+				var va = axis({from: -1400 , to: 10000, label: 'USD($)', ticks: {major: 10, minor: 0}});
+				//var va = axis({categories: ['jan', 'feb', 'mar', 'apr'], label: 'Months in 2008'});
 
-				var ch = chart('canvas-context', ha, va, 'Sales 2008', 'Monthly average');
+				var pa = axis({from: -Math.PI, to: Math.PI, ticks: {major: 8}, label: 'hello'});
 
+				var ch = chart('canvas-context', {/*polar: pa,*/ horizontal: ha, vertical: va}, 'Sales 2008', 'Monthly average');
 
-				//console.log(ha);
-
-				//console.log(ch.preferredSize());
 				ch.bounds(ch.preferredSize());
-				ch.bounds({x: 10, y: 10});
+				ch.bounds({x: 20, y: 20});
 				ch.doLayout();
 				ch.draw();
-/*
-				var g = graphics('canvas-context');
-
-				g.beginViewport(0, 0, 400, 400, {from: 0, to: 1}, {from: 0, to: 1}).
-					beginViewport(0, 0, 1, 1, {from: 0, to: 200}, {from: 0, to: 200}).
-						beginViewport(100, 100, 100, 100, {from: -5, to: 5}, {from: -5, to: 5}).
-							rect(-4, -4, 8, 8).
-							stroke().
-							circle(0, 0 , 3).
-							stroke().
-							text(-5, -5, "hello world").
-							beginPath().
-								moveTo(0,0).
-								lineTo(1,1).
-							closePath().
-							stroke().
-						closeViewport().
-						roundedRect(0, 0, 100, 100, 10).
-						stroke().
-					closeViewport().
-					rect(0, 0, 0.8, 0.8).
-					stroke().
-				closeViewport();
-*/
-
-						
-
-/*
-				var canvas = document.getElementById('canvas-context');
-		
-				if(canvas.getContext) {
-					ctx = canvas.getContext('2d');
-
-					ctx.scale(1, -1);
-					ctx.translate(0, -canvas.height);
-					ctx.translate(0.5, 0.5);
-					ctx.strokeStyle = 'rgb(0,0,0)';
-					
-
-					ctx.save();
-					ctx.scale(canvas.width / Interval.width(xrange), canvas.height / Interval.width(yrange));
-					ctx.translate(-xrange.from, -yrange.from);
-					//ctx.lineWidth = 1 / 200;
-
-					
-					ctx.beginPath();
-					ctx.moveTo(xrange.from, 0);
-					ctx.lineTo(xrange.to, 0);			
-
-					ctx.moveTo(0, yrange.from);
-					ctx.lineTo(0, yrange.to);
-					
-					ctx.moveTo(0, 0);
-					ctx.lineTo(100, 10);
-					ctx.closePath();	
-
-					ctx.restore();
-
-					ctx.stroke();
-
-					var horizontalAxis = axis({from: xrange.from, to: xrange.to, numMajorTicks: 10, numMinorTicks: 6});
-					var verticalAxis = axis({from: yrange.from, to: yrange.to, numMajorTicks: 10});
-
-				}
-*/
-/*
-var c = canvas(g, {
-    horizontalAxis: axis({
-        from: 0,
-        to: 10,
-        numMajorTicks: 10
-    }),
-    verticalAxis: axis({
-        from: 0,
-        to: 10,
-        numMajorTicks: 10
-    })
-});
-
-*/
 			}
 		]]>
 		</script>

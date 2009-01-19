@@ -21,17 +21,11 @@ var canvas = function () {
 
 			// Axis tick mark lengths
 			tickLength = 0.026,
-	//		tick = {
-	//			len: 0.026,
-	//			horizontal: 0,
-	//			vertical: 0
-	//		},
 
 			// Available axes
 			axes = {
 				horizontal: undefined,
-				vertical: undefined,
-				polar: undefined
+				vertical: undefined
 			},
 
 			// An offset to draw axes that do not start at zero
@@ -63,7 +57,6 @@ var canvas = function () {
 			cartesian = true,
 
 			// Some variables to generalize axis code
-			allAxes = ['horizontal', 'vertical', 'polar'],
 			cartesianAxes = ['horizontal', 'vertical'],
 			cartesianOppositeAxes = [].append(cartesianAxes).reverse();
 
@@ -74,55 +67,43 @@ var canvas = function () {
 
 		that.insets({left: 10, right: 10, top: 10, bottom: 10});
 
-		allAxes.forEach(function (n) {
-			axes[n] = (options[n + 'Axis'] !== undefined && options[n + 'Axis']) || undefined;
-		});
+		cartesian = options.axes.polar === undefined;
 
-		cartesian = axes.polar === undefined;
-
-		if (cartesian) {
-			// Calculate the correct aspect ratio
-			if (axes.horizontal && axes.vertical) {
-				ratio.horizontal *= axes.horizontal.majorTicks.length - 1;
-				ratio.vertical *= axes.vertical.majorTicks.length - 1;
-			}
-			else if (axes.horizontal && !axes.vertical) {
-				ratio.horizontal *= axes.horizontal.majorTicks.length - 1;
-				ratio.vertical *= axes.horizontal.majorTicks.length - 1;
-			}
-			else if (!axes.horizontal && axes.vertical) {
-				ratio.horizontal *= axes.vertical.majorTicks.length - 1;
-				ratio.vertical *= axes.vertical.majorTicks.length - 1;
-			}
-
-			// The horizontal and vertical range equal the range of 
-			// numerical axes, or 0..1 for categorical axes.
-			cartesianAxes.forEach(function (n) {
-				range[n] = !Interval.empty(options[n + 'Axis']) ? {from: options[n + 'Axis'].from, to: options[n + 'Axis'].to, numerical: true} : range[n];
-			});
-
-			cartesianAxes.forEach(function (axis, i) {
-				var opposite = cartesianOppositeAxes[i];
-
-				// The sign determines on which side of the axis the
-				// labels are drawn.
-				sign[axis] = range[opposite].to <= 0 ? -1 : 1;
-
-				// If the axes do not start at zero or contain zero,
-				// this will adjust the opposite axis to draw at the
-				// correct location.
-				if (!Interval.contains(range[axis], 0)) {
-					offset[opposite] = range[axis].to < 0 ? range[axis].to : range[axis].from;
-				}
-			});
-
-		//	cartesianAxes.forEach(function (axis, i) {
-		//	}
-			//if (axes.vertical.to > 0 && axes.horizontal.from < 0
+		if (!cartesian) {
+			axes.horizontal = options.axes.polar;
+			axes.vertical = options.axes.polar;
+		}
+		else if (cartesian && options.axes.horizontal !== undefined && options.axes.vertical !== undefined) {
+			axes.horizontal = options.axes.horizontal;
+			axes.vertical = options.axes.vertical;
 		}
 		else {
-			// TODO: polar...
+			throw new TypeError('No axes specified for chart.');
 		}
+
+		// The horizontal and vertical range equal the range of 
+		// numerical axes, or 0..1 for categorical axes.
+		cartesianAxes.forEach(function (n) {
+			range[n] = !Interval.empty(axes[n]) ? {from: axes[n].from, to: axes[n].to, numeric: true} : range[n];
+		});
+
+		cartesianAxes.forEach(function (axis, i) {
+			var opposite = cartesianOppositeAxes[i];
+
+			// calculate the correct aspect ratio
+			ratio[axis] *= axes[axis].ticks.major.length - 1;
+
+			// The sign determines on which side of the axis the
+			// labels are drawn.
+			sign[axis] = range[opposite].to <= 0 ? -1 : 1;
+
+			// If the axes do not start at zero or contain zero,
+			// this will adjust the opposite axis to draw at the
+			// correct location.
+			if (!Interval.contains(range[axis], 0)) {
+				offset[opposite] = range[axis].to < 0 ? range[axis].to : range[axis].from;
+			}
+		});
 
 		Object.extend(that, {
 			doLayout: function () {
@@ -150,19 +131,15 @@ var canvas = function () {
 					maxHeight = 0,
 					maxWidth = 0;
 
-				if (axes.vertical) {
-					axes.vertical.majorTicks.forEach(function (t) {
-						maxWidth = Math.max(graphics.textSize(t).width, maxWidth);
-					});
-				}
+				axes.vertical.ticks.major.forEach(function (t) {
+					maxWidth = Math.max(graphics.textSize(t).width, maxWidth);
+				});
 
-				if (axes.horizontal) {
-					axes.horizontal.majorTicks.forEach(function (t) {
-						maxHeight = Math.max(graphics.textSize(t).height, maxHeight);
-					});
-				}
+				axes.horizontal.ticks.major.forEach(function (t) {
+					maxHeight = Math.max(graphics.textSize(t).height, maxHeight);
+				});
 
-				maxHeight *= 1.3;
+				maxHeight *= 2;
 				maxWidth *= 1.3;
 
 				if (i.right < maxWidth || i.left < maxWidth) {
@@ -197,27 +174,23 @@ var canvas = function () {
 						height: 0
 					},
 					maxHeight = 0,
-					maxWidth = 0;
-				if (axes.vertical) {
-					axes.vertical.majorTicks.forEach(function (t) {
-						maxHeight = Math.max(graphics.textSize(t).height, maxHeight);
-					});
-					result.height = axes.vertical.majorTicks.length * maxHeight;
-					result.height += (axes.vertical.majorTicks.length - 1) * spacing['vertical'];
-				}
+					maxWidth = 0;			
 
-				if (axes.horizontal) {
-					axes.horizontal.majorTicks.forEach(function (t) {
-						maxWidth = Math.max(graphics.textSize(t).width, maxWidth);
-					});
-					result.width = axes.horizontal.majorTicks.length * maxWidth;
-					result.width += (axes.horizontal.majorTicks.length - 1) * spacing['horizontal'];
-				}
+				axes.vertical.ticks.major.forEach(function (t) {
+					maxHeight = Math.max(graphics.textSize(t).height, maxHeight);
+				});
+				result.height = axes.vertical.ticks.major.length * maxHeight;
+				result.height += (axes.vertical.ticks.major.length - 1) * spacing.vertical;
+
+				axes.horizontal.ticks.major.forEach(function (t) {
+					maxWidth = Math.max(graphics.textSize(t).width, maxWidth);
+				});
+				result.width = axes.horizontal.ticks.major.length * maxWidth;
+				result.width += (axes.horizontal.ticks.major.length - 1) * spacing.horizontal;
+
 				return result;
 			},
-			drawPolarAxes: function (g) {
-			},
-			drawCartesianAxes: function (g) {
+			drawAxes: function (g) {
 				var b = that.bounds(),
 					// Adjust the tick size using the aspect ratio (height / width).
 					tick = {
@@ -225,20 +198,32 @@ var canvas = function () {
 						vertical: (Interval.width(range.horizontal) * tickLength) * (b.height / b.width)
 					};
 
+				if (grid && !cartesian) {
+					g.beginClip(range.horizontal.from, range.vertical.from, Interval.width(range.horizontal), Interval.width(range.vertical));
+					axes.horizontal.ticks.major.forEach(function (s) {
+						if (range.horizontal.numeric) {
+							g.ellipse(0, 0, Math.abs(s), Math.abs(s)).
+							stroke(defaults.color.grid);
+						}
+					});
+					graphics.closeClip();
+				}
+
 				// Horizontal major ticks and labels
-				axes.horizontal.majorTicks.forEach(function (s, i, a) {
+				axes.horizontal.ticks.major.forEach(function (s, i, a) {
 					var size = (Interval.width(range['horizontal']) / (a.length));
 
-					if (typeof s === 'number' && !isNaN(s)) {
+					if (range.horizontal.numeric) {
 						if (s !== offset['vertical'] || range['vertical'].from >= 0 || range['vertical'].to <= 0) {
-							if (grid) {
+							if (grid && cartesian) {
 								g.line(s, range['vertical'].from, s, range['vertical'].to).
 								stroke(defaults.color.grid);
 							}
 							g.line(s, offset['horizontal'], s, offset['horizontal'] + tick['horizontal'] * -sign['horizontal']).
 							stroke(defaults.color.axes);
 
-							g.text(s, offset['horizontal'] + (tick['horizontal'] * 1.5) * -sign['horizontal'], s, {
+							
+							g.text(s, offset['horizontal'] + (tick['horizontal'] * 1.5) * -sign['horizontal'], axes.horizontal.ticks.labels[i] || s, {
 								textAlign: 'center', 
 								textBaseLine: (Math.isNegative(sign['horizontal']) ? 'bottom' : 'top'),
 								background: defaults.color.background
@@ -257,21 +242,32 @@ var canvas = function () {
 				});
 
 				// Horizontal minor ticks
-				axes.horizontal.minorTicks.forEach(function (i) {
-					if (typeof i === 'number' && !isNaN(i) && i !== 0) {
+				axes.horizontal.ticks.minor.forEach(function (i) {
+					if (range.horizontal.numeric && i !== 0) {
 						g.line(i, offset['horizontal'], i, offset['horizontal'] + (tick['horizontal'] * 0.5) * -sign['horizontal']).
 						stroke(defaults.color.axes);
 					}
 				});
 
+				// Horizontal label
+				if (axes.horizontal.label !== undefined) {
+					var size = (Interval.width(range.vertical) / (axes.vertical.ticks.major.length));
+						console.log(Interval.width(range.horizontal) / 2);
+					g.text((Interval.width(range.horizontal) / 2) + range.horizontal.from, range['vertical'].from + ((size / 2) * -sign.horizontal), axes.horizontal.label, {
+						textAlign: 'center',
+						textBaseLine: (Math.isNegative(sign['horizontal']) ? 'bottom' : 'top')
+					}).
+					fill(defaults.color.text);
+				}
+
 				// Vertical major ticks and labels
-				axes.vertical.majorTicks.forEach(function (s, i, a) {
+				axes.vertical.ticks.major.forEach(function (s, i, a) {
 					var size = (Interval.width(range['vertical']) / (a.length));
 
-					if (typeof s === 'number' && !isNaN(s)) {
+					if (range.vertical.numeric) {
 						// don't draw the tick or the label where the axes cross
 						if (s !== offset['horizontal'] || range['horizontal'].from >= 0 || range['horizontal'].to <= 0) {
-							if (grid) {
+							if (grid && cartesian) {
 								g.line(range['horizontal'].from, s, range['horizontal'].to, s).
 								stroke(defaults.color.grid);
 							}
@@ -279,7 +275,7 @@ var canvas = function () {
 							stroke(defaults.color.axes);
 
 							g.text(
-								offset['vertical'] + (tick['vertical'] * 1.5) * -sign['vertical'], s, s, {
+								offset['vertical'] + (tick['vertical'] * 1.5) * -sign['vertical'], s, axes.vertical.ticks.labels[i] || s, {
 									textAlign: (Math.isNegative(sign['vertical']) ? 'left' : 'right'), 
 									textBaseLine: 'middle',
 									background: defaults.color.background
@@ -298,16 +294,34 @@ var canvas = function () {
 					}
 				});
 
+				if (axes.vertical.label !== undefined && cartesian) {
+					var size = (Interval.width(range.vertical) / (axes.vertical.ticks.major.length));
+					if (range.vertical.numeric) {
+						g.text(offset['vertical'] + (tick['vertical'] * 1.5) * -sign['vertical'], axes.vertical.to + size, axes.vertical.label, {
+							textAlign: (Math.isNegative(sign['vertical']) ? 'left' : 'right'),
+							textBaseLine: 'middle'
+						}).
+						fill(defaults.color.text);
+					}
+					else {
+						g.text(range['horizontal'].from + tick['vertical'] * -1.5, axes.vertical.from + (size / 2), axes.vertical.label, {
+							textAlign: 'right',
+							textBaseLine: 'middle'
+						}).
+						fill(defaults.color.text);
+					}
+				}
+
 				// Vertical minor ticks
-				axes.vertical.minorTicks.forEach(function (i) {
-					if (typeof i === 'number' && !isNaN(i) && i !== 0) {
+				axes.vertical.ticks.minor.forEach(function (i) {
+					if (range.vertical.numeric && i !== 0) {
 						g.line(offset['vertical'], i, offset['vertical'] + (tick['vertical'] * 0.5) * -sign['vertical'], i).
 						stroke(defaults.color.axes);
 					}
 				});
 
 
-				if (!range['horizontal'].numerical) {
+				if (!range.horizontal.numeric) {
 					g.line(range['horizontal'].from, range['vertical'].from, range['horizontal'].to, range['vertical'].from).
 					stroke(defaults.color.axes);
 				}
@@ -319,36 +333,22 @@ var canvas = function () {
 				// The base vertical axis
 				g.line(offset['vertical'], range['vertical'].from, offset['vertical'], range['vertical'].to).
 				stroke(defaults.color.axes);
-
-
-				g.ellipse(0, 0, 4, 8000).
-				stroke(defaults.color.grid);
-
-				g.ellipse(0, 0, 3, 6000).
-				stroke(defaults.color.grid);
-
-				g.ellipse(0, 0, 2, 4000).
-				stroke(defaults.color.grid);
-
-				g.ellipse(0, 0, 1, 2000).
-				stroke(defaults.color.grid);
 			},
 			draw: function () {
 				var b = that.bounds(),
 					i = that.insets();
+			
+				graphics.beginViewport(b.x, b.y, b.width, b.height);
+					graphics.beginViewport(i.left, i.bottom, b.width - (i.right + i.left), b.height - (i.bottom + i.top), {range: range});
+						that.drawAxes(graphics);
+					//	graphics.beginViewport(range.horizontal.from, range.vertical.from, Interval.width(range.horizontal), Interval.width(range.vertical), {polar: true});
+					//		graphics.line(0, 0, 3, Math.PI / 4).stroke('rgb(0, 0, 255)');
+					//	graphics.closeViewport();
 
-				if (cartesian) {
-					graphics.beginViewport(b.x, b.y, b.width, b.height);
-						graphics.beginViewport(i.left, i.bottom, b.width - (i.right + i.left), b.height - (i.bottom + i.top), range.horizontal, range.vertical);
-							that.drawCartesianAxes(graphics);
-						graphics.closeViewport();
-					//	graphics.rect(i.left, i.bottom, b.width - (i.right + i.left), b.height - (i.bottom + i.top)).stroke('rgb(255, 0, 0)');
 					graphics.closeViewport();
-				//	graphics.rect(b.x, b.y, b.width, b.height).stroke('rgb(255,0,0)');
-				}
-				else {
-					// TODO: polar		
-				}
+				//	graphics.rect(i.left, i.bottom, b.width - (i.right + i.left), b.height - (i.bottom + i.top)).stroke('rgb(255, 0, 0)');
+				graphics.closeViewport();
+			//	graphics.rect(b.x, b.y, b.width, b.height).stroke('rgb(255,0,0)');
 			}
 		});
 		return that;

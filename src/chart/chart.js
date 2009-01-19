@@ -1,17 +1,16 @@
 
 /*global bounds, insets, graphics, jLayout, container, title, canvas*/
 var chart = function () {
-	return function (elementIdentifier, ha, va, titleString, subtitleString) {
+	return function (elementIdentifier, axes, titleString, subtitleString) {
 		var g = graphics(elementIdentifier),
 
 			c = canvas(g, {
-				horizontalAxis: ha,
-				verticalAxis: va,
+				axes: axes,
 				ratio: {
 					horizontal: 1,
 					vertical: 1
 				},
-				grid: true
+				grid: false
 			}),
 
 			t = title(g, {
@@ -30,7 +29,7 @@ var chart = function () {
 				south: t
 			});
 
-		t.insets({top: 10});
+		t.insets({top: 10, bottom: 10});
 
 		var that = {
 			draw: function () {
@@ -39,7 +38,7 @@ var chart = function () {
 				c.draw();
 				t.draw();
 				g.closeViewport();
-				g.rect(b.x, b.y, b.width, b.height).stroke('rgb(0,0,255)');
+			//	g.rect(b.x, b.y, b.width, b.height).stroke('rgb(0,0,255)');
 			}
 		};
 

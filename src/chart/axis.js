@@ -65,13 +65,19 @@ var axis = function () {
 	return function (options) {
 		var minorTicks = [],
 			majorTicks = [],
+			label = undefined,
+			ticks = {
+				major: [],
+				minor: [],
+				labels: []
+			},
 			from, to, tmp = [];
 
-		if ((options.from === undefined || options.to === undefined || Interval.empty(options)) && options.majorTicks === undefined && options.numMajorTicks === undefined) {
+		if (options.from === undefined || options.to === undefined || Interval.empty(options)) {
 			from = 1;
 			to = 0;
 			if (options.categories !== undefined && Object.isArray(options.categories) && options.categories.length > 0) {
-				majorTicks = options.categories.map(function (v) {
+				ticks.major = options.categories.map(function (v) {
 					return v.toString();
 				});
 			}
@@ -80,77 +86,79 @@ var axis = function () {
 			}
 		}
 		else {
-			if (options.numMajorTicks !== undefined && options.from !== undefined && options.to !== undefined) {
-				majorTicks = calculateTicks(options, options.numMajorTicks);
+			if (options.ticks !== undefined && options.ticks.major !== undefined && typeof options.ticks.major === 'number' && options.from !== undefined && options.to !== undefined) {
+				ticks.major = calculateTicks(options, options.ticks.major);
 			}
-			else  if (options.majorTicks !== undefined && Object.isArray(options.majorTicks) && isNumeric(options.majorTicks)) {
-				majorTicks = options.majorTicks;
+			else  if (options.ticks !== undefined && options.ticks.major !== undefined && Object.isArray(options.ticks.major) && isNumeric(options.ticks.major)) {
+				ticks.major = options.ticks.major;
 			}
 			else {
-				throw new TypeError('A numeric axis should be specified by either numMajorTicks, or a numeric majorTicks array.');
+				throw new TypeError('A numeric axis must contain a range or major ticks.');
 			}
 
-			if (options.numMinorTicks !== undefined) {
-				// I'm not sure if the assumption that minor ticks also have to be "nice" 
-				// numbers is correct. Assuming the major ticks are "nice" we can easily
-				// calculate the minor ticks.
-				/*
-				majorTicks.forEach(function (v, i) {
-					minorTicks.append(calculateTicks({
-						from: v,
-						to: (i !== (majorTicks.length - 1) ? majorTicks[i + 1] : v)
-					}, options.numMinorTicks));
-				});
-				*/
-				majorTicks.forEach(function (v, i) {
+			if (options.ticks !== undefined && options.ticks.minor !== undefined && typeof options.ticks.minor === 'number') {
+				ticks.major.forEach(function (v, i) {
 					var interval = {
 							from: v,
-							to: (i !== (majorTicks.length - 1) ? majorTicks[i + 1] : v)
+							to: (i !== (ticks.major.length - 1) ? ticks.major[i + 1] : v)
 						},
-						step = Interval.width(interval) / (options.numMinorTicks + 1),
+						step = Interval.width(interval) / (options.ticks.minor + 1),
 						j = interval.from;
 
 					for (; j < interval.to; j += step) {
-						minorTicks.push(j);
+						ticks.minor.push(j);
 					}
 				});
 			}
-			else if (options.minorTicks !== undefined && Object.isArray(options.minorTicks) && isNumeric(options.minorTicks)) {
-				minorTicks = options.minorTicks;
+			else if (options.ticks !== undefined && options.ticks.minor !== undefined && Object.isArray(options.ticks.minor) && isNumeric(options.ticks.minor)) {
+				ticks.minor = options.ticks.minor;
 			}
 			else {
 				// minor ticks are optional, so we don't throw an error.
 			}
 
-			if (majorTicks.isEmpty()) {
-				if (minorTicks.isEmpty()) {
+			if (ticks.major.isEmpty()) {
+				if (ticks.minor.isEmpty()) {
 					// unspecified, so we assume the number of ticks is set to 10
 					tmp = calculateTicks(options, 10);
 					from = tmp[0];
-					to = tmp[tmp.length - 1];
+					to = tmp.peek();
 				}
 				else {
-					from = minorTicks[0];
-					to = minorTicks[minorTicks.length - 1];
+					from = ticks.minor[0];
+					to = ticks.minor.peek();
 				}
 			}
 			else {
-				from = majorTicks[0];
-				to = majorTicks[majorTicks.length - 1];
+				from = ticks.major[0];
+				to = ticks.major.peek();
 			}
+
+			if (options.ticks && options.ticks.labels !== undefined && Object.isArray(options.ticks.labels)) {
+				ticks.labels = options.ticks.labels.map(function (s) {
+					if (s !== undefined && s !== null) {
+						return s.toString();
+					}
+					return undefined;
+				});
+			}
+		}
+
+		if (options.label !== undefined) {
+			label = options.label.toString();
 		}
 
 		// filter out the minor ticks that are also major ticks as
 		// there is no point in drawing them.
-		if (!minorTicks.isEmpty() && !majorTicks.isEmpty()) {
-			minorTicks = minorTicks.filter(function (i) {
-				return !majorTicks.contains(i);
+		if (!ticks.minor.isEmpty() && !ticks.major.isEmpty()) {
+			ticks.minor = ticks.minor.filter(function (i) {
+				return !ticks.major.contains(i);
 			});
 		}
 
 		return {
-			minorTicks: minorTicks,
-			majorTicks: majorTicks,
+			ticks: ticks,
+			label: label,
 			from: from,
 			to: to
 		};

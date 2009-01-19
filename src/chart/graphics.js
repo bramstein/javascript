@@ -13,6 +13,29 @@ var graphics = function () {
 	var shape = {};
 	var text = {};
 
+	/**
+	 * Converts polar coordinates to cartesian.
+	 */
+/*
+	function toCartesian(r, t) {
+		return [r * Math.cos(t), r * Math.sin(t)];
+	}
+*/
+	function toCartesian(v) {
+		return $V([v.e(1) * Math.cos(v.e(2)), v.e(1) * Math.sin(v.e(2)), 1]);
+	}
+
+	function setCoordinates(v, polar) {
+		if (polar) {
+		//	console.log("sdfdfsdf");
+		//	console.log(toCartesian(v));
+		//	return toCartesian(v);
+		}
+	//	console.log(polar);
+	//	console.log(v);
+		return v;
+	}
+
 	var parseFont = function (font) {
 		var r = {
 			size: 11,
@@ -46,12 +69,13 @@ var graphics = function () {
 		var context = null,
 			canvas = document.getElementById(identifier),
 			transformation = [],
+			coordinate = [],
 			textBuffer = [];
 
 		function transform(x, y) {
 			return transformation.reduceRight(function (i, item) {
 				return item.multiply(i);
-			}, $V([x, y, 1]));
+			}, coordinate.peek() ? toCartesian($V([x, y, 1])) : $V([x, y, 1]));
 		}
 
 		function transform_length(w, h) {
@@ -66,7 +90,7 @@ var graphics = function () {
 			['lineTo', 'moveTo', 'arcTo', 'bezierCurveTo', 'quadraticCurveTo'].forEach(function (n) {
 				path[n] = function (x, y) {
 					var p = transform(x, y);
-					context[n].apply(context, [p.e(1), p.e(2)]);
+					context[n].apply(context, [round(p.e(1)), round(p.e(2))]);
 					return path;
 				};
 			});
@@ -112,47 +136,53 @@ var graphics = function () {
 				return path;
 			};
 
+			shape.beginClip = function (x, y, width, height) {
+				var p = transform(x, y),
+					d = transform_length(width, height);
+				x = round(p.e(1));
+				y = round(p.e(2));
+				width = Math.ceil(d.e(1));
+				height = Math.ceil(d.e(2));
+
+				context.save();
+				context.beginPath();
+				context.rect(x, y, width, height);
+				context.clip();
+			};
+
+			shape.closeClip = function () {
+				context.restore();
+			};
+
 			shape.rect = function (x, y, width, height) {
 				var p = transform(x, y),
 					d = transform_length(width, height);
-				x = p.e(1);
-				y = p.e(2);
-				width = d.e(1);
-				height = d.e(2);
+				x = round(p.e(1));
+				y = round(p.e(2));
+				width = Math.ceil(d.e(1));
+				height = Math.ceil(d.e(2));
 	
 				context.beginPath();
-				context.moveTo(Math.round(x) - 0.5, Math.round(y));
-				context.lineTo(Math.round(x) - 0.5, Math.round(y + height));
-
-				context.moveTo(Math.round(x) - 1, Math.round(y) - 0.5);
-				context.lineTo(Math.round(x + width) - 1, Math.round(y) - 0.5);
-				
-				context.moveTo(Math.round(x), Math.round(y + height) - 0.5);
-				context.lineTo(Math.round(x + width), Math.round(y + height) - 0.5);
-
-				context.moveTo(Math.round(x + width) - 0.5, Math.round(y + height) - 0.5);
-				context.lineTo(Math.round(x + width) - 0.5, Math.round(y) - 0.5);
+				context.rect(x, y, width, height);
 				context.closePath();
 				return shape;
 			};
+
+			function round(n) {
+				var t = Math.roundTo(n, 0.5);
+				if (Math.round(n) === t) {
+					t -= 0.5;
+				}
+				return t;
+			}
 
 			shape.line = function (x1, y1, x2, y2) {
 				var p1 = transform(x1, y1),
 					p2 = transform(x2, y2);
 
 				context.beginPath();
-				if (x1 === x2) {
-					context.moveTo(Math.round(p1.e(1)) - 0.5, Math.round(p1.e(2)));
-					context.lineTo(Math.round(p2.e(1)) - 0.5, Math.round(p2.e(2)));
-				}
-				else if (y2 === y2) {
-					context.moveTo(Math.round(p1.e(1)), Math.round(p1.e(2)) - 0.5);
-					context.lineTo(Math.round(p2.e(1)), Math.round(p2.e(2)) - 0.5);
-				}
-				else {
-					context.moveTo(p1.e(1), p1.e(2));
-					context.lineTo(p2.e(1), p2.e(2));
-				}
+				context.moveTo(round(p1.e(1)), round(p1.e(2)));
+				context.lineTo(round(p2.e(1)), round(p2.e(2)));
 				context.closePath();
 				return shape;
 			};
@@ -161,7 +191,7 @@ var graphics = function () {
 				var p = transform(x, y),
 					r = transform_length(radius, 0).e(1);
 				context.beginPath();
-				context.arc(p.e(1), p.e(2), r, 0, Math.PI * 2, false);
+				context.arc(round(p.e(1)), round(p.e(2)), r, 0, Math.PI * 2, false);
 				context.closePath();
 				return shape;
 			};
@@ -170,9 +200,11 @@ var graphics = function () {
 				var p = transform(x, y),
 					r = transform_length(hr, vr);
 				context.save();
-				context.translate(p.e(1), p.e(2));
+				context.translate(round(p.e(1)), round(p.e(2)));
 				context.beginPath();
-				context.scale(1, r.e(2) / r.e(1));
+				if (r.e(1) !== 0) {
+					context.scale(1, r.e(2) / r.e(1));
+				}
 				context.arc(0, 0, r.e(1), 0, Math.PI * 2, false);
 				context.closePath();
 				context.restore();
@@ -183,11 +215,11 @@ var graphics = function () {
 				var p = transform(x, y);
 				var d = transform_length(width, height);
 				var r = transform_length(r, 0);
-				x = p.e(1);
-				y = p.e(2);
-				width = d.e(1);
-				height = d.e(2);
-				radius = r.e(1);
+				x = round(p.e(1));
+				y = round(p.e(2));
+				width = Math.ceil(d.e(1));
+				height = Math.ceil(d.e(2));
+				radius = round(r.e(1));
 				context.beginPath();
 				context.moveTo(x, y + radius);
 				context.lineTo(x, y + height - radius);
@@ -209,7 +241,7 @@ var graphics = function () {
 			shape.text = function (x, y, str, options) {
 				var p = transform(x, y);
 				options.font = parseFont(options.font);
-				textBuffer.push([context, Math.round(p.e(1)) - 0.5, Math.round(p.e(2)), str, options]);
+				textBuffer.push([context, round(p.e(1)), round(p.e(2)), str, options]);
 				return shape;
 			}.defaults(0, 0, "", {});
 
@@ -224,27 +256,51 @@ var graphics = function () {
 				return shape;
 			};
 
-			shape.beginViewport = function (x, y, width, height, xrange, yrange) {
+			shape.beginViewport = function (x, y, width, height, options) {
 				var origin = transform(x, y),
-					view_xrange = {from: x, to: x + width},
-					view_yrange = {from: y, to: y + height},
-					x_scale = 1,
-					y_scale = 1;
+					view = {
+						horizontal: {
+							from: x,
+							to: x + width
+						},
+						vertical: {
+							from: y,
+							to: y + height
+						}
+					},
+					scale = {
+						horizontal: 1,
+						vertical: 1
+					},
+					range = {
+						horizontal: {
+							from: 0,
+							to: Interval.width(view.horizontal)
+						},
+						vertical: {
+							from: 0,
+							to: Interval.width(view.vertical)
+						}
+					};
+	
+				if (options && options.range) {
+					range.horizontal = options.range.horizontal || range.horizontal;
+					range.vertical = options.range.vertical || range.vertical;
+				}
 
-				xrange = xrange || {from: 0, to: Interval.width(view_xrange)};
-				yrange = yrange || {from: 0, to: Interval.width(view_yrange)};
-
-				x_scale = Interval.width(view_xrange) / Interval.width(xrange);
-				y_scale = Interval.width(view_yrange) / Interval.width(yrange);
+				scale.horizontal = Interval.width(view.horizontal) / Interval.width(range.horizontal);
+				scale.vertical = Interval.width(view.vertical) / Interval.width(range.vertical);
 
 				context.save();
 				context.translate(Math.round(origin.e(1)), Math.round(origin.e(2)));
 				
 				transformation.push($M([
-						[x_scale, 0, -xrange.from * x_scale],
-						[0, y_scale, -yrange.from * y_scale],
+						[scale.horizontal, 0, -range.horizontal.from * scale.horizontal],
+						[0, scale.vertical, -range.vertical.from * scale.vertical],
 						[0, 0, 1]
 					]));
+
+				coordinate.push((options && options.polar === true) || false);
 
 				textBuffer = [];
 
@@ -253,6 +309,7 @@ var graphics = function () {
 
 			shape.closeViewport = function () {
 				transformation.pop();
+				coordinate.pop();
 				context.restore();
 				textBuffer = [];
 				return shape;
@@ -265,15 +322,6 @@ var graphics = function () {
 			context.lineWidth = 1.0;
 			context.strokeStyle = 'rgb(255,255,255)';
 			context.fillStyle = 'rgb(255,255,255)';
-
-			console.log(context);
-
-			if (!context.font) {
-				context.font = '11px sans-serif';
-			}
-			if (!context.mozTextStyle) {
-				context.mozTextStyle = '11px sans-serif';
-			}
 			return shape;
 		}
 		else {

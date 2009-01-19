@@ -8,6 +8,9 @@
 			var t = Math.pow(10, precision || 1);
 			return Math.ceil(x / t) * t;
 		},
+		roundTo: function (x, precision) {
+			return Math.round(x / precision) * precision;
+		},
 		log2: function (x) {
 			return Math.log(x) / Math.LN2;
 		},

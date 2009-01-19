@@ -1,11 +1,14 @@
--look into labels for numeric axes
--reduce code duplication in axis drawing code.
--implement polar axes.
 -implement canvas minimum size
 -look into vertical tick lengths again (slightly off, might be caused by rounding)
+-axis label
 -add legend
 -test composite chart
--reenable clipping on viewports
++added option to viewport to switch to polar coordinates
++reimplemented crisp line drawing (more consistent, less code)
++added labels to numeric axes
++changed axis to accept a ticks object with either array or number parameters.
++implemented polar axes.
++added clipping to graphics
 +added ellipse code to graphics
 +added correct insets to canvas (might need some more work to save more screen space, but good enough for now)
 +implemented preferred size for all components.
@@ -38,6 +41,8 @@
 +add endPath and closePath and remove stroke and fill from path.
 +remove itransform & itransform_length from graphics.
 -look into alternative text API's for IE and Opera
+-look into SVG again (Rapheal library)
 -server side support with Rhino and a simple implementation of Canvas
 -drawing into canvas buffer and dynamically inserting an image through a data URL.
 -test text drawing API on Firefox3.1
+-reimplement simple vector and matrix library
