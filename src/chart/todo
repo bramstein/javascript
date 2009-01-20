@@ -1,8 +1,9 @@
--implement canvas minimum size
--look into vertical tick lengths again (slightly off, might be caused by rounding)
--axis label
 -add legend
 -test composite chart
+-fix set bounds to include labels and axis labels
++implement canvas minimum size
++fixed preferred size to include axis label
++added axis label
 +added option to viewport to switch to polar coordinates
 +reimplemented crisp line drawing (more consistent, less code)
 +added labels to numeric axes
@@ -41,6 +42,7 @@
 +add endPath and closePath and remove stroke and fill from path.
 +remove itransform & itransform_length from graphics.
 -look into alternative text API's for IE and Opera
+-look into vertical tick lengths again (slightly off, might be caused by rounding)
 -look into SVG again (Rapheal library)
 -server side support with Rhino and a simple implementation of Canvas
 -drawing into canvas buffer and dynamically inserting an image through a data URL.

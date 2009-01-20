@@ -1,10 +1,8 @@
 
 /*global bounds, insets, graphics, jLayout, container, title, canvas*/
 var chart = function () {
-	return function (elementIdentifier, axes, titleString, subtitleString) {
-		var g = graphics(elementIdentifier),
-
-			c = canvas(g, {
+	return function (g, axes, titleString, subtitleString) {
+		var	c = canvas(g, {
 				axes: axes,
 				ratio: {
 					horizontal: 1,

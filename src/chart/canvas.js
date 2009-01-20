@@ -117,7 +117,40 @@ var canvas = function () {
 					tick = {
 						horizontal: (Interval.width(range.vertical) * tickLength),
 						vertical: (Interval.width(range.horizontal) * tickLength) * (r.height / r.width)
-					};
+					},
+					maxHeight = 0,
+					maxWidth = 0,
+					maxLabel = 0;
+
+				axes.vertical.ticks.major.forEach(function (t) {
+					maxWidth = Math.max(graphics.textSize(t).width, maxWidth);
+				});
+
+				axes.horizontal.ticks.major.forEach(function (t) {
+					maxHeight = Math.max(graphics.textSize(t).height, maxHeight);
+				});
+
+				maxWidth += (r.width * tickLength) * 1.5;
+				maxHeight += ((r.height * tickLength) * (r.height / r.width)) * 1.5;
+/*
+				if (axes.horizontal.label) {
+					maxLabel = (r.height / axes.vertical.ticks.major.length) + graphics.textSize(axes.vertical.label).height;
+				}
+
+				if (axes.vertical.label) {
+					maxLabel = Math.max((r.height / axes.vertical.ticks.major.length) + graphics.textSize(axes.vertical.label).height, maxLabel);
+				}
+
+				maxHeight += maxLabel;
+*/
+				if (i.right < maxWidth || i.left < maxWidth) {
+					i.right = maxWidth;
+					i.left = maxWidth;
+				}
+				if (i.bottom < maxHeight || i.top < maxHeight) {
+					i.bottom = maxHeight;
+					i.top = maxHeight;
+				}
 
 				r.width += i.left + i.right;
 				r.height += i.bottom + i.top;
@@ -129,7 +162,8 @@ var canvas = function () {
 					i = that.insets(),
 					size = Math.max(preferred.width / ratio.horizontal, preferred.height / ratio.vertical),
 					maxHeight = 0,
-					maxWidth = 0;
+					maxWidth = 0,
+					maxLabel = 0;
 
 				axes.vertical.ticks.major.forEach(function (t) {
 					maxWidth = Math.max(graphics.textSize(t).width, maxWidth);
@@ -139,9 +173,19 @@ var canvas = function () {
 					maxHeight = Math.max(graphics.textSize(t).height, maxHeight);
 				});
 
-				maxHeight *= 2;
-				maxWidth *= 1.3;
+				maxWidth += (preferred.width * tickLength) * 1.5;
+				maxHeight += ((preferred.height * tickLength) * (preferred.height / preferred.width)) * 1.5;
+/*
+				if (axes.horizontal.label) {
+					maxLabel = (preferred.height / axes.vertical.ticks.major.length) + graphics.textSize(axes.vertical.label).height;
+				}
 
+				if (axes.vertical.label) {
+					maxLabel = Math.max((preferred.height / axes.vertical.ticks.major.length) + graphics.textSize(axes.vertical.label).height, maxLabel);
+				}
+
+				maxHeight += maxLabel;
+*/
 				if (i.right < maxWidth || i.left < maxWidth) {
 					i.right = maxWidth;
 					i.left = maxWidth;
@@ -248,18 +292,17 @@ var canvas = function () {
 						stroke(defaults.color.axes);
 					}
 				});
-
+/*
 				// Horizontal label
 				if (axes.horizontal.label !== undefined) {
 					var size = (Interval.width(range.vertical) / (axes.vertical.ticks.major.length));
-						console.log(Interval.width(range.horizontal) / 2);
-					g.text((Interval.width(range.horizontal) / 2) + range.horizontal.from, range['vertical'].from + ((size / 2) * -sign.horizontal), axes.horizontal.label, {
+					g.text((Interval.width(range.horizontal) / 2) + range.horizontal.from, range['vertical'].from + size * -1, axes.horizontal.label, {
 						textAlign: 'center',
-						textBaseLine: (Math.isNegative(sign['horizontal']) ? 'bottom' : 'top')
+						textBaseLine: 'top'
 					}).
 					fill(defaults.color.text);
 				}
-
+*/
 				// Vertical major ticks and labels
 				axes.vertical.ticks.major.forEach(function (s, i, a) {
 					var size = (Interval.width(range['vertical']) / (a.length));
@@ -293,12 +336,12 @@ var canvas = function () {
 						fill(defaults.color.text);
 					}
 				});
-
+/*
 				if (axes.vertical.label !== undefined && cartesian) {
 					var size = (Interval.width(range.vertical) / (axes.vertical.ticks.major.length));
 					if (range.vertical.numeric) {
 						g.text(offset['vertical'] + (tick['vertical'] * 1.5) * -sign['vertical'], axes.vertical.to + size, axes.vertical.label, {
-							textAlign: (Math.isNegative(sign['vertical']) ? 'left' : 'right'),
+							textAlign: 'right',
 							textBaseLine: 'middle'
 						}).
 						fill(defaults.color.text);
@@ -311,7 +354,7 @@ var canvas = function () {
 						fill(defaults.color.text);
 					}
 				}
-
+*/
 				// Vertical minor ticks
 				axes.vertical.ticks.minor.forEach(function (i) {
 					if (range.vertical.numeric && i !== 0) {
@@ -346,9 +389,9 @@ var canvas = function () {
 					//	graphics.closeViewport();
 
 					graphics.closeViewport();
-				//	graphics.rect(i.left, i.bottom, b.width - (i.right + i.left), b.height - (i.bottom + i.top)).stroke('rgb(255, 0, 0)');
+					graphics.rect(i.left, i.bottom, b.width - (i.right + i.left), b.height - (i.bottom + i.top)).stroke('rgb(255, 0, 0)');
 				graphics.closeViewport();
-			//	graphics.rect(b.x, b.y, b.width, b.height).stroke('rgb(255,0,0)');
+				graphics.rect(b.x, b.y, b.width, b.height).stroke('rgb(255,0,0)');
 			}
 		});
 		return that;

@@ -193,19 +193,34 @@
 */
 
 			function draw() {
-				var ha = axis({from: -2, to: 10, ticks: {major: 20, minor: 0}, label: 'Ranking'});
-				//var ha = axis({categories: ['jan', 'feb', 'mar', 'apr', 'may', 'june', 'july']});
+				var g = graphics('canvas-context');
+
+				var ha = axis({from: 0, to: 10, ticks: {major: 20, minor: 0}, label: 'Ranking'});
+				var ha = axis({categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July'], label: 'Months in 2008'});
 				var va = axis({from: -1400 , to: 10000, label: 'USD($)', ticks: {major: 10, minor: 0}});
 				//var va = axis({categories: ['jan', 'feb', 'mar', 'apr'], label: 'Months in 2008'});
 
 				var pa = axis({from: -Math.PI, to: Math.PI, ticks: {major: 8}, label: 'hello'});
 
-				var ch = chart('canvas-context', {/*polar: pa,*/ horizontal: ha, vertical: va}, 'Sales 2008', 'Monthly average');
+				var ch = chart(g, {/*polar: pa,*/ horizontal: ha, vertical: va}, 'Sales 2008', 'Monthly average');
 
-				ch.bounds(ch.preferredSize());
+				ch.bounds(ch.minimumSize());
 				ch.bounds({x: 20, y: 20});
 				ch.doLayout();
 				ch.draw();
+
+				console.log(ch.insets());
+
+				var ha1 = axis({from: 0, to: 20000, ticks: {major: 5}});
+				var va1 = axis({categories: ['Sales', 'Engineering', 'HR', 'Marketing']});
+
+				var ch1 = chart(g, {horizontal: ha1, vertical: va1}, 'Sales 2008', 'per department');
+
+
+				ch1.bounds(ch1.minimumSize());
+				ch1.bounds({x: 20, y: 320});
+				ch1.doLayout();
+				ch1.draw();
 			}
 		]]>
 		</script>
