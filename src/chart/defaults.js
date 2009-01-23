@@ -4,12 +4,19 @@ var defaults = {
 		fill: function (context, x, y, str, options) {
 		},
 		stroke: function (context, x, y, str, options) {
+		}
+	},
+	font: {
+		labels: {
+			size: 11
 		},
-		size: function (context, str, options) {
-			return {
-				width: 0,
-				height: 0
-			};
+		title: {
+			size: 12,
+			weight: 'bold'
+		},
+		subtitle: {
+			size: 11,
+			style: 'italic'
 		}
 	},
 	color: {

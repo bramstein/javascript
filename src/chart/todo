@@ -1,6 +1,17 @@
+-line breaks in labels
+-axis label
+-trend lines
+-reference lines
+-legend
+-fill color for data region/surrounding area
+-non-axis based grid (later)
+-option to disable drawing of axis labels
 -add legend
 -test composite chart
--fix set bounds to include labels and axis labels
++added defaults fonts
++changed all font caluclations to use the new font metrics
++changed font size to use HTML font metrics (more reliable and accurate)
++fixed bounds to include labels
 +implement canvas minimum size
 +fixed preferred size to include axis label
 +added axis label

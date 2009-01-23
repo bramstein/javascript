@@ -17,6 +17,7 @@
 		<script type="text/javascript" src="chart/interval.js"></script>
 		<script type="text/javascript" src="chart/coordinate.js"></script>
 		<script type="text/javascript" src="chart/axis.js"></script>
+		<script type="text/javascript" src="chart/font.js"></script>
 		<script type="text/javascript" src="chart/graphics.js"></script>
 		<script type="text/javascript" src="chart/text.mozilla.js"></script>
 		<script type="text/javascript" src="chart/chart.js"></script>
@@ -197,7 +198,7 @@
 
 				var ha = axis({from: 0, to: 10, ticks: {major: 20, minor: 0}, label: 'Ranking'});
 				var ha = axis({categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July'], label: 'Months in 2008'});
-				var va = axis({from: 0 , to: 10000, label: 'USD($)', ticks: {major: 5, minor: 0}});
+				var va = axis({from: -1400 , to: 10000, label: 'USD($)', ticks: {major: 8, minor: 0}});
 				//var va = axis({categories: ['jan', 'feb', 'mar', 'apr'], label: 'Months in 2008'});
 
 				var pa = axis({from: -Math.PI, to: Math.PI, ticks: {major: 8}, label: 'hello'});
@@ -205,7 +206,7 @@
 				var ch = chart(g, {/*polar: pa,*/ horizontal: ha, vertical: va}, 'Sales 2008', 'Monthly average');
 
 				ch.bounds(ch.preferredSize());
-				ch.bounds({x: 10, y: 10});
+				//ch.bounds({x: 10, y: 10});
 				ch.doLayout();
 				ch.draw();
 /*
@@ -221,20 +222,17 @@
 				ch1.bounds({x: 20, y: 320});
 				ch1.doLayout();
 				ch1.draw();
+
+				
 */
 			}
 		]]>
 		</script>
 		<style>
-			body {
-				font-size: 10em;
-			}
-
+		
 			#canvas-context {
 				border: 1px solid black;
 			}
-
-
 		</style>
 	</head>
 	<body onload="draw();">

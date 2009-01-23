@@ -16,15 +16,15 @@
 			yOffset = 0,
 			previousFont = context.mozTextStyle,
 			numerical = (typeof str === 'number' && !isNaN(str)),
-			size = defaults.text.size(context, str, options.font),
+			size = font.size(str, options.font),
 			fillStyle = context.fillStyle;
 
 		context.mozTextStyle = options.font.toString();
 
 		if (options.textAlign) {
 			if (numerical && Math.isNegative(str) && options.textAlign === 'center') {
-				xOffset = -context.mozMeasureText(Math.abs(str).toLocaleString());
-				xOffset -= context.mozMeasureText('-') * 2;
+				xOffset = -font.size(Math.abs(str).toLocaleString(), options.font).width;
+				xOffset -= font.size('-', options.font).width * 2;
 			}
 			else {
 				xOffset = -size.width;
@@ -65,9 +65,9 @@
 			context.fillStyle = options.background;
 			context.fillRect(x + xOffset, -y + yOffset, size.width, -size.height);
 			context.fillStyle = fillStyle;
-		}
+		}	
 
-		context.translate(x + xOffset, -y + yOffset);
+		context.translate(x + xOffset, -y + yOffset - options.font.size / 4);
 		f(context, str.toLocaleString());
 		context.restore();
 		context.mozTextStyle = previousFont;
@@ -79,27 +79,6 @@
 		},
 		stroke: function (context, x, y, str, options) {
 			draw(context, x, y, str, options, stroke);
-		},
-		size: function (context, str, font) {
-			var result = {
-					width: 0,
-					height: 0
-				},
-				previousFont = context.mozTextStyle;
-	
-			// TODO: Figure out why the initial font size is 16px instead
-			// of 10 as the mozilla documentation claims and why the 
-			// mozTextStyle property is initially empty. Another good 
-			// question would be why a context save/restore does not 
-			// correctly reset the font attributes.
-			context.mozTextStyle = font.toString();
-			if (str !== undefined) {
-				result.width = context.mozMeasureText(str.toLocaleString());
-				result.height = font.size * 0.85;
-			//	result.height = font.size;
-			}
-			context.mozTextStyle = previousFont;
-			return result;
 		}
 	});
 })();

@@ -13,11 +13,7 @@ var chart = function () {
 
 			t = title(g, {
 				title: titleString,
-				subtitle: subtitleString,
-				font: {
-					size: 12,
-					weight: 'bold'
-				}
+				subtitle: subtitleString
 			}),
 
 			layout = jLayout.border({
@@ -27,7 +23,7 @@ var chart = function () {
 				south: t
 			});
 
-		t.insets({top: 10, bottom: 10});
+//		t.insets({top: 5, bottom: 5});
 
 		var that = {
 			draw: function () {

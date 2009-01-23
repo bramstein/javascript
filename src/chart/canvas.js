@@ -133,11 +133,11 @@ var canvas = function () {
 					maxLabel = 0;
 
 				axes.vertical.ticks.major.forEach(function (t) {
-					maxWidth = Math.max(graphics.textSize(t).width, maxWidth);
+					maxWidth = Math.max(font.size(t, defaults.font.labels).width, maxWidth);
 				});
 
 				axes.horizontal.ticks.major.forEach(function (t) {
-					maxHeight = Math.max(graphics.textSize(t).height, maxHeight);
+					maxHeight = Math.max(font.size(t, defaults.font.labels).height, maxHeight);
 				});
 
 				maxWidth += (r.height * tickLength) * 1.5;
@@ -166,11 +166,11 @@ var canvas = function () {
 					maxLabel = 0;
 
 				axes.vertical.ticks.major.forEach(function (t) {
-					maxWidth = Math.max(graphics.textSize(t).width, maxWidth);
+					maxWidth = Math.max(font.size(t, defaults.font.labels).width, maxWidth);
 				});
 
 				axes.horizontal.ticks.major.forEach(function (t) {
-					maxHeight = Math.max(graphics.textSize(t).height, maxHeight);
+					maxHeight = Math.max(font.size(t, defaults.font.labels).height, maxHeight);
 				});
 
 				preferred.width = size * ratio.horizontal;
@@ -183,8 +183,6 @@ var canvas = function () {
 
 				padding.bottom = maxHeight;
 				padding.top = maxHeight;
-
-				
 
 				preferred.width += i.left + i.right;
 				preferred.height += i.bottom + i.top;
@@ -212,13 +210,13 @@ var canvas = function () {
 					maxWidth = 0;			
 
 				axes.vertical.ticks.major.forEach(function (t) {
-					maxHeight = Math.max(graphics.textSize(t).height, maxHeight);
+					maxHeight = Math.max(font.size(t, defaults.font.labels).height, maxHeight);
 				});
 				result.height = axes.vertical.ticks.major.length * maxHeight;
 				result.height += (axes.vertical.ticks.major.length - 1) * spacing.vertical;
 
 				axes.horizontal.ticks.major.forEach(function (t) {
-					maxWidth = Math.max(graphics.textSize(t).width, maxWidth);
+					maxWidth = Math.max(font.size(t, defaults.font.labels).width, maxWidth);
 				});
 				result.width = axes.horizontal.ticks.major.length * maxWidth;
 				result.width += (axes.horizontal.ticks.major.length - 1) * spacing.horizontal;
@@ -262,7 +260,8 @@ var canvas = function () {
 							g.text(s, offset['horizontal'] + (tick['horizontal'] * 1.5) * -sign['horizontal'], axes.horizontal.ticks.labels[i] || s, {
 								textAlign: 'center', 
 								textBaseLine: (Math.isNegative(sign['horizontal']) ? 'bottom' : 'top'),
-								background: defaults.color.background
+								background: defaults.color.background,
+								font: defaults.font.labels
 							}).
 							fill(defaults.color.text);
 						}
@@ -271,7 +270,8 @@ var canvas = function () {
 						g.text(size * i + (size / 2), range['vertical'].from + tick['horizontal'] * -1.5, s, {
 							textAlign: 'center', 
 							textBaseLine: 'top',
-							background: defaults.color.background
+							background: defaults.color.background,
+							font: defaults.font.labels
 						}).
 						fill(defaults.color.text);
 					}
@@ -303,7 +303,8 @@ var canvas = function () {
 								offset['vertical'] + (tick['vertical'] * 1.5) * -sign['vertical'], s, axes.vertical.ticks.labels[i] || s, {
 									textAlign: (Math.isNegative(sign['vertical']) ? 'left' : 'right'), 
 									textBaseLine: 'middle',
-									background: defaults.color.background
+									background: defaults.color.background,
+									font: defaults.font.labels
 								}
 							).
 							fill(defaults.color.text);
@@ -313,7 +314,8 @@ var canvas = function () {
 						g.text(range['horizontal'].from + tick['vertical'] * -1.5, size * i + (size / 2), s, {
 							textAlign: 'right', 
 							textBaseLine: 'middle',
-							background: defaults.color.background
+							background: defaults.color.background,
+							font: defaults.font.labels
 						}).
 						fill(defaults.color.text);
 					}
