@@ -96,6 +96,7 @@
 			if (str !== undefined) {
 				result.width = context.mozMeasureText(str.toLocaleString());
 				result.height = font.size * 0.85;
+			//	result.height = font.size;
 			}
 			context.mozTextStyle = previousFont;
 			return result;

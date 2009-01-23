@@ -8,7 +8,7 @@ var chart = function () {
 					horizontal: 1,
 					vertical: 1
 				},
-				grid: false
+				grid: true
 			}),
 
 			t = title(g, {

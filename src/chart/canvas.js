@@ -6,8 +6,16 @@ var canvas = function () {
 
 			// The minimum amount of spacing between labels
 			spacing = {
-				horizontal: options.hspace || 10,
-				vertical: options.vspace || 15
+				horizontal: options.hspace || 5,
+				vertical: options.vspace || 5
+			},
+
+			// The amount of padding around the data area
+			padding = {
+				top: 0,
+				bottom: 0,
+				left: 0,
+				right: 0
 			},
 
 			// The aspect ratio of the data area of the chart
@@ -65,7 +73,7 @@ var canvas = function () {
 		that = insets(that);
 		that = maximum(that);
 
-		that.insets({left: 10, right: 10, top: 10, bottom: 10});
+		//that.insets({left: 10, right: 10, top: 10, bottom: 10});
 
 		cartesian = options.axes.polar === undefined;
 
@@ -94,7 +102,9 @@ var canvas = function () {
 			ratio[axis] *= axes[axis].ticks.major.length - 1;
 
 			// The sign determines on which side of the axis the
-			// labels are drawn.
+			// labels are drawn. 1 means on the left side, -1 on the right side
+			// for a vertical axes. For a horizontal axis 1 means below,
+			// -1 means above the axis.
 			sign[axis] = range[opposite].to <= 0 ? -1 : 1;
 
 			// If the axes do not start at zero or contain zero,
@@ -130,30 +140,20 @@ var canvas = function () {
 					maxHeight = Math.max(graphics.textSize(t).height, maxHeight);
 				});
 
-				maxWidth += (r.width * tickLength) * 1.5;
-				maxHeight += ((r.height * tickLength) * (r.height / r.width)) * 1.5;
-/*
-				if (axes.horizontal.label) {
-					maxLabel = (r.height / axes.vertical.ticks.major.length) + graphics.textSize(axes.vertical.label).height;
-				}
+				maxWidth += (r.height * tickLength) * 1.5;
+				maxHeight += ((r.width * tickLength) * (r.height / r.width)) * 1.5;
 
-				if (axes.vertical.label) {
-					maxLabel = Math.max((r.height / axes.vertical.ticks.major.length) + graphics.textSize(axes.vertical.label).height, maxLabel);
-				}
+				padding.left = maxWidth;
+				padding.right = maxWidth;
 
-				maxHeight += maxLabel;
-*/
-				if (i.right < maxWidth || i.left < maxWidth) {
-					i.right = maxWidth;
-					i.left = maxWidth;
-				}
-				if (i.bottom < maxHeight || i.top < maxHeight) {
-					i.bottom = maxHeight;
-					i.top = maxHeight;
-				}
+				padding.bottom = maxHeight;
+				padding.top = maxHeight;
 
 				r.width += i.left + i.right;
 				r.height += i.bottom + i.top;
+
+				r.width += padding.left + padding.right;
+				r.height += padding.top + padding.bottom;
 
 				return r;
 			},
@@ -173,38 +173,29 @@ var canvas = function () {
 					maxHeight = Math.max(graphics.textSize(t).height, maxHeight);
 				});
 
-				maxWidth += (preferred.width * tickLength) * 1.5;
-				maxHeight += ((preferred.height * tickLength) * (preferred.height / preferred.width)) * 1.5;
-/*
-				if (axes.horizontal.label) {
-					maxLabel = (preferred.height / axes.vertical.ticks.major.length) + graphics.textSize(axes.vertical.label).height;
-				}
-
-				if (axes.vertical.label) {
-					maxLabel = Math.max((preferred.height / axes.vertical.ticks.major.length) + graphics.textSize(axes.vertical.label).height, maxLabel);
-				}
-
-				maxHeight += maxLabel;
-*/
-				if (i.right < maxWidth || i.left < maxWidth) {
-					i.right = maxWidth;
-					i.left = maxWidth;
-				}
-				if (i.bottom < maxHeight || i.top < maxHeight) {
-					i.bottom = maxHeight;
-					i.top = maxHeight;
-				}
-
 				preferred.width = size * ratio.horizontal;
 				preferred.height = size * ratio.vertical;
 
+				maxWidth += (preferred.height * tickLength) * 1.5;
+				maxHeight += ((preferred.width * tickLength) * (preferred.height / preferred.width)) * 1.5;
+				padding.left = maxWidth;
+				padding.right = maxWidth;
+
+				padding.bottom = maxHeight;
+				padding.top = maxHeight;
+
+				
+
 				preferred.width += i.left + i.right;
 				preferred.height += i.bottom + i.top;
-				
+
+				preferred.width += padding.right + padding.left;
+				preferred.height += padding.bottom + padding.top;				
+
 				return preferred;
 			},
 			preferredDataSize: function () {
-				var preferred = that.dataSize(),
+				var preferred = that.minimumDataSize(),
 					size = Math.max(preferred.width / ratio.horizontal, preferred.height / ratio.vertical);
 
 				preferred.width = size * ratio.horizontal;
@@ -236,11 +227,13 @@ var canvas = function () {
 			},
 			drawAxes: function (g) {
 				var b = that.bounds(),
+					tick = {};
+
 					// Adjust the tick size using the aspect ratio (height / width).
-					tick = {
-						horizontal: (Interval.width(range.vertical) * tickLength),
-						vertical: (Interval.width(range.horizontal) * tickLength) * (b.height / b.width)
-					};
+				tick = {
+					horizontal: (Interval.width(range.vertical) * tickLength),
+					vertical: (Interval.width(range.horizontal) * tickLength) * (b.height / b.width)
+				};
 
 				if (grid && !cartesian) {
 					g.beginClip(range.horizontal.from, range.vertical.from, Interval.width(range.horizontal), Interval.width(range.vertical));
@@ -266,7 +259,6 @@ var canvas = function () {
 							g.line(s, offset['horizontal'], s, offset['horizontal'] + tick['horizontal'] * -sign['horizontal']).
 							stroke(defaults.color.axes);
 
-							
 							g.text(s, offset['horizontal'] + (tick['horizontal'] * 1.5) * -sign['horizontal'], axes.horizontal.ticks.labels[i] || s, {
 								textAlign: 'center', 
 								textBaseLine: (Math.isNegative(sign['horizontal']) ? 'bottom' : 'top'),
@@ -292,17 +284,7 @@ var canvas = function () {
 						stroke(defaults.color.axes);
 					}
 				});
-/*
-				// Horizontal label
-				if (axes.horizontal.label !== undefined) {
-					var size = (Interval.width(range.vertical) / (axes.vertical.ticks.major.length));
-					g.text((Interval.width(range.horizontal) / 2) + range.horizontal.from, range['vertical'].from + size * -1, axes.horizontal.label, {
-						textAlign: 'center',
-						textBaseLine: 'top'
-					}).
-					fill(defaults.color.text);
-				}
-*/
+
 				// Vertical major ticks and labels
 				axes.vertical.ticks.major.forEach(function (s, i, a) {
 					var size = (Interval.width(range['vertical']) / (a.length));
@@ -336,25 +318,7 @@ var canvas = function () {
 						fill(defaults.color.text);
 					}
 				});
-/*
-				if (axes.vertical.label !== undefined && cartesian) {
-					var size = (Interval.width(range.vertical) / (axes.vertical.ticks.major.length));
-					if (range.vertical.numeric) {
-						g.text(offset['vertical'] + (tick['vertical'] * 1.5) * -sign['vertical'], axes.vertical.to + size, axes.vertical.label, {
-							textAlign: 'right',
-							textBaseLine: 'middle'
-						}).
-						fill(defaults.color.text);
-					}
-					else {
-						g.text(range['horizontal'].from + tick['vertical'] * -1.5, axes.vertical.from + (size / 2), axes.vertical.label, {
-							textAlign: 'right',
-							textBaseLine: 'middle'
-						}).
-						fill(defaults.color.text);
-					}
-				}
-*/
+
 				// Vertical minor ticks
 				axes.vertical.ticks.minor.forEach(function (i) {
 					if (range.vertical.numeric && i !== 0) {
@@ -382,16 +346,16 @@ var canvas = function () {
 					i = that.insets();
 			
 				graphics.beginViewport(b.x, b.y, b.width, b.height);
-					graphics.beginViewport(i.left, i.bottom, b.width - (i.right + i.left), b.height - (i.bottom + i.top), {range: range});
+					graphics.beginViewport(i.left + padding.left, i.bottom + padding.bottom, b.width - (i.right + i.left + padding.left + padding.right), b.height - (i.bottom + i.top + padding.bottom + padding.top), {range: range});
 						that.drawAxes(graphics);
 					//	graphics.beginViewport(range.horizontal.from, range.vertical.from, Interval.width(range.horizontal), Interval.width(range.vertical), {polar: true});
 					//		graphics.line(0, 0, 3, Math.PI / 4).stroke('rgb(0, 0, 255)');
 					//	graphics.closeViewport();
 
 					graphics.closeViewport();
-					graphics.rect(i.left, i.bottom, b.width - (i.right + i.left), b.height - (i.bottom + i.top)).stroke('rgb(255, 0, 0)');
+			//		graphics.rect(i.left + padding.left, i.bottom + padding.bottom, b.width - (i.right + i.left + padding.right + padding.left), b.height - (i.bottom + i.top + padding.bottom + padding.top)).stroke('rgb(255, 0, 0)');
 				graphics.closeViewport();
-				graphics.rect(b.x, b.y, b.width, b.height).stroke('rgb(255,0,0)');
+			//	graphics.rect(b.x, b.y, b.width, b.height).stroke('rgb(255,0,0)');
 			}
 		});
 		return that;

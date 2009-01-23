@@ -193,6 +193,8 @@ var graphics = function () {
 				context.beginPath();
 				context.arc(round(p.e(1)), round(p.e(2)), r, 0, Math.PI * 2, false);
 				context.closePath();
+				console.log(p);
+				console.log(r + " " + radius + "dsdsdS");
 				return shape;
 			};
 
