@@ -3,8 +3,7 @@
 -reference lines
 -add legend
 -test composite chart
--change category range to 1-n where n is the number of categories (simplifies rendering)
--add option to draw range frames instead
++changed category range to 1-n where n is the number of categories (simplifies rendering)
 +added option to disable drawing of axis line
 +added options to disable drawing of axis labels, ticks and grid
 +cleaned up canvas options

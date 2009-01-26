@@ -5,12 +5,12 @@ var chart = function () {
 		var	c = canvas({
 				axes: axes,
 				ratio: {
-					horizontal: 1,
+					horizontal: 1.61,
 					vertical: 1
 				},
 				draw: {
 					horizontal: {
-						grid: true,
+						grid: false,
 						labels: true,
 						tight: false
 					},
@@ -24,7 +24,7 @@ var chart = function () {
 
 			t = title({
 				title: titleString,
-		/*		subtitle: subtitleString*/
+				subtitle: subtitleString
 			}),
 
 			layout = jLayout.border({

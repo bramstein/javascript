@@ -100,7 +100,10 @@ var canvas = function () {
 				from: axes[n].from,
 				to: axes[n].to,
 				numeric: true
-			} : range[n];
+			} : {
+				from: 0,
+				to: axes[n].ticks.major.length || 1
+			};
 		});
 
 		options.draw = options.draw || {};
@@ -140,8 +143,6 @@ var canvas = function () {
 				}
 			});
 		});
-
-		console.log(options);
 
 		['minimum', 'preferred'].forEach(function (type) {
 			that[type + 'Size'] = function () {
@@ -341,6 +342,14 @@ var canvas = function () {
 						rect(range.horizontal.from, range.vertical.from, Interval.width(range.horizontal), Interval.width(range.vertical)).
 						fill(defaults.color.background.data);
 						that.drawAxes(g);
+
+						g.rect(0.25, 0, 0.75, 4500).fill('rgb(100, 100, 100)');
+						g.rect(1.25, 0, 0.75, 2567).fill('rgb(100, 100, 100)');
+						g.rect(2.25, 0, 0.75, 813).fill('rgb(100, 100, 100)');
+						g.rect(3.25, 0, 0.75, -1459).fill('rgb(255, 0, 0)');
+						g.rect(4.25, 0, 0.75, 1100).fill('rgb(100, 100, 100)');
+						g.rect(5.25, 0, 0.75, 6450).fill('rgb(100, 100, 100)');
+						g.rect(6.25, 0, 0.75, 9451).fill('rgb(100, 100, 100)');
 
 					g.closeViewport();
 			//		g.rect(i.left + padding.left, i.bottom + padding.bottom, b.width - (i.right + i.left + padding.right + padding.left), b.height - (i.bottom + i.top + padding.bottom + padding.top)).stroke('rgb(255, 0, 0)');

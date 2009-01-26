@@ -203,14 +203,15 @@
 
 				var pa = axis({from: -Math.PI, to: Math.PI, ticks: {major: 8}, label: 'hello'});
 
-				console.log(va);
+
 
 				var ch = chart({/*polar: pa,*/ horizontal: ha, vertical: va}, 'Sales 2008', 'Monthly average');
 
 				ch.bounds(ch.preferredSize());
-				//ch.bounds({x: 10, y: 10});
 				ch.doLayout();
 				ch.draw(g);
+
+				
 /*
 				console.log(ch.insets());
 
@@ -233,11 +234,11 @@
 		<style>
 		
 			#canvas-context {
-				border: 1px solid black;
+				border: 0px solid black;
 			}
 		</style>
 	</head>
 	<body onload="draw();">
-		<canvas id="canvas-context" width="600" height="600"></canvas>
+		<canvas id="canvas-context" width="300" height="200"></canvas>
 	</body>
 </html>

@@ -125,8 +125,8 @@ var graphics = function () {
 					d = transform_length(width, height);
 				x = round(p.e(1));
 				y = round(p.e(2));
-				width = Math.ceil(d.e(1));
-				height = Math.ceil(d.e(2));
+				width = round(d.e(1));
+				height = round(d.e(2));
 	
 				context.beginPath();
 				context.rect(x, y, width, height);
