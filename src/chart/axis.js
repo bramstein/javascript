@@ -71,11 +71,11 @@ var axis = function () {
 				minor: [],
 				labels: []
 			},
-			from, to, start, end, tmp = [];
+			from, to, tmp = [];
 
 		if (options.from === undefined || options.to === undefined || Interval.empty(options)) {
-			from = start = 1;
-			to = end = 0;
+			from = 1;
+			to = 0;
 			if (options.categories !== undefined && Object.isArray(options.categories) && options.categories.length > 0) {
 				ticks.major = options.categories.map(function (v) {
 					return v.toString();
@@ -116,9 +116,6 @@ var axis = function () {
 			else {
 				// minor ticks are optional, so we don't throw an error.
 			}
-
-			start = options.from;
-			end = options.to;
 
 			if (ticks.major.isEmpty()) {
 				if (ticks.minor.isEmpty()) {
@@ -166,9 +163,7 @@ var axis = function () {
 			ticks: ticks,
 			label: label,
 			from: from,
-			to: to,
-			start: start,
-			end: end
+			to: to
 		};
 	}.defaults({});
 }();

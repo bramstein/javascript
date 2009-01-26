@@ -42,15 +42,11 @@ var canvas = function () {
 			range = { 
 				horizontal: {
 					from: 0,
-					to: 1,
-					start: 0,
-					end: 1
+					to: 1
 				},
 				vertical: {
 					from: 0,
-					to: 1,
-					start: 0,
-					end: 0
+					to: 1
 				}
 			},
 
@@ -103,9 +99,7 @@ var canvas = function () {
 			range[n] = !Interval.empty(axes[n]) ? {
 				from: axes[n].from,
 				to: axes[n].to,
-				numeric: true,
-				start: axes[n].start,
-				end: axes[n].end
+				numeric: true
 			} : range[n];
 		});
 
@@ -140,7 +134,7 @@ var canvas = function () {
 			// Clean up the draw options
 			options.draw[axis] = options.draw[axis] || {};
 			options.draw[axis].grid = options.draw[axis].grid === true || false;
-			['tight', 'axis', 'labels', 'ticks'].forEach(function (type) {
+			['axis', 'labels', 'ticks'].forEach(function (type) {
 				if (!Object.isBoolean(options.draw[axis][type])) {
 					options.draw[axis][type] = true;
 				}
@@ -225,26 +219,24 @@ var canvas = function () {
 
 					if (range.horizontal.numeric) {
 						if (s !== offset['vertical'] || range['vertical'].from >= 0 || range['vertical'].to <= 0) {
-							if (!options.draw.horizontal.tight || (s > range.horizontal.start && s < range.horizontal.end)) {
-								if (options.draw.vertical.grid && cartesian) {
-									g.line(s, options.draw.vertical.tight ? range['vertical'].start : range.vertical.from, s, options.draw.vertical.tight ? range['vertical'].end : range.vertical.to).
-									stroke(defaults.color.grid);
-								}
-				
-								if (options.draw.horizontal.ticks) {
-									g.line(s, offset['horizontal'], s, offset['horizontal'] + tick['horizontal'] * -sign['horizontal']).
-									stroke(defaults.color.axes);
-								}
-						
-								if (options.draw.horizontal.labels) {
-									g.text(s, offset['horizontal'] + (tick['horizontal'] * 1.5) * -sign['horizontal'], axes.horizontal.ticks.labels[i] || s, {
-										textAlign: 'center', 
-										textBaseLine: (Math.isNegative(sign['horizontal']) ? 'bottom' : 'top'),
-										background: defaults.color.background.data,
-										font: defaults.font.labels
-									}).
-									fill(defaults.color.text);
-								}
+							if (options.draw.vertical.grid && cartesian) {
+								g.line(s, range.vertical.from, s, range.vertical.to).
+								stroke(defaults.color.grid);
+							}
+			
+							if (options.draw.horizontal.ticks) {
+								g.line(s, offset['horizontal'], s, offset['horizontal'] + tick['horizontal'] * -sign['horizontal']).
+								stroke(defaults.color.axes);
+							}
+					
+							if (options.draw.horizontal.labels) {
+								g.text(s, offset['horizontal'] + (tick['horizontal'] * 1.5) * -sign['horizontal'], axes.horizontal.ticks.labels[i] || s, {
+									textAlign: 'center', 
+									textBaseLine: (Math.isNegative(sign['horizontal']) ? 'bottom' : 'top'),
+									background: defaults.color.background.data,
+									font: defaults.font.labels
+								}).
+								fill(defaults.color.text);
 							}
 						}
 					}
@@ -276,28 +268,26 @@ var canvas = function () {
 					if (range.vertical.numeric) {
 						// don't draw the tick or the label where the axes cross
 						if (s !== offset['horizontal'] || range['horizontal'].from >= 0 || range['horizontal'].to <= 0) { 
-							if (!options.draw.vertical.tight || (s > range.vertical.start && s < range.vertical.end)) {
-								if (options.draw.horizontal.grid && cartesian) {
-									g.line(options.draw.horizontal.tight ? range['horizontal'].start : range.horizontal.from, s, options.draw.horizontal.tight ? range['horizontal'].end : range.horizontal.to, s).
-									stroke(defaults.color.grid);
-								}
+							if (options.draw.horizontal.grid && cartesian) {
+								g.line(range.horizontal.from, s, range.horizontal.to, s).
+								stroke(defaults.color.grid);
+							}
 
-								if (options.draw.vertical.ticks) {
-									g.line(offset['vertical'], s, offset['vertical'] + tick['vertical'] * -sign['vertical'], s).
-									stroke(defaults.color.axes);
-								}
+							if (options.draw.vertical.ticks) {
+								g.line(offset['vertical'], s, offset['vertical'] + tick['vertical'] * -sign['vertical'], s).
+								stroke(defaults.color.axes);
+							}
 
-								if (options.draw.vertical.labels) {
-									g.text(
-										offset['vertical'] + (tick['vertical'] * 1.5) * -sign['vertical'], s, axes.vertical.ticks.labels[i] || s, {
-											textAlign: (Math.isNegative(sign['vertical']) ? 'left' : 'right'), 
-											textBaseLine: 'middle',
-											background: defaults.color.background.data,
-											font: defaults.font.labels
-										}
-									).
-									fill(defaults.color.text);
-								}
+							if (options.draw.vertical.labels) {
+								g.text(
+									offset['vertical'] + (tick['vertical'] * 1.5) * -sign['vertical'], s, axes.vertical.ticks.labels[i] || s, {
+										textAlign: (Math.isNegative(sign['vertical']) ? 'left' : 'right'), 
+										textBaseLine: 'middle',
+										background: defaults.color.background.data,
+										font: defaults.font.labels
+									}
+								).
+								fill(defaults.color.text);
 							}
 						}
 					}
@@ -312,33 +302,6 @@ var canvas = function () {
 					}
 				});
 
-
-				if (options.draw.horizontal.tight) {
-					['start', 'end'].forEach(function (p) {
-						g.text(range.horizontal[p], offset['horizontal'] + (tick['horizontal'] * 1.5) * -sign['horizontal'], (p === 'start' ? axes.horizontal.ticks.labels[0] : axes.horizontal.ticks.labels[axes.horizontal.ticks.major.length - 1]) || range.horizontal[p], {
-							textAlign: 'center', 
-							textBaseLine: (Math.isNegative(sign['horizontal']) ? 'bottom' : 'top'),
-							background: defaults.color.background.data,
-							font: defaults.font.labels
-						}).
-						fill(defaults.color.text);
-					});
-				}
-
-				if (options.draw.vertical.tight) {
-					['start', 'end'].forEach(function (p) {
-						g.text(
-							offset['vertical'] + (tick['vertical'] * 1.5) * -sign['vertical'], range.vertical[p], (p === 'start' ? axes.vertical.ticks.labels[0] : axes.vertical.ticks.labels[axes.vertical.ticks.major.length - 1]) || range.vertical[p], {
-								textAlign: (Math.isNegative(sign['vertical']) ? 'left' : 'right'), 
-								textBaseLine: 'middle',
-								background: defaults.color.background.data,
-								font: defaults.font.labels
-							}
-						).
-						fill(defaults.color.text);
-					});
-				}
-
 				// Vertical minor ticks
 				if (options.draw.vertical.ticks) {
 					axes.vertical.ticks.minor.forEach(function (i) {
@@ -352,9 +315,9 @@ var canvas = function () {
 				// The base horizontal axis
 				if (options.draw.horizontal.axis) {
 					g.line(
-						options.draw.horizontal.tight ? range.horizontal.start : range['horizontal'].from, 
+						range['horizontal'].from, 
 						offset['horizontal'],
-						options.draw.horizontal.tight ? range.horizontal.end : range['horizontal'].to,
+						range['horizontal'].to,
 						offset['horizontal']
 					).stroke(defaults.color.axes);
 				}
@@ -363,9 +326,9 @@ var canvas = function () {
 				if (options.draw.vertical.axis) {
 					g.line(
 						offset['vertical'],
-						options.draw.vertical.tight ? range.vertical.start : range['vertical'].from,
+						range['vertical'].from,
 						offset['vertical'],
-						options.draw.vertical.tight ? range.vertical.end : range['vertical'].to
+						range['vertical'].to
 					).stroke(defaults.color.axes);
 				}
 			},
