@@ -1,5 +1,4 @@
-
-/*global defaults*/
+/*global defaults, font*/
 (function () {
 	function stroke(context, str) {
 		context.beginPath();

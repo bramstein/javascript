@@ -7,7 +7,7 @@
  * closePath().
  * fill();
  */
-/*global document, $V, $M, Interval, defaults*/
+/*global document, $V, $M, Interval, defaults, font*/
 var graphics = function () {
 	var path = {};
 	var shape = {};
@@ -18,6 +18,17 @@ var graphics = function () {
 	 */
 	function toCartesian(v) {
 		return $V([v.e(1) * Math.cos(v.e(2)), v.e(1) * Math.sin(v.e(2)), 1]);
+	}
+
+	/**
+	 * Rounds numbers to the nearest .5 number.
+	 */
+	function round(n) {
+		var t = Math.roundTo(n, 0.5);
+		if (Math.round(n) === t) {
+			t -= 0.5;
+		}
+		return t;
 	}
 
 	return function (identifier) {
@@ -122,14 +133,6 @@ var graphics = function () {
 				context.closePath();
 				return shape;
 			};
-
-			function round(n) {
-				var t = Math.roundTo(n, 0.5);
-				if (Math.round(n) === t) {
-					t -= 0.5;
-				}
-				return t;
-			}
 
 			shape.line = function (x1, y1, x2, y2) {
 				var p1 = transform(x1, y1),

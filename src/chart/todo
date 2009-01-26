@@ -1,13 +1,16 @@
--line breaks in labels
 -axis label
 -trend lines
 -reference lines
--legend
--fill color for data region/surrounding area
--non-axis based grid (later)
--option to disable drawing of axis labels
 -add legend
 -test composite chart
+-change category range to 1-n where n is the number of categories (simplifies rendering)
+-add option to draw range frames instead
++added option to disable drawing of axis line
++added options to disable drawing of axis labels, ticks and grid
++cleaned up canvas options
++removed graphics from object constructor (now passed as parameter to the draw methods)
++added a fill color for data region/surrounding area
++cleaned up minimum and preferred size code
 +added defaults fonts
 +changed all font caluclations to use the new font metrics
 +changed font size to use HTML font metrics (more reliable and accurate)
@@ -52,6 +55,8 @@
 +test vertical category axis (fixed, working now).
 +add endPath and closePath and remove stroke and fill from path.
 +remove itransform & itransform_length from graphics.
+-line breaks in labels
+-non-axis based grid
 -look into alternative text API's for IE and Opera
 -look into vertical tick lengths again (slightly off, might be caused by rounding)
 -look into SVG again (Rapheal library)

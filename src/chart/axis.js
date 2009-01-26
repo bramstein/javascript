@@ -71,11 +71,11 @@ var axis = function () {
 				minor: [],
 				labels: []
 			},
-			from, to, tmp = [];
+			from, to, start, end, tmp = [];
 
 		if (options.from === undefined || options.to === undefined || Interval.empty(options)) {
-			from = 1;
-			to = 0;
+			from = start = 1;
+			to = end = 0;
 			if (options.categories !== undefined && Object.isArray(options.categories) && options.categories.length > 0) {
 				ticks.major = options.categories.map(function (v) {
 					return v.toString();
@@ -85,7 +85,7 @@ var axis = function () {
 				throw new TypeError('A category axis must at least contain one category.');
 			}
 		}
-		else {
+		else if (options.from !== undefined && options.to !== undefined) {
 			if (options.ticks !== undefined && options.ticks.major !== undefined && typeof options.ticks.major === 'number' && options.from !== undefined && options.to !== undefined) {
 				ticks.major = calculateTicks(options, options.ticks.major);
 			}
@@ -117,6 +117,9 @@ var axis = function () {
 				// minor ticks are optional, so we don't throw an error.
 			}
 
+			start = options.from;
+			end = options.to;
+
 			if (ticks.major.isEmpty()) {
 				if (ticks.minor.isEmpty()) {
 					// unspecified, so we assume the number of ticks is set to 10
@@ -143,6 +146,9 @@ var axis = function () {
 				});
 			}
 		}
+		else {
+			throw new TypeError('A numeric axes should contain a from and to property.');
+		}
 
 		if (options.label !== undefined) {
 			label = options.label.toString();
@@ -160,7 +166,9 @@ var axis = function () {
 			ticks: ticks,
 			label: label,
 			from: from,
-			to: to
+			to: to,
+			start: start,
+			end: end
 		};
 	}.defaults({});
 }();

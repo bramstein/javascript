@@ -1,10 +1,9 @@
-
-/*global bounds, insets, maximum*/
+/*global bounds, insets, maximum, font, defaults*/
 var title = function () {
-	return function (graphics, options) {
+	return function (options) {
 		var that = {},
 			title = options.title,
-			subtitle = options.subtitle;
+			subtitle = options.subtitle || "";
 
 		if (!title || title.length === 0) {
 			throw new TypeError('A title must contain at least one character.');
@@ -33,12 +32,12 @@ var title = function () {
 					height: titleSize.height + subtitleSize.height + (subtitleSize.height * 0.2) + insets.top + insets.bottom
 				};
 			},
-			draw: function () {
+			draw: function (g) {
 				var b = that.bounds();
-				graphics.beginViewport(b.x, b.y, b.width, b.height);
-				graphics.text(b.width / 2, b.height - that.insets().top, title, {textAlign: 'center', textBaseLine: 'top', font: defaults.font.title}).fill(defaults.color.title);
-				graphics.text(b.width / 2, that.insets().bottom, subtitle, {textAlign: 'center', textBaseLine: 'bottom', font: defaults.font.subtitle}).fill(defaults.color.subtitle);
-				graphics.closeViewport();
+				g.beginViewport(b.x, b.y, b.width, b.height);
+				g.text(b.width / 2, b.height - that.insets().top, title, {textAlign: 'center', textBaseLine: 'top', font: defaults.font.title}).fill(defaults.color.title);
+				g.text(b.width / 2, that.insets().bottom, subtitle, {textAlign: 'center', textBaseLine: 'bottom', font: defaults.font.subtitle}).fill(defaults.color.subtitle);
+				g.closeViewport();
 			//	graphics.rect(b.x, b.y, b.width, b.height).stroke('rgb(0, 255, 0)');
 			}
 		});

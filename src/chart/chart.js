@@ -1,19 +1,30 @@
 
-/*global bounds, insets, graphics, jLayout, container, title, canvas*/
+/*global bounds, insets, graphics, jLayout, container, title, canvas, defaults*/
 var chart = function () {
-	return function (g, axes, titleString, subtitleString) {
-		var	c = canvas(g, {
+	return function (axes, titleString, subtitleString) {
+		var	c = canvas({
 				axes: axes,
 				ratio: {
 					horizontal: 1,
 					vertical: 1
 				},
-				grid: true
+				draw: {
+					horizontal: {
+						grid: true,
+						labels: true,
+						tight: false
+					},
+					vertical: {
+						tight: true,
+						grid: true,
+						tight: false
+					}
+				}
 			}),
 
-			t = title(g, {
+			t = title({
 				title: titleString,
-				subtitle: subtitleString
+		/*		subtitle: subtitleString*/
 			}),
 
 			layout = jLayout.border({
@@ -23,14 +34,14 @@ var chart = function () {
 				south: t
 			});
 
-//		t.insets({top: 5, bottom: 5});
-
 		var that = {
-			draw: function () {
+			draw: function (g) {
 				var b = that.bounds();
-				g.beginViewport(b.x, b.y, b.width, b.height);
-				c.draw();
-				t.draw();
+				g.beginViewport(b.x, b.y, b.width, b.height).
+					rect(0, 0, b.width, b.height).
+					fill(defaults.color.background.chart);
+				c.draw(g);
+				t.draw(g);
 				g.closeViewport();
 			//	g.rect(b.x, b.y, b.width, b.height).stroke('rgb(0,0,255)');
 			}

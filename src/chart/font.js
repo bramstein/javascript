@@ -1,4 +1,4 @@
-
+/*global document*/
 /**
  * This is a bit of a compromise, none of the canvas
  * text APIs return valid font metrics, so we abuse
