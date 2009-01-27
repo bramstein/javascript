@@ -24,7 +24,7 @@ var chart = function () {
 
 			t = title({
 				title: titleString,
-				subtitle: subtitleString
+			//	subtitle: subtitleString
 			}),
 
 			layout = jLayout.border({

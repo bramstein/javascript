@@ -11,8 +11,8 @@ var defaults = {
 			size: 11
 		},
 		title: {
-			size: 12,
-			weight: 'bold'
+			size: 11,
+//			weight: 'bold'
 		},
 		subtitle: {
 			size: 11,
