@@ -31,14 +31,6 @@ var graphics = function () {
 		return t;
 	}
 
-	function roundUp(n) {
-		var t = Math.roundTo(n, 0.5);
-		if (Math.round(n) === t) {
-			t += 0.5;
-		}
-		return t;
-	}
-
 	return function (identifier) {
 		var context = null,
 			canvas = document.getElementById(identifier),
@@ -131,32 +123,17 @@ var graphics = function () {
 			shape.rect = function (x, y, width, height) {
 				var p = transform(x, y),
 					d = transform_length(width, height);
-				x = round(p.e(1));
-				y = round(p.e(2));
-				width = Math.round(d.e(1)) - 1;
-				height = Math.round(d.e(2)) - 1;
+				x = p.e(1);
+				y = p.e(2);
+				width = d.e(1);
+				height = d.e(2);
 
-				console.log(x + " " + y);
-				console.log(width + " " + height);	
-				context.lineCap = 'square';
+				// we don't use the round functions here because a filled
+				// rectangle is already drawn crisp. If the rectangular path
+				// is stroked lines are however blurred. Fortunately we rarely
+				// draw stroked rectangles.
 				context.beginPath();
-				// left
-				context.moveTo(roundUp(x), roundUp(y));
-				context.lineTo(roundUp(x), round(y + (height - 1)));
-
-				// top
-			//	context.moveTo(x, round(y + (height - 1)));
-				context.lineTo(round(x + (width - 1)), round(y + (height - 1)));
-
-				// right
-			//	context.moveTo(round(x + (width - 1)), y);
-				context.lineTo(round(x + (width - 1)), round(y + (height - 1)));
-
-				// bottom
-				//context.moveTo(x, roundUp(y));
-				context.lineTo(round(x + (width - 1)), roundUp(y));
-
-			//	context.rect(x, y, width, height);
+				context.rect(Math.round(x), Math.round(y), Math.round(width), Math.round(height));
 				context.closePath();
 				return shape;
 			};

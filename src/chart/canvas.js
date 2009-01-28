@@ -343,7 +343,7 @@ var canvas = function () {
 						rect(range.horizontal.from, range.vertical.from, Interval.width(range.horizontal), Interval.width(range.vertical)).
 						fill(defaults.color.background.data);
 						that.drawAxes(g);
-/*
+
 						g.rect(0.25, 0, 0.50, 4500).fill('rgb(100, 100, 100)');
 						g.rect(1.25, 0, 0.50, 2567).fill('rgb(100, 100, 100)');
 						g.rect(2.25, 0, 0.50, 813).fill('rgb(100, 100, 100)');
@@ -351,8 +351,8 @@ var canvas = function () {
 						g.rect(4.25, 0, 0.50, 1100).fill('rgb(100, 100, 100)');
 						g.rect(5.25, 0, 0.50, 6450).fill('rgb(100, 100, 100)');
 						g.rect(6.25, 0, 0.50, 9451).fill('rgb(100, 100, 100)');
-*/
-						g.rect(0, 0, 3, 8000).fill('rgb(255, 0, 0)');
+
+					//	g.rect(0, 0, 3, 8000).fill('rgb(255, 0, 0)');
 
 					g.closeViewport();
 			//		g.rect(i.left + padding.left, i.bottom + padding.bottom, b.width - (i.right + i.left + padding.right + padding.left), b.height - (i.bottom + i.top + padding.bottom + padding.top)).stroke('rgb(255, 0, 0)');
