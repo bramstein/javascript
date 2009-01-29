@@ -1,3 +1,48 @@
+Nominal Comparison
+==================
+Goal:
+To compare quantitative values for one or more categories with possible sub-categories.
+
+Design solutions:
+* sub-categories -> color encoded columns or bars
+* many categories -> small-multiples / series
+* few categories & many items -> bar chart
+* few categories & few items -> column chart
+
+Time series
+===========
+Goal:
+To display a relationship between quantitative values belonging to one or more categories and subdivisions of time.
+
+Design solutions:
+* few time subdivisions & many categories -> line chart with a line for each category
+* few time subdivisions & few categories -> column chart
+* many time subdivisions -> line chart
+
+Part-to-Whole (Composition)
+===========================
+
+
+Distribution
+============
+Goal:
+To display the distribution of quantitative values over a range.
+
+Design solutions:
+* single variable & few values -> histogram
+* single variable & many values -> line histogram
+* two variables -> scatter chart
+
+Correlation
+===========
+Goal:
+To display the correlation between a set of quantitative values
+
+Design solutions:
+* two variables -> scatter chart
+* three variables -> bubble chart
+
+----------------------------------------------------------------
 
 { 'category': [1, 2, 3, 4] }
 
