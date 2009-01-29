@@ -1,4 +1,85 @@
 
+{ 'category': [1, 2, 3, 4] }
+
+var data = [
+	{ 'category': [
+			{ 'class': [1, 2, 3, 4] },
+			{ 'class': [2, 2, 1, 2] }
+		]
+	}
+]
+
+var data = [
+	{ 'Sales': [2, 4, 1] },
+	{ 'Engineering': [2, 3, 1] }
+];
+
+// simple data without labels
+var data = [1, 7, 5, 3];
+
+// simple multi dimensional data
+var data = [
+	[1, 7, 5, 3],
+	[2, 5, 1, 4]
+];
+
+// simple data with categories
+var data = [
+	{ 'Sales': [2, 4, 1, 3] },
+	{ 'Engineering': [2, 3, 2, 4] }
+];
+
+// simple data with nested catagories
+var data = [
+	{ '2001': [
+		{ 'Sales': [2, 4, 1, 3] },
+		{ 'Engineering': [2, 3, 2, 4] }
+	]},
+	{ '2002': [
+		{ 'Sales': [3, 5, 1, 3] },
+		{ 'Engineering': [2, 4, 1, 5] }
+	]}
+];
+
+
+// a bar chart is 
+
+
+/**
+ * Data format should be:
+ * var data = [
+ *	 {'Jan': 1},
+ *   {'Feb': 7},
+ *   {'Mar': 5},
+ *   {'Apr': 3}
+ * };
+ * var data = [1, 7, 5, 3];
+ * or:
+ * var multiCategoryData = [
+ *   {'Jan': [12, 15, 20] }
+ * ];
+ * var multiCategoryData = [
+ *   [12, 15, 20],
+ *   [8, 2, 15],
+ *   [20, 22, 18],
+ *   [27, 12, 15]
+ * ];
+ *
+ * Options can be:
+ * var options = {
+ *    range: {
+ *       from: 0,
+ *       to: 10
+ *    },
+ *    orientation: 'vertical|horizontal',
+ *    type: 'stack|group'
+ * };
+ */
+var column = function (data, meta, options) {
+	
+}();
+
+
 Most other online chart software deals only with two dimensional data, that is, its basic data types are pairs of x and y values. This project on the other hand stores its data in multiple dimensions, often called a data space. This leaves further room for expansion to, for example, project multidimensional dataset in two or three dimensions. Labels and hierarchical categories---or groupings---are described as meta-data.
 
 var data = 
