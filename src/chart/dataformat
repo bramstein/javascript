@@ -1,13 +1,25 @@
 Nominal Comparison
 ==================
 Goal:
-To compare quantitative values for one or more categories with possible sub-categories.
+To compare quantitative values for one or more categories.
+
 
 Design solutions:
 * sub-categories -> color encoded columns or bars
 * many categories -> small-multiples / series
 * few categories & many items -> bar chart
 * few categories & few items -> column chart
+
+Example:
+// categories
+var simple = category('Sales', 'Engineering', 'Marketing');
+simple.data(10, 12, 8);
+
+// categories with sub categories
+var bonds = category('Treasury Bonds', 'AAA Municipal Bonds');
+var years = category('Two-Year Yields', 'Ten-Year Yields');
+years.data(bonds.data(1.1, 3), bonds.data(3.1, 5.7));
+
 
 Time series
 ===========
@@ -18,6 +30,16 @@ Design solutions:
 * few time subdivisions & many categories -> line chart with a line for each category
 * few time subdivisions & few categories -> column chart
 * many time subdivisions -> line chart
+
+Example:
+var d = category('Sales', 'Engineering');
+var t = time(2001, 2002, 2003, 2004);
+t.data(
+	d.data(2, 2.2), // 2001
+	d.data(3, 5),   // 2002
+	d.data(1, 5),   // 2003
+	d.data(10, 2)   // 2004
+);
 
 Part-to-Whole (Composition)
 ===========================
@@ -30,19 +52,74 @@ To display the distribution of quantitative values over a range.
 
 Design solutions:
 * single variable & few values -> histogram
+	- var data =  [1, 3, 3, 4, 7, 5, 3, 2, 1];
+	- var label = 
 * single variable & many values -> line histogram
 * two variables -> scatter chart
+
+var v = Variable(1);
+v.data(1, 3, 3, 4, 7, 5, 3, 2, 1);
+
+var v = Variable(2);
+v.data(
+	[1, 1],
+	[2, 1],
+	[2, 1],
+	[1, 3],
+	[2, 1]
+);
 
 Correlation
 ===========
 Goal:
-To display the correlation between a set of quantitative values
+To display the correlation between a set of quantitative values.
 
 Design solutions:
 * two variables -> scatter chart
+	var data = [
+		Category(name, []),
+		Category(name, [])
+	];
+
+	var data = [
+		[10, 12],
+		[11, 9],
+		[15, 8]
+	];
 * three variables -> bubble chart
+	var data = [
+		[10, 12, 3],
+		[11, 9, 2],
+		[15, 9, 4]
+	];
 
 ----------------------------------------------------------------
+categories (categories are nominal and unordered---although visually we would like to have a consistent order)
+sub categories
+quantitative values
+time subdivisions (time is an ordered set of categories)
+
+Basic data types:
+Category
+Time
+Variable
+
+Other data types to consider:
+range / intervals
+functions
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 { 'category': [1, 2, 3, 4] }
 
