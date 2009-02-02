@@ -100,9 +100,9 @@ quantitative values
 time subdivisions (time is an ordered set of categories)
 
 Basic data types:
-Category
-Time
-Variable
+Category([string]).data([number|data]) -> data
+Time([year]).data([number|data]) -> data
+Variable(number).data([number]) -> data
 
 Other data types to consider:
 range / intervals

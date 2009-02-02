@@ -14,6 +14,7 @@
 		<script type="text/javascript" src="../lib/sylvester.js"></script>
 		<script type="text/javascript" src="chart/defaults.js"></script>
 		<script type="text/javascript" src="chart/properties.js"></script>
+		<script type="text/javascript" src="chart/data.js"></script>
 		<script type="text/javascript" src="chart/interval.js"></script>
 		<script type="text/javascript" src="chart/coordinate.js"></script>
 		<script type="text/javascript" src="chart/axis.js"></script>
@@ -24,176 +25,130 @@
 		<script type="text/javascript" src="chart/composite-chart.js"></script>
 		<script type="text/javascript" src="chart/canvas.js"></script>
 		<script type="text/javascript" src="chart/title.js"></script>
+		<script type="text/javascript" src="chart/chart.scatter.js"></script>
 
 		<script type="text/javascript">
 		<![CDATA[
+			function anscombe() {
+				var g = graphics('scatter-anscombe');
+
+				var categories = data.category('Set 1', 'Set 2', 'Set 3', 'Set 4');
+				var v = data.variable(2);
+				var anscombe = [
+					[
+						[10, 8.04],
+						[8, 6.95],
+						[13, 7.58],
+						[9, 8.81],
+						[11, 8.33],
+						[14, 9.96],
+						[6, 7.24],
+						[4, 4.26],
+						[12, 10.84],
+						[7, 4.82],
+						[5, 5.68]
+					],
+					[
+						[10, 9.14],
+						[8, 8.14],
+						[13, 8.74],
+						[9, 8.77],
+						[11, 9.26],
+						[14, 8.1],
+						[6, 6.13],
+						[4, 3.1],
+						[12, 9.13],
+						[7, 7.26],
+						[5, 4.74]
+					],
+					[
+						[10, 7.46],
+						[8, 6.77],
+						[13, 12.74],
+						[9, 7.11],
+						[11, 7.81],
+						[14, 8.84],
+						[6, 6.08],
+						[4, 5.39],
+						[12, 8.15],
+						[7, 6.42],
+						[5, 5.73]
+					],
+					[
+						[8, 6.58],
+						[8, 5.76],
+						[8, 7.71],
+						[8, 8.84],
+						[8, 8.47],
+						[8, 7.04],
+						[8, 5.25],
+						[19, 12.5],
+						[8, 5.56],
+						[8, 7.91],
+						[8, 6.89]
+					]
+				];
+
+				var d = categories.data(
+					v.data.apply(null, anscombe[0]),
+					v.data.apply(null, anscombe[1]),
+					v.data.apply(null, anscombe[2]),
+					v.data.apply(null, anscombe[3])
+				);
+
+				var plot = defaults.type.scatter(d, { title: 'Anscombe\'s Quartet of Datasets' });
+
+				console.log(plot.preferredSize());
+
+				plot.bounds(plot.preferredSize());
+				plot.doLayout();
+				plot.draw(g);
+			}
+
+			function challenger() {
+				var g = graphics('scatter-challenger');
+				var challenger = [
+					[11.9, 11],
+					[14.1, 4],
+					[14.2, 4],
+					[17.1, 2],
+					[19.1, 0],
+					[19.2, 0],
+					[19.3, 0],
+					[19.4, 0],
+					[19.5, 0],
+					[20.1, 0],
+					[21.1, 4],
+					[21.2, 0],
+					[21.3, 4],
+					[21.4, 0],
+					[21.5, 0],
+					[22.1, 0],
+					[23.2, 0],
+					[24.3, 4],
+					[24.4, 0],
+					[24.5, 0],
+					[26.1, 0],
+					[26.2, 0],
+					[27.1, 0]
+				];
+				var v = data.variable(2);
+				var d = v.data.apply(null, challenger);
+				var plot = defaults.type.scatter(d, { title: 'Temperature vs Damage Index' });
+				console.log(plot.preferredSize());
+				plot.bounds(plot.preferredSize());
+				plot.doLayout();
+				plot.draw(g);
+			}
+
+			function scatter() {
+				anscombe();
+				challenger();
+			}
+
+			function draw() {
+				font = font();
 /*
-			var data = [];
-			var length = 100;
-			for (var i = 0; i < length; i += 1) {
-				if (i % 523 === 0 || i % 245 === 0) {
-					data[i] = Math.randomInt(0,5);
-				}  
-				else {
-					data[i] = Math.randomInt(0,1);
-				}
-			}
-
-			
-
-			var ctx = null;
-
-			function draw() {
-
-				var canvas = document.getElementById('canvas-context');
-
-				if (canvas.getContext) {
-					ctx = canvas.getContext('2d');
-
-					ctx.lineWidth = 1;					
-					ctx.save();
-
-					ctx.scale(1000/length, 15);
-					for (var i = 0; i < length; i += 1) {
-						ctx.lineTo(i, data[i]);
-					}
-					ctx.restore();
-					ctx.stroke();
-				}
-			}
-*/
-/*
-			var xrange = {from: -10, to: 10};
-			var yrange = {from: 0, to: 20};
-			var scalex, scaley;
-			var pixelSizeX = 0;
-			var pixelSizeY = 0;
-
-			function memo(f) {  
-				return function () {  
-					var args = [arguments[0].from, arguments[0].to];  
-					f.memo = f.memo || {};  
-					if (args in f.memo) {
-						return f.memo[args];
-					}
-					else {
-						return f.memo[args] = f.apply(this, arguments);
-						
-					}
-					//return (args in f.memo)? f.memo[args] : f.memo[args] = f.apply(this, args);  
-				};  
-			}  
-
-			var mcos = memo(Interval.cos);
-
-			function f(x, y) {
-			//	return Interval.sin(x.divide(32)).multiply(50).add(y).add(-100);
-				var s = Interval.sin({from: x.from / 32, to: x.to / 32});
-				s.from *= 50;
-				s.to *= 50;
-			
-				s = Interval.add(s, y);
-				
-				s.from -= 100;
-				s.to -= 100;
-
-				return s;
-				
-			//	return x.multiply(x).add(y).add(-100);
-			}
-
-			// to translate back we add -x.from to both coordinates
-
-			// to scale we multiply with a scaling factor and (1 / scaling factor) to scale back
-			// the scaling factor is the destiny vector divided by the original vector
-			// to go from 1 to 100, you need a 100 / 1 = 100 scaling factor.
-
-
-			function fillRect(x, y, w, h, data, r, g, b) {
-				if (x.from >= 0 && x.to <= w && y.from >= 0 && y.to <= h) {
-					var yf = Math.round(y.from);
-					var yt = Math.round(y.to);
-					var xf = Math.round(x.from);
-					var xt = Math.round(x.to);
-
-					for (var i = yf; i < yt; i += 1) {
-						for (var j = xf; j < xt; j += 1) {
-							var p = (i * w + j) * 4;
-							data[p] = r;
-							data[p + 1] = g;
-							data[p + 2] = b;
-							data[p + 3] = 255;
-						}
-					}
-				}
-			}
-
-			function plotPixel(x, y, w, h, data, r, g, b) {
-				var i = (y * w + x) * 4;
-				data[i] = r;
-				data[i+1] = g;
-				data[i+2] = b;
-				data[i+3] = 255;
-			}
-
-			function quadtree(data, x, y, w, h) {
-				var F = f(x, y);
-
-				if (F.from <= 0 && 0 <= F.to) {
-					if (Interval.width(x) < 1 && Interval.width(y) < 1) {
-						var cx = Math.floor((x.from + x.to) / 2);
-						var cy = Math.floor((y.from + y.to) / 2);
-					
-					//	fillRect(x, y, w, h, data, 0, 0, 255);
-						plotPixel(cx, cy, w, h, data, 255, 0, 0);
-					}
-					else {
-						subdivide(data, x, y, w, h);
-					}
-				}
-				else {
-				//	fillRect(x, y, w, h, data, 0, 255, 0);
-				}
-			}
-
-		
-
-			function subdivide(data, x, y, w, h) {
-				var xk = (x.from + x.to) / 2;
-				var yk = (y.from + y.to) / 2;
-
-				quadtree(data, {from: x.from, to: xk}, {from: y.from, to: yk}, w, h);
-				quadtree(data, {from: x.from, to: xk}, {from: yk, to: y.to}, w, h);
-				quadtree(data, {from: xk, to: x.to}, {from: yk, to: y.to}, w, h);
-				quadtree(data, {from: xk, to: x.to}, {from: y.from, to: yk}, w, h);
-			}
-
-			function draw() {
-
-				var canvas = document.getElementById('canvas-context');
-
-				if (canvas.getContext)
-				{
-					ctx = canvas.getContext('2d');
-
-				//	ctx.fillStyle = "rgb(0, 0, 255)";
-				//	ctx.fillRect(0,0, canvas.width, canvas.height);
-
-					var image = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-					var w = image.width, 
-						h = image.height,
-						data = image.data;
-
-
-					quadtree(data, {from: 0, to: w}, {from: 0, to: h}, w, h);
-
-					ctx.putImageData(image, 0, 0);
-				}
-			}
-*/
-
-			function draw() {
 				var g = graphics('canvas-context');
 
 				var ha = axis({from: -3, to: 8.5, ticks: {major: 10, minor: 0}, label: 'Ranking'});
@@ -205,40 +160,48 @@
 
 
 
-				var ch = chart({/*polar: pa,*/ horizontal: ha, vertical: va}, 'Sales 2008', 'Monthly average');
+				var ch = chart({ horizontal: ha, vertical: va}, {title: 'Sales 2008'});
 
-				ch.bounds(ch.preferredSize());
+				ch.bounds({width: 300, height: 200});
 				ch.doLayout();
 				ch.draw(g);
-
-				
-/*
-				console.log(ch.insets());
-
-				var ha1 = axis({from: 0, to: 20000, ticks: {major: 5}});
-				var va1 = axis({categories: ['Sales', 'Engineering', 'HR', 'Marketing']});
-
-				var ch1 = chart(g, {horizontal: ha1, vertical: va1}, 'Sales 2008', 'per department');
-
-
-				ch1.bounds(ch1.preferredSize());
-				ch1.bounds({x: 20, y: 320});
-				ch1.doLayout();
-				ch1.draw();
-
-				
 */
+				scatter();
 			}
 		]]>
 		</script>
 		<style>
-		
-			#canvas-context {
-				border: 0px solid black;
+			html {
+				background-color: grey;
+				margin: 0em;
+				padding: 0em;
+			}
+
+			body {
+				margin-left: 5em;
+				margin-right: 5em;
+				margin-top: 0em;
+				padding-top: 2em;
+				padding-bottom: 2em;
+				padding-left: 4em;
+				padding-right: 4em;
+				background-color: white;
+			}
+
+			div {
+				margin-bottom: 2em;
 			}
 		</style>
 	</head>
 	<body onload="draw();">
-		<canvas id="canvas-context" width="300" height="200"></canvas>
+		<div>
+			<canvas id="canvas-context" width="300" height="200"></canvas>
+		</div>
+		<div>
+			<canvas id="scatter-anscombe" width="381" height="267"></canvas>
+		</div>
+		<div>
+			<canvas id="scatter-challenger" width="347" height="204"></canvas>
+		</div>
 	</body>
 </html>

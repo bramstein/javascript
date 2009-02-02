@@ -3,6 +3,15 @@
 -reference lines
 -add legend
 -test composite chart
++generalized chart
++made title and subtitle optional
++moved data range detection into data module
++added preference order to point shapes
++added drawing of polar data
++made title optional in scatter chart
++fixed bounds not taking padding into account
++added more shape primitives (cross, diamond, triangle, centered square)
++fixed circle radius
 +changed category range to 1-n where n is the number of categories (simplifies rendering)
 +added option to disable drawing of axis line
 +added options to disable drawing of axis labels, ticks and grid
@@ -54,12 +63,13 @@
 +test vertical category axis (fixed, working now).
 +add endPath and closePath and remove stroke and fill from path.
 +remove itransform & itransform_length from graphics.
+-make ticks a fixed length instead of dynamic (or find some way to do it more reliably)
+-option to draw the axes on the bottom and left of the chart instead of at the zero point
 -line breaks in labels
 -non-axis based grid
--look into alternative text API's for IE and Opera
--look into vertical tick lengths again (slightly off, might be caused by rounding)
 -look into SVG again (Rapheal library)
 -server side support with Rhino and a simple implementation of Canvas
 -drawing into canvas buffer and dynamically inserting an image through a data URL.
 -test text drawing API on Firefox3.1
+-implement div overlaying canvas for text drawing
 -reimplement simple vector and matrix library

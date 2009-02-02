@@ -112,7 +112,7 @@ var graphics = function () {
 
 				context.save();
 				context.beginPath();
-				context.rect(x, y, width, height);
+					context.rect(x, y, width, height);
 				context.clip();
 			};
 
@@ -133,7 +133,7 @@ var graphics = function () {
 				// is stroked lines are however blurred. Fortunately we rarely
 				// draw stroked rectangles.
 				context.beginPath();
-				context.rect(Math.round(x), Math.round(y), Math.round(width), Math.round(height));
+					context.rect(Math.round(x), Math.round(y), Math.round(width), Math.round(height));
 				context.closePath();
 				return shape;
 			};
@@ -143,16 +143,90 @@ var graphics = function () {
 					p2 = transform(x2, y2);
 
 				context.beginPath();
-				context.moveTo(round(p1.e(1)), round(p1.e(2)));
-				context.lineTo(round(p2.e(1)), round(p2.e(2)));
+					context.moveTo(round(p1.e(1)), round(p1.e(2)));
+					context.lineTo(round(p2.e(1)), round(p2.e(2)));
 				context.closePath();
 				return shape;
 			};
 
 			shape.circle = function (x, y, radius) {
-				return shape.ellipse(x, y, radius, radius);
+				var p = transform(x, y);
+				x = round(p.e(1));
+				y = round(p.e(2));
+				context.beginPath();
+				context.arc(x, y, radius / 2, 0, Math.PI * 2, false);
+				context.closePath();
+				return shape;
 			};
-			
+
+			shape.triangle = function (x, y, size) {
+				var p = transform(x, y),
+					h = size * Math.sqrt(3) / 2;
+				x = round(p.e(1));
+				y = round(p.e(2));
+	
+				context.beginPath();
+				context.moveTo(x - size /2, y - h / 2); // left
+				context.lineTo(x + size / 2, y - h / 2); // right
+				context.lineTo(x, y + h /2); // top
+				context.closePath();
+				return shape;
+			};
+
+			shape.cross = function (x, y, size) {
+				var p = transform(x, y);
+
+				x = round(p.e(1));
+				y = round(p.e(2));
+
+				context.beginPath();
+				context.moveTo(x - size / 2, y);
+				context.lineTo(x + size / 2, y);
+				context.moveTo(x, y - size / 2);
+				context.lineTo(x, y + size / 2);
+				context.closePath();
+				
+				return shape;
+			};
+
+			shape.diamond = function (x, y, size) {
+				var p = transform(x, y);
+				context.save();
+				context.translate(p.e(1), p.e(2));
+				context.rotate(Math.PI / 4);
+				context.translate(-p.e(1), -p.e(2));
+				shape.square(x, y, size);
+				context.restore();
+				return shape;
+			};
+
+			shape.vdash = function (x, y, size) {
+				var p = transform(x, y);
+
+				x = p.e(1);
+				y = p.e(2);
+
+				context.beginPath();
+				context.moveTo(round(x), round(y));
+				context.lineTo(round(x), round(y) + size);
+				context.closePath();
+				return shape;
+				
+			};
+
+			shape.hdash = function (x, y, size) {
+				var p = transform(x, y);
+
+				x = p.e(1);
+				y = p.e(2);
+
+				context.beginPath();
+				context.moveTo(round(x), round(y));
+				context.lineTo(round(x) + size, round(y));
+				context.closePath();
+				return shape;
+			};
+
 			shape.ellipse = function (x, y, hr, vr) {
 				var p = transform(x, y),
 					r = transform_length(hr, vr);
@@ -168,8 +242,16 @@ var graphics = function () {
 				return shape;
 			};
 
-			shape.square = function (x, y, s) {
-				return shape.rect(x, y, s, s);
+			shape.square = function (x, y, size) {
+				var p = transform(x, y);
+
+				x = Math.round(p.e(1)) - size / 2;
+				y = Math.round(p.e(2)) - size / 2;
+
+				context.beginPath();
+				context.rect(x, y, size, size);
+				context.closePath();
+				return shape;
 			};
 
 			shape.text = function (x, y, str, options) {
@@ -211,7 +293,7 @@ var graphics = function () {
 							to: Interval.width(view.vertical)
 						}
 					};
-	
+
 				if (options && options.range) {
 					range.horizontal = options.range.horizontal || range.horizontal;
 					range.vertical = options.range.vertical || range.vertical;
@@ -251,8 +333,6 @@ var graphics = function () {
 			context.lineWidth = 1.0;
 			context.strokeStyle = 'rgb(255,255,255)';
 			context.fillStyle = 'rgb(255,255,255)';
-
-			font = font();
 
 			return shape;
 		}

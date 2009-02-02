@@ -3,6 +3,13 @@ var canvas = function () {
 	return function (options) {
 		var that = {},
 
+			size = {
+				width: 0,
+				height: 0,
+				x: 0,
+				y: 0
+			},
+
 			// The minimum amount of spacing between labels
 			spacing = {
 				horizontal: options.hspace || 5,
@@ -242,7 +249,6 @@ var canvas = function () {
 						}
 					}
 					else if (options.draw.horizontal.labels) {
-					//	g.ellipse(i,range['vertical'].from + tick['horizontal'] * -1.5, 0.125,375).fill('rgb(255,0,0)');
 						g.text(size * i + (size / 2), range['vertical'].from + tick['horizontal'] * -2, s, {
 							textAlign: 'center', 
 							textBaseLine: 'top',
@@ -334,16 +340,26 @@ var canvas = function () {
 					).stroke(defaults.color.axes);
 				}
 			},
-			draw: function (g) {
+			draw: function (g, f) {
 				var b = that.bounds(),
 					i = that.insets();
-			
 				g.beginViewport(b.x, b.y, b.width, b.height).
 					beginViewport(i.left + padding.left, i.bottom + padding.bottom, b.width - (i.right + i.left + padding.left + padding.right), b.height - (i.bottom + i.top + padding.bottom + padding.top), {range: range}).
 						rect(range.horizontal.from, range.vertical.from, Interval.width(range.horizontal), Interval.width(range.vertical)).
 						fill(defaults.color.background.data);
 						that.drawAxes(g);
 
+						if (f) {
+							if (!cartesian) {
+								g.beginViewport(range.horizontal.from, range.vertical.from, Interval.width(range.horizontal), Interval.width(range.vertical), { polar: true});
+								f(g);
+								g.closeViewport();	
+							}
+							else {
+								f(g);
+							}
+						}
+/*
 						g.rect(0.25, 0, 0.50, 4500).fill('rgb(100, 100, 100)');
 						g.rect(1.25, 0, 0.50, 2567).fill('rgb(100, 100, 100)');
 						g.rect(2.25, 0, 0.50, 813).fill('rgb(100, 100, 100)');
@@ -353,13 +369,22 @@ var canvas = function () {
 						g.rect(6.25, 0, 0.50, 9451).fill('rgb(100, 100, 100)');
 
 					//	g.rect(0, 0, 3, 8000).fill('rgb(255, 0, 0)');
-
+						g.triangle(1, 5000, 10).fill('rgb(255, 0, 0)');
+						g.circle(1, 5000, 1).fill('rgb(0,0,0)');
+						g.cross(1, 5000, 10).stroke('rgb(0, 255,0)');
+					
+						g.diamond(1, 5000, 10).fill('rgb(0, 0,255)');
+*/
 					g.closeViewport();
-			//		g.rect(i.left + padding.left, i.bottom + padding.bottom, b.width - (i.right + i.left + padding.right + padding.left), b.height - (i.bottom + i.top + padding.bottom + padding.top)).stroke('rgb(255, 0, 0)');
+				//	g.rect(i.left + padding.left, i.bottom + padding.bottom, b.width - (i.right + i.left + padding.right + padding.left), b.height - (i.bottom + i.top + padding.bottom + padding.top)).stroke('rgb(255, 0, 0)');
 				g.closeViewport();
 			//	g.rect(b.x, b.y, b.width, b.height).stroke('rgb(255,0,0)');
 			}
 		});
+
+		// calculate the minimumSize (and thus correctly setting the padding);
+		that.minimumSize();
+
 		return that;
 
 	}.defaults({});
