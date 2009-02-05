@@ -26,75 +26,69 @@
 		<script type="text/javascript" src="chart/canvas.js"></script>
 		<script type="text/javascript" src="chart/title.js"></script>
 		<script type="text/javascript" src="chart/chart.scatter.js"></script>
+		<script type="text/javascript" src="chart/chart.bar.js"></script>
 
 		<script type="text/javascript">
 		<![CDATA[
 			function anscombe() {
 				var g = graphics('scatter-anscombe');
-
-				var categories = data.category('Set 1', 'Set 2', 'Set 3', 'Set 4');
-				var v = data.variable(2);
-				var anscombe = [
-					[
-						[10, 8.04],
-						[8, 6.95],
-						[13, 7.58],
-						[9, 8.81],
-						[11, 8.33],
-						[14, 9.96],
-						[6, 7.24],
-						[4, 4.26],
-						[12, 10.84],
-						[7, 4.82],
-						[5, 5.68]
-					],
-					[
-						[10, 9.14],
-						[8, 8.14],
-						[13, 8.74],
-						[9, 8.77],
-						[11, 9.26],
-						[14, 8.1],
-						[6, 6.13],
-						[4, 3.1],
-						[12, 9.13],
-						[7, 7.26],
-						[5, 4.74]
-					],
-					[
-						[10, 7.46],
-						[8, 6.77],
-						[13, 12.74],
-						[9, 7.11],
-						[11, 7.81],
-						[14, 8.84],
-						[6, 6.08],
-						[4, 5.39],
-						[12, 8.15],
-						[7, 6.42],
-						[5, 5.73]
-					],
-					[
-						[8, 6.58],
-						[8, 5.76],
-						[8, 7.71],
-						[8, 8.84],
-						[8, 8.47],
-						[8, 7.04],
-						[8, 5.25],
-						[19, 12.5],
-						[8, 5.56],
-						[8, 7.91],
-						[8, 6.89]
+				var d = {
+					categories: ['Set1', 'Set2', 'Set3', 'Set 4'],
+					data: [
+						[
+							[10, 8.04],
+							[8, 6.95],
+							[13, 7.58],
+							[9, 8.81],
+							[11, 8.33],
+							[14, 9.96],
+							[6, 7.24],
+							[4, 4.26],
+							[12, 10.84],
+							[7, 4.82],
+							[5, 5.68]
+						],
+						[
+							[10, 9.14],
+							[8, 8.14],
+							[13, 8.74],
+							[9, 8.77],
+							[11, 9.26],
+							[14, 8.1],
+							[6, 6.13],
+							[4, 3.1],
+							[12, 9.13],
+							[7, 7.26],
+							[5, 4.74]
+						],
+						[
+							[10, 7.46],
+							[8, 6.77],
+							[13, 12.74],
+							[9, 7.11],
+							[11, 7.81],
+							[14, 8.84],
+							[6, 6.08],
+							[4, 5.39],
+							[12, 8.15],
+							[7, 6.42],
+							[5, 5.73]
+						],
+						[
+							[8, 6.58],
+							[8, 5.76],
+							[8, 7.71],
+							[8, 8.84],
+							[8, 8.47],
+							[8, 7.04],
+							[8, 5.25],
+							[19, 12.5],
+							[8, 5.56],
+							[8, 7.91],
+							[8, 6.89]
+						]
 					]
-				];
-
-				var d = categories.data(
-					v.data.apply(null, anscombe[0]),
-					v.data.apply(null, anscombe[1]),
-					v.data.apply(null, anscombe[2]),
-					v.data.apply(null, anscombe[3])
-				);
+				};
 
 				var plot = defaults.type.scatter(d, { title: 'Anscombe\'s Quartet of Datasets' });
 
@@ -107,7 +101,7 @@
 
 			function challenger() {
 				var g = graphics('scatter-challenger');
-				var challenger = [
+				var c = [
 					[11.9, 11],
 					[14.1, 4],
 					[14.2, 4],
@@ -132,13 +126,45 @@
 					[26.2, 0],
 					[27.1, 0]
 				];
-				var v = data.variable(2);
-				var d = v.data.apply(null, challenger);
-				var plot = defaults.type.scatter(d, { title: 'Temperature vs Damage Index' });
+				var plot = defaults.type.scatter(c, { title: 'Temperature vs Damage Index' });
 				console.log(plot.preferredSize());
 				plot.bounds(plot.preferredSize());
 				plot.doLayout();
 				plot.draw(g);
+			}
+
+			function bonds() {
+				var g = graphics('bar-bonds');
+				var d = {
+					categories: ['Treasury Bonds', 'AAA Municipal Bonds'],
+					subcategories: ['Two-Year Yields', 'Ten-Year Yields'],
+					data: [
+						[1.11, 3],
+						[3.1, 5.7],
+					]
+				};
+
+				var plot = defaults.type.bar(d, { title: 'Bond Yields' });
+				plot.bounds({width: 300, height: 200});
+				plot.doLayout();
+				plot.draw(g);
+			}
+
+			function sales() {
+				var g = graphics('bar-pcount');
+				var d = {
+					categories: ['Sales', 'Engineering', 'Marketing', 'HR'],
+					data: [1.5, 3, 2.2, -0.3]
+				};
+				var plot = defaults.type.bar(d);
+				plot.bounds({width: 300, height: 200});
+				plot.doLayout();
+				plot.draw(g);
+			}
+
+			function bar() {
+				sales();
+				bonds();
 			}
 
 			function scatter() {
@@ -166,6 +192,7 @@
 				ch.doLayout();
 				ch.draw(g);
 */
+				bar();
 				scatter();
 			}
 		]]>
@@ -195,8 +222,14 @@
 	</head>
 	<body onload="draw();">
 		<div>
-			<canvas id="canvas-context" width="300" height="200"></canvas>
+			<canvas id="bar-pcount" width="300" height="200"></canvas>
 		</div>
+		<div>
+			<canvas id="bar-bonds" width="300" height="200"></canvas>
+		</div>
+		<!--<div>
+			<canvas id="canvas-context" width="300" height="200"></canvas>
+		</div>-->
 		<div>
 			<canvas id="scatter-anscombe" width="381" height="267"></canvas>
 		</div>

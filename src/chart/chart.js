@@ -10,6 +10,9 @@ var chart = function () {
 			throw new TypeError('A subclass of chart must specify axes.');
 
 		}
+	
+		options = options || {};
+
 		// Axes can be overridden by a user supplied value
 		if (options.axes) {
 			my.axes = {

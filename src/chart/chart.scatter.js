@@ -16,28 +16,37 @@ Object.extend(defaults.type, {
 					from: Number.MAX_VALUE,
 					to: Number.MIN_VALUE
 				}
-			};
+			},
+			that = {},
 
-		// Check that:
-		// * the data has x,y
-		// * category or not
-		if (data.isValid(d)) {
-			if (d.labels() !== undefined) {
-				d.data().forEach(function (category) {
-					range.horizontal.from = Math.min(range.horizontal.from, category.min()[0]);
-					range.horizontal.to = Math.max(range.horizontal.to, category.max()[0]);
+			input = data(d);
+
+		if (!input.subcategories.isEmpty()) {
+			throw new TypeError('Scatter charts do not support sub categories.');
+		}
+
+		if (!input.categories.isEmpty()) {
+			// multiple categories
+			input.values.forEach(function (set) {	
+				set.forEach(function (v) {
+					range.horizontal.from = Math.min(range.horizontal.from, v[0]);
+					range.horizontal.to = Math.max(range.horizontal.to, v[0]);
 	
-					range.vertical.from = Math.min(range.vertical.from, category.min()[1]);
-					range.vertical.to = Math.max(range.vertical.to, category.max()[1]);	
+					range.vertical.from = Math.min(range.vertical.from, v[1]);
+					range.vertical.to = Math.max(range.vertical.to, v[1]);	
 				});
-
-			}
-			else {
-				range.horizontal.from = d.min()[0];
-				range.horizontal.to = d.max()[0];
+			});
+		}
+		else {
+			if (Object.isArray(input.values[0]) && input.values[0].length === 2) {
+				// no category
+				input.values.forEach(function (v) {
+					range.horizontal.from = Math.min(range.horizontal.from, v[0]);
+					range.horizontal.to = Math.max(range.horizontal.to, v[0]);
 	
-				range.vertical.from = d.min()[1];
-				range.vertical.to = d.max()[1];		
+					range.vertical.from = Math.min(range.vertical.from, v[1]);
+					range.vertical.to = Math.max(range.vertical.to, v[1]);	
+				});
 			}
 		}
 
@@ -50,29 +59,24 @@ Object.extend(defaults.type, {
 
 		Object.extend(that, {
 			plot: function (g) {
-				var type = 0;
-				if (d.labels() !== undefined && d.labels().length > 1) {
-					// More than one category
-					d.data().forEach(function (category) {
-						category.data().forEach(function (pair) {
-							g[defaults.point[type]](pair[0], pair[1], 6.5).stroke(defaults.color.data.qualitative_highlight[type]);
+				var i = 0;
+
+				if (!input.categories.isEmpty()) {
+					input.values.forEach(function (set) {
+						set.forEach(function (v) {
+							g[defaults.point[i]](v[0], v[1], 6.5).stroke(defaults.color.data.qualitative_highlight[i]);
 						});
-						type += 1;
-					});
-				}
-				else if (d.labels() !== undefined) {
-					// One category
-					d.data().forEach(function (category) {
-						category.data().forEach(function (pair) {
-							g[defaults.point[0]](pair[0], pair[1], 6.5).stroke(defaults.color.data.standard);
-						});
+						i += 1;
 					});
 				}
 				else {
-					// No category
-					d.data().forEach (function (pair) {
-						g[defaults.point[0]](pair[0], pair[1], 6.5).stroke(defaults.color.data.standard);
-					});
+					if (Object.isArray(input.values[0]) && input.values[0].length === 2) {
+						// no category
+						input.values.forEach(function (v) {
+							g[defaults.point[i]](v[0], v[1], 6.5).stroke(defaults.color.data.standard);
+							
+						});
+					}
 				}
 			}
 		});

@@ -2,6 +2,8 @@
 -trend lines
 -reference lines
 -add legend
+-make ticks a fixed length instead of dynamic (or find some way to do it more reliably)
+-perhaps move axes creation into chart (and add options to specify ticks)
 -test composite chart
 +generalized chart
 +made title and subtitle optional
@@ -63,7 +65,6 @@
 +test vertical category axis (fixed, working now).
 +add endPath and closePath and remove stroke and fill from path.
 +remove itransform & itransform_length from graphics.
--make ticks a fixed length instead of dynamic (or find some way to do it more reliably)
 -option to draw the axes on the bottom and left of the chart instead of at the zero point
 -line breaks in labels
 -non-axis based grid

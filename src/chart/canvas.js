@@ -184,8 +184,8 @@ var canvas = function () {
 					size = Math.max(preferred.width / ratio.horizontal, preferred.height / ratio.vertical);
 
 				preferred.width = size * ratio.horizontal;
-				preferred.height = size * ratio.vertical;
-				
+				preferred.height = size * ratio.vertical;			
+
 				return preferred;
 			},
 			minimumDataSize: function () {
@@ -359,22 +359,6 @@ var canvas = function () {
 								f(g);
 							}
 						}
-/*
-						g.rect(0.25, 0, 0.50, 4500).fill('rgb(100, 100, 100)');
-						g.rect(1.25, 0, 0.50, 2567).fill('rgb(100, 100, 100)');
-						g.rect(2.25, 0, 0.50, 813).fill('rgb(100, 100, 100)');
-						g.rect(3.25, 0, 0.50, -1459).fill('rgb(255, 0, 0)');
-						g.rect(4.25, 0, 0.50, 1100).fill('rgb(100, 100, 100)');
-						g.rect(5.25, 0, 0.50, 6450).fill('rgb(100, 100, 100)');
-						g.rect(6.25, 0, 0.50, 9451).fill('rgb(100, 100, 100)');
-
-					//	g.rect(0, 0, 3, 8000).fill('rgb(255, 0, 0)');
-						g.triangle(1, 5000, 10).fill('rgb(255, 0, 0)');
-						g.circle(1, 5000, 1).fill('rgb(0,0,0)');
-						g.cross(1, 5000, 10).stroke('rgb(0, 255,0)');
-					
-						g.diamond(1, 5000, 10).fill('rgb(0, 0,255)');
-*/
 					g.closeViewport();
 				//	g.rect(i.left + padding.left, i.bottom + padding.bottom, b.width - (i.right + i.left + padding.right + padding.left), b.height - (i.bottom + i.top + padding.bottom + padding.top)).stroke('rgb(255, 0, 0)');
 				g.closeViewport();

@@ -29,6 +29,9 @@
 			// perhaps NaN should not be considered a number..
 			return typeof value === 'number';
 		},
+		isString: function (value) {
+			return typeof value === 'string';
+		},
 		isBoolean: function (value) {
 			return value !== null && 
 				typeof value === 'boolean';

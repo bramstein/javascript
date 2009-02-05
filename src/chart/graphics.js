@@ -131,7 +131,8 @@ var graphics = function () {
 				// we don't use the round functions here because a filled
 				// rectangle is already drawn crisp. If the rectangular path
 				// is stroked lines are however blurred. Fortunately we rarely
-				// draw stroked rectangles.
+				// draw stroked rectangles. Unfortunately this sometimes creates
+				// rounding errors in drawings resulting in visual artifacts.
 				context.beginPath();
 					context.rect(Math.round(x), Math.round(y), Math.round(width), Math.round(height));
 				context.closePath();
