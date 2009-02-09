@@ -1,5 +1,6 @@
 -trend lines
 -reference lines
+-fix sub category bar width and spacing
 -add support for highlighting data points
 -perhaps move axes creation into chart (and add options to specify ticks)
 -test composite chart
