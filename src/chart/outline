@@ -1,0 +1,50 @@
+Introduction
+============
+Background on how this project was conceived, the ideas behind it, its goals, etc. Also includes a summary overview of the entire thesis report.
+
+Design
+======
+Introduction to the design of the chart library and how its component based nature allows chart developers to extend the library with custom chart types using the standard components. The following components will be discussed in this chapter:
+
+* core: Overview of extensions I made to the JavaScript language, such as map, reduce, currying, and pattern matching to support a more functional programming style.
+
+* layout: discussion of the layout managers used to lay out items in the chart, such as the grid and border layout. Perhaps also a brief mention of the fact that it is not tied to charts and can also be used to lay out HTML elements.
+
+* axis: introduction to the axis component, which accepts an interval, and generates "nice" tick locations. It can also accept custom values, or categoric labels.
+
+* title: short introduction to the title component used to display chart titles and subtitles.
+
+* legend: short introduction to the legend component.
+
+* canvas: the canvas component sets up a viewport given one or two axis components and draws them. It is also responsible for drawing grid lines and labels.
+
+* data: introduction to the data format accepted by all chart types (category, time and variables) and the validation procedure performed by the data object.
+
+* graphics: The graphics object is a specialized chart drawing API, with support for setting up custom interval viewports that make drawing data easier. It also explains how and why all drawing is performed in device pixel space (to get sharp edges).
+
+Chart types
+===========
+Overview of the chart types currently supported in the library, each including a description of its use and design rationale:
+
+* column/bar chart
+* scatter
+* line
+* histogram
+* function plotting: including an introduction to plotting using interval arithmetic and how it differs from most other plotting programs
+* polar charts
+
+Related work
+============
+A comparison with other web based chart/visualization libraries and the advantages (and disadvantages) of this thesis project.
+
+Future work
+===========
+A short discussion of future improvements or changes to the library, items may include: SVG support, drawing graphics on the server side, more chart types, and better web page integration by accepting HTML tables as input.
+
+Conclusion
+==========
+Concluding remarks.
+
+References
+==========
+(...)
