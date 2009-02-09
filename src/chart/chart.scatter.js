@@ -1,6 +1,6 @@
 
 Object.extend(defaults.type, {
-	scatter: function (d, options) {
+	scatter: function (canvasIdentifier, d, options) {
 		var my = {
 				ratio: {
 					horizontal: 1.61,
@@ -36,6 +36,12 @@ Object.extend(defaults.type, {
 					range.vertical.to = Math.max(range.vertical.to, v[1]);	
 				});
 			});
+
+			my.legend = legend({
+				labels: input.categories,
+				type: 'point',
+				colors: defaults.color.data.qualitative_highlight
+			});
 		}
 		else {
 			if (Object.isArray(input.values[0]) && input.values[0].length === 2) {
@@ -50,12 +56,22 @@ Object.extend(defaults.type, {
 			}
 		}
 
+		// This adds a small value to the range
+		// to make sure all data point lie within
+		// the range and not on the boundaries (i.e.
+		// the inclusion property.)
+		range.vertical.from -= 0.001;
+		range.vertical.to += 0.001;
+
+		range.horizontal.from -= 0.001;
+		range.horizontal.to += 0.001;
+
 		my.axes = {
 			horizontal: axis(Object.extend(range.horizontal, { ticks: { major: 10 } })),
 			vertical: axis(Object.extend(range.vertical, { ticks: { major: 10 } }))
 		};
 
-		that = chart(options, my);
+		that = chart(canvasIdentifier, options, my);
 
 		Object.extend(that, {
 			plot: function (g) {

@@ -16,7 +16,20 @@
 			previousFont = context.mozTextStyle,
 			numerical = (typeof str === 'number' && !isNaN(str)),
 			size = font.size(str, options.font),
-			fillStyle = context.fillStyle;
+			fillStyle = context.fillStyle,
+			padding = {
+				top: 0,
+				bottom: 0,
+				right: 0,
+				left: 0
+			};
+
+		Object.forEach(padding, function (v, k) {
+			padding[k] = options.padding && options.padding[k] || v;
+		});
+
+		size.height += padding.top + padding.bottom;
+		size.width += padding.left + padding.right;
 
 		context.mozTextStyle = options.font.toString();
 
@@ -58,6 +71,7 @@
 			context.fill();
 		}
 		if (options.box && options.box === true) {
+			context.strokeStyle = 'black';
 			context.strokeRect(x + xOffset, -y + yOffset, size.width, -size.height);
 		}
 		if (options.background) {
@@ -65,6 +79,9 @@
 			context.fillRect(x + xOffset, -y + yOffset, size.width, -size.height);
 			context.fillStyle = fillStyle;
 		}	
+
+		yOffset -= padding.bottom;
+		xOffset += padding.left;
 
 		context.translate(x + xOffset, -y + yOffset - options.font.size / 4);
 		f(context, str.toLocaleString());

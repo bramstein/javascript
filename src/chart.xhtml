@@ -25,15 +25,16 @@
 		<script type="text/javascript" src="chart/composite-chart.js"></script>
 		<script type="text/javascript" src="chart/canvas.js"></script>
 		<script type="text/javascript" src="chart/title.js"></script>
+		<script type="text/javascript" src="chart/legend.js"></script>
 		<script type="text/javascript" src="chart/chart.scatter.js"></script>
 		<script type="text/javascript" src="chart/chart.bar.js"></script>
+		<script type="text/javascript" src="chart/chart.line.js"></script>
 
 		<script type="text/javascript">
 		<![CDATA[
 			function anscombe() {
-				var g = graphics('scatter-anscombe');
 				var d = {
-					categories: ['Set1', 'Set2', 'Set3', 'Set 4'],
+					categories: ['Set 1', 'Set 2', 'Set 3', 'Set 4'],
 					data: [
 						[
 							[10, 8.04],
@@ -90,17 +91,12 @@
 					]
 				};
 
-				var plot = defaults.type.scatter(d, { title: 'Anscombe\'s Quartet of Datasets' });
-
-				console.log(plot.preferredSize());
-
-				plot.bounds(plot.preferredSize());
-				plot.doLayout();
-				plot.draw(g);
+				var plot = defaults.type.scatter('scatter-anscombe', d, { title: 'Anscombe\'s Quartet of Datasets' });
+				plot.bounds({width: 350, height: 200});
+				plot.draw();
 			}
 
 			function challenger() {
-				var g = graphics('scatter-challenger');
 				var c = [
 					[11.9, 11],
 					[14.1, 4],
@@ -126,15 +122,12 @@
 					[26.2, 0],
 					[27.1, 0]
 				];
-				var plot = defaults.type.scatter(c, { title: 'Temperature vs Damage Index' });
-				console.log(plot.preferredSize());
-				plot.bounds(plot.preferredSize());
-				plot.doLayout();
-				plot.draw(g);
+				var plot = defaults.type.scatter('scatter-challenger', c, { title: 'Challenger Shuttle Disaster - O-Ring Damage', subtitle: 'Temperature vs Damage Index' });
+				plot.bounds({width: 300, height: 200});
+				plot.draw();
 			}
 
 			function bonds() {
-				var g = graphics('bar-bonds');
 				var d = {
 					categories: ['Treasury Bonds', 'AAA Municipal Bonds'],
 					subcategories: ['Two-Year Yields', 'Ten-Year Yields'],
@@ -144,22 +137,47 @@
 					]
 				};
 
-				var plot = defaults.type.bar(d, { title: 'Bond Yields' });
-				plot.bounds({width: 300, height: 200});
-				plot.doLayout();
-				plot.draw(g);
+				var plot = defaults.type.bar('bar-bonds', d, { title: 'Bond Yields'});
+				plot.bounds({width: 400, height: 200});
+				plot.draw();
 			}
 
 			function sales() {
-				var g = graphics('bar-pcount');
 				var d = {
 					categories: ['Sales', 'Engineering', 'Marketing', 'HR'],
 					data: [1.5, 3, 2.2, -0.3]
 				};
-				var plot = defaults.type.bar(d);
-				plot.bounds({width: 300, height: 200});
-				plot.doLayout();
-				plot.draw(g);
+				var plot = defaults.type.bar('bar-pcount', d, {title: 'Employee turnover'});
+				plot.bounds({width: 350, height: 200});
+				plot.draw();
+			}
+
+			function linesales() {
+				var d = {
+					categories: ['2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008'],
+					data: [13000, 13400, 14000, 16000, 14100, 12700, 15000, 16000]
+				};
+
+				var plot = defaults.type.line('line-sales', d, {title: 'Sales per year'});
+				plot.bounds({width: 350, height: 200});
+				plot.draw();
+			}
+
+			function linesdepartments() {
+				var d = {
+					categories: ['2001', '2002', '2003', '2004', '2005', '2006'],
+					subcategories: ['Engineering', 'Marketing', 'HR', 'R&D'],
+					data: [
+						[1200, 2000, 4000, 4500, 5000, 6300],
+						[2000, 4000, 3200, 6000, 7000, 7500],
+						[1000, 1500, 1000, 1000, 1800, 1800],
+						[1800, 2000, 2100, 2300, 2000, 2700]
+					]
+				};
+
+				var plot = defaults.type.line('line-departments', d, {title: 'Expenses by department'});
+				plot.bounds({width: 450, height: 200});
+				plot.draw();
 			}
 
 			function bar() {
@@ -169,72 +187,76 @@
 
 			function scatter() {
 				anscombe();
-				challenger();
+			//	challenger();
+			}
+
+			function line() {
+			//	linesales();
+				linesdepartments();
 			}
 
 			function draw() {
 				font = font();
-/*
-				var g = graphics('canvas-context');
-
-				var ha = axis({from: -3, to: 8.5, ticks: {major: 10, minor: 0}, label: 'Ranking'});
-				var ha = axis({categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July'], label: 'Months in 2008'});
-				var va = axis({from: -1400 , to: 9720, label: 'USD($)', ticks: {major: 10, minor: 0}});
-				//var va = axis({categories: ['jan', 'feb', 'mar', 'apr'], label: 'Months in 2008'});
-
-				var pa = axis({from: -Math.PI, to: Math.PI, ticks: {major: 8}, label: 'hello'});
-
-
-
-				var ch = chart({ horizontal: ha, vertical: va}, {title: 'Sales 2008'});
-
-				ch.bounds({width: 300, height: 200});
-				ch.doLayout();
-				ch.draw(g);
-*/
 				bar();
 				scatter();
+				line();
 			}
 		]]>
 		</script>
 		<style>
 			html {
-				background-color: grey;
+				background-color: white;
 				margin: 0em;
 				padding: 0em;
 			}
 
 			body {
-				margin-left: 5em;
-				margin-right: 5em;
 				margin-top: 0em;
-				padding-top: 2em;
+				padding-top: 3em;
 				padding-bottom: 2em;
-				padding-left: 4em;
-				padding-right: 4em;
+				padding-left: 3em;
+				padding-right: 3em;
 				background-color: white;
 			}
 
 			div {
-				margin-bottom: 2em;
+				margin-bottom: 3em;
+			}
+
+			.left {
+				float: left;	
+				width: 50%;
+			}
+
+			.right {
+				float: right;
+				width: 50%;
 			}
 		</style>
 	</head>
 	<body onload="draw();">
-		<div>
-			<canvas id="bar-pcount" width="300" height="200"></canvas>
+		<div class="left">
+			<canvas id="bar-pcount" width="350" height="200"></canvas>
 		</div>
-		<div>
-			<canvas id="bar-bonds" width="300" height="200"></canvas>
+		<div class="right">
+			<canvas id="bar-bonds" width="400" height="200"></canvas>
 		</div>
 		<!--<div>
 			<canvas id="canvas-context" width="300" height="200"></canvas>
 		</div>-->
-		<div>
-			<canvas id="scatter-anscombe" width="381" height="267"></canvas>
+		<div class="left">
+			<canvas id="scatter-anscombe" width="350" height="200"></canvas>
 		</div>
-		<div>
-			<canvas id="scatter-challenger" width="347" height="204"></canvas>
+<!--
+		<div class="right">
+			<canvas id="scatter-challenger" width="300" height="200"></canvas>
+		</div>
+		<div class="left">
+			<canvas id="line-sales" width="350" height="200"></canvas>
+		</div>
+-->
+		<div class="right">
+			<canvas id="line-departments" width="450" height="200"></canvas>
 		</div>
 	</body>
 </html>

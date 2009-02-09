@@ -22,7 +22,6 @@ var title = function () {
 				var titleSize = font.size(title, defaults.font.title),
 					subtitleSize = font.size(subtitle, defaults.font.subtitle),
 					insets = that.insets();
-
 				return {
 					width: Math.max(titleSize.width, subtitleSize.width) + insets.left + insets.right,
 					height: titleSize.height + subtitleSize.height + (subtitleSize.height * 0.2) + insets.top + insets.bottom
@@ -38,10 +37,16 @@ var title = function () {
 					g.text(b.width / 2, that.insets().bottom, subtitle, {textAlign: 'center', textBaseLine: 'bottom', font: defaults.font.subtitle}).fill(defaults.color.subtitle);
 				}
 				g.closeViewport();
-			//	graphics.rect(b.x, b.y, b.width, b.height).stroke('rgb(0, 255, 0)');
+			//	g.rect(b.x, b.y, b.width, b.height).stroke('rgb(0, 255, 0)');
 			}
 		});
 
+		that.insets({
+			top: 5,
+			bottom: 20,
+			left: 5,
+			right: 5
+		});
 		return that;
 	}.defaults({});
 }();

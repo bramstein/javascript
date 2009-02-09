@@ -1,10 +1,19 @@
--axis label
 -trend lines
 -reference lines
--add legend
--make ticks a fixed length instead of dynamic (or find some way to do it more reliably)
+-add support for highlighting data points
 -perhaps move axes creation into chart (and add options to specify ticks)
 -test composite chart
+-add minimum size to chart bounds
+-try validation and range calculation based on input format specification
++added line chart
++added axis label(s)
++changed chart bounds to automatically lay out the chart upon setting its size
++moved graphics into chart
++added transpose option to bar chart (called reverse)
++added legend
++added optional linewidth parameter to stroke and fill methods
++made ticks a fixed length instead of dynamic
++added padding option to font options
 +generalized chart
 +made title and subtitle optional
 +moved data range detection into data module
@@ -65,6 +74,10 @@
 +test vertical category axis (fixed, working now).
 +add endPath and closePath and remove stroke and fill from path.
 +remove itransform & itransform_length from graphics.
+-more precise bounding box of data area using graphics (reduces border space, increases data area)
+-implement circle with area parameter
+-guarantee inclusion property for interval arithmetic (should fix data points lying exactly on a grid line, among other things)
+-integrate font and alignment options so that font.size also includes the padding.
 -option to draw the axes on the bottom and left of the chart instead of at the zero point
 -line breaks in labels
 -non-axis based grid
@@ -74,3 +87,6 @@
 -test text drawing API on Firefox3.1
 -implement div overlaying canvas for text drawing
 -reimplement simple vector and matrix library
+-add option to jLayout to support different coordinate systems.
+-implement flow layout
+-move legend above chart instead of to the right if possible.

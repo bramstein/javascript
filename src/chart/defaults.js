@@ -12,11 +12,14 @@ var defaults = {
 		},
 		title: {
 			size: 11,
-//			weight: 'bold'
+			weight: 'bold'
 		},
 		subtitle: {
 			size: 11,
 			style: 'italic'
+		},
+		inlineLabel: {
+			size: 11
 		}
 	},
 	point: [
@@ -33,9 +36,10 @@ var defaults = {
 		},
 		grid: 'rgb(220, 220, 220)',
 		axes: 'rgb(160, 160, 160)',
-		text: 'rgb(30, 30, 30)',
+		text: 'rgb(50, 50, 50)',
 		title: 'rgb(0, 0, 0)',
 		subtitle: 'rgb(50, 50, 50)',
+		label: 'rgb(30, 30, 30)',
 		data: {
 			//standard: 'rgb(20, 20, 20)',
 			standard: 'rgb(255, 0, 0)',
@@ -43,13 +47,13 @@ var defaults = {
 				'rgb(141, 199, 211)',
 				'rgb(255, 179, 255)',
 				'rgb(190, 218, 186)',
-				'rgb(251, 114, 128)',
-				'rgb(128, 211, 177)',
-				'rgb(253, 98, 180)',
 				'rgb(179, 105, 222)',
 				'rgb(252, 229, 205)',
 				'rgb(217, 217, 217)',
-				'rgb(188, 189, 128)'
+				'rgb(188, 189, 128)',
+				'rgb(251, 114, 128)',
+				'rgb(128, 211, 177)',
+				'rgb(253, 98, 180)',
 			],
 			qualitative_highlight: [
 				'rgb(27, 119, 158)',

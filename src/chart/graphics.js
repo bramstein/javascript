@@ -62,9 +62,14 @@ var graphics = function () {
 			});
 
 			['stroke', 'fill'].forEach(function (n) {
-				shape[n] = function (c) {
+				shape[n] = function (c, w) {
 					var p = n + 'Style',
-						previous = context[p];
+						previousStyle = context[p],
+						previousWidth = context.lineWidth;
+
+					if (w) {
+						context.lineWidth = w;
+					}
 
 					if (c) {
 						context[p] = c;
@@ -80,8 +85,12 @@ var graphics = function () {
 						context[n].apply(context, []);
 					}
 
+					if (w) {
+						context.lineWidth = previousWidth;
+					}
+
 					if (c) {
-						context[p] = previous;
+						context[p] = previousStyle;
 					}
 
 					return shape;

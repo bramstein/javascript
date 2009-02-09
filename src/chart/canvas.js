@@ -30,8 +30,8 @@ var canvas = function () {
 				vertical: (options.ratio && options.ratio.vertical) || 1
 			},
 
-			// Axis tick mark lengths
-			tickLength = 0.026,
+			// Axis tick mark size
+			tickSize = 4,
 
 			// Available axes
 			axes = {
@@ -144,7 +144,7 @@ var canvas = function () {
 			// Clean up the draw options
 			options.draw[axis] = options.draw[axis] || {};
 			options.draw[axis].grid = options.draw[axis].grid === true || false;
-			['axis', 'labels', 'ticks'].forEach(function (type) {
+			['label', 'axis', 'labels', 'ticks'].forEach(function (type) {
 				if (!Object.isBoolean(options.draw[axis][type])) {
 					options.draw[axis][type] = true;
 				}
@@ -160,11 +160,31 @@ var canvas = function () {
 						width: maximumLabelSize.vertical.width
 					};
 
-				m.width += (r.height * tickLength) * 2;
-				m.height += ((r.width * tickLength) * (r.height / r.width)) * 2;
+				m.width += tickSize * 2;
+				m.height += tickSize * 2;
 
-				padding.left = padding.right = m.width;
-				padding.top = padding.bottom = m.height;
+				if (sign.horizontal === -1) {
+					padding.top = m.height;
+				}
+				else {
+					padding.bottom = m.height;
+				}
+
+				if (sign.vertical === -1) {
+					padding.right = m.width;
+				}
+				else {
+					padding.left = m.width;
+				}
+
+				if (axes.horizontal.label) {
+					padding.bottom += font.size(axes.horizontal.label, defaults.font.labels).height + (tickSize * 2);
+				}
+
+				if (axes.vertical.label) {
+					padding.top += font.size(axes.vertical.label, defaults.font.labels).height + (tickSize * 2);
+					padding.left += (font.size(axes.vertical.label, defaults.font.labels).width + (tickSize * 2)) - padding.left;
+				}
 
 				r.width += i.left + i.right + padding.right + padding.left;
 				r.height += i.bottom + i.top + padding.bottom + padding.top;
@@ -203,12 +223,7 @@ var canvas = function () {
 				return result;
 			},
 			drawAxes: function (g) {
-				var b = that.bounds(),
-					// Adjust the tick size using the aspect ratio (height / width).
-					tick = {
-						horizontal: (Interval.width(range.vertical) * tickLength),
-						vertical: (Interval.width(range.horizontal) * tickLength) * (b.height / b.width)
-					};
+				var b = that.bounds();
 
 				if (options.draw.vertical.grid && !cartesian) {
 					g.beginClip(range.horizontal.from, range.vertical.from, Interval.width(range.horizontal), Interval.width(range.vertical));
@@ -223,39 +238,46 @@ var canvas = function () {
 
 				// Horizontal major ticks and labels
 				axes.horizontal.ticks.major.forEach(function (s, i, a) {
-					var size = (Interval.width(range['horizontal']) / (a.length));
+					var size = (Interval.width(range.horizontal) / (a.length));
 
 					if (range.horizontal.numeric) {
-						if (s !== offset['vertical'] || range['vertical'].from >= 0 || range['vertical'].to <= 0) {
+						if (s !== offset.vertical || range.vertical.from >= 0 || range.vertical.to <= 0) {
 							if (options.draw.vertical.grid && cartesian) {
 								g.line(s, range.vertical.from, s, range.vertical.to).
 								stroke(defaults.color.grid);
 							}
-			
-							if (options.draw.horizontal.ticks) {
-								g.line(s, offset['horizontal'], s, offset['horizontal'] + tick['horizontal'] * -sign['horizontal']).
-								stroke(defaults.color.axes);
-							}
 					
 							if (options.draw.horizontal.labels) {
-								g.text(s, offset['horizontal'] + (tick['horizontal'] * 2) * -sign['horizontal'], axes.horizontal.ticks.labels[i] || s, {
+								g.text(s, offset.horizontal, axes.horizontal.ticks.labels[i] || s, {
 									textAlign: 'center', 
-									textBaseLine: (Math.isNegative(sign['horizontal']) ? 'bottom' : 'top'),
+									textBaseLine: (Math.isNegative(sign.horizontal) ? 'bottom' : 'top'),
 									background: defaults.color.background.data,
-									font: defaults.font.labels
+									font: defaults.font.labels,
+									padding: {
+										top: (Math.isNegative(sign.horizontal) ? 0 : tickSize * 2),
+										bottom: (Math.isNegative(sign.horizontal) ? tickSize * 2 : 0)
+									}
 								}).
-								fill(defaults.color.text);
+								fill(defaults.color.label);
+							}
+	
+							if (options.draw.horizontal.ticks) {
+								g.vdash(s, offset.horizontal, tickSize * -sign.horizontal).
+								stroke(defaults.color.axes);
 							}
 						}
 					}
 					else if (options.draw.horizontal.labels) {
-						g.text(size * i + (size / 2), range['vertical'].from + tick['horizontal'] * -2, s, {
+						g.text(size * i + (size / 2), range['vertical'].from /*+ tick['horizontal'] * -2*/, s, {
 							textAlign: 'center', 
 							textBaseLine: 'top',
 							background: defaults.color.background.data,
-							font: defaults.font.labels
+							font: defaults.font.labels,
+							padding: {
+								top: tickSize * 2
+							}
 						}).
-						fill(defaults.color.text);
+						fill(defaults.color.label);
 					}
 				});
 
@@ -263,7 +285,7 @@ var canvas = function () {
 				if (options.draw.horizontal.ticks) {
 					axes.horizontal.ticks.minor.forEach(function (i) {
 						if (range.horizontal.numeric && i !== 0) {
-							g.line(i, offset['horizontal'], i, offset['horizontal'] + (tick['horizontal'] * 0.5) * -sign['horizontal']).
+							g.vdash(i, offset.horizontal, Math.ceil(tickSize / 2) * -sign.horizontal).
 							stroke(defaults.color.axes);
 						}
 					});
@@ -281,32 +303,39 @@ var canvas = function () {
 								stroke(defaults.color.grid);
 							}
 
-							if (options.draw.vertical.ticks) {
-								g.line(offset['vertical'], s, offset['vertical'] + tick['vertical'] * -sign['vertical'], s).
-								stroke(defaults.color.axes);
-							}
-
 							if (options.draw.vertical.labels) {
 								g.text(
-									offset['vertical'] + (tick['vertical'] * 2) * -sign['vertical'], s, axes.vertical.ticks.labels[i] || s, {
+									offset.vertical, s, axes.vertical.ticks.labels[i] || s, {
 										textAlign: (Math.isNegative(sign['vertical']) ? 'left' : 'right'), 
 										textBaseLine: 'middle',
 										background: defaults.color.background.data,
-										font: defaults.font.labels
+										font: defaults.font.labels,
+										padding: {
+											right: (Math.isNegative(sign.vertical) ? 0 : tickSize * 2),
+											left: (Math.isNegative(sign.vertical) ? tickSize * 2 : 0)
+										}
 									}
 								).
-								fill(defaults.color.text);
+								fill(defaults.color.label);
+							}
+
+							if (options.draw.vertical.ticks) {
+								g.hdash(offset.vertical, s, tickSize * -sign.vertical).
+								stroke(defaults.color.axes);
 							}
 						}
 					}
 					else if (options.draw.vertical.labels) {
-						g.text(range['horizontal'].from + tick['vertical'] * -2, size * i + (size / 2), s, {
+						g.text(range['horizontal'].from, size * i + (size / 2), s, {
 							textAlign: 'right', 
 							textBaseLine: 'middle',
 							background: defaults.color.background.data,
-							font: defaults.font.labels
+							font: defaults.font.labels,
+							padding: {
+								right: tickSize * 2
+							}
 						}).
-						fill(defaults.color.text);
+						fill(defaults.color.label);
 					}
 				});
 
@@ -314,7 +343,7 @@ var canvas = function () {
 				if (options.draw.vertical.ticks) {
 					axes.vertical.ticks.minor.forEach(function (i) {
 						if (range.vertical.numeric && i !== 0) {
-							g.line(offset['vertical'], i, offset['vertical'] + (tick['vertical'] * 0.5) * -sign['vertical'], i).
+							g.hdash(offset.vertical, i, Math.ceil(tickSize / 2) * -sign.vertical).
 							stroke(defaults.color.axes);
 						}
 					});
@@ -342,9 +371,15 @@ var canvas = function () {
 			},
 			draw: function (g, f) {
 				var b = that.bounds(),
-					i = that.insets();
+					i = that.insets(),
+					data = {
+						x: i.left + padding.left,
+						y: i.bottom + padding.bottom,
+						width: b.width - (i.right + i.left + padding.left + padding.right),
+						height: b.height - (i.bottom + i.top + padding.bottom + padding.top)
+					};
 				g.beginViewport(b.x, b.y, b.width, b.height).
-					beginViewport(i.left + padding.left, i.bottom + padding.bottom, b.width - (i.right + i.left + padding.left + padding.right), b.height - (i.bottom + i.top + padding.bottom + padding.top), {range: range}).
+					beginViewport(data.x, data.y, data.width, data.height, {range: range}).
 						rect(range.horizontal.from, range.vertical.from, Interval.width(range.horizontal), Interval.width(range.vertical)).
 						fill(defaults.color.background.data);
 						that.drawAxes(g);
@@ -360,7 +395,21 @@ var canvas = function () {
 							}
 						}
 					g.closeViewport();
-				//	g.rect(i.left + padding.left, i.bottom + padding.bottom, b.width - (i.right + i.left + padding.right + padding.left), b.height - (i.bottom + i.top + padding.bottom + padding.top)).stroke('rgb(255, 0, 0)');
+				//	g.rect(data.x, data.y, data.width, data.height).stroke('rgb(255, 0, 0)');
+
+					if (axes.horizontal.label && options.draw.horizontal.label) {
+						g.text(data.x + (data.width / 2), 0, axes.horizontal.label, {
+							textAlign: 'center'
+						}).
+						fill(defaults.color.label);
+					}
+
+					if (axes.vertical.label && options.draw.vertical.label) {
+						g.text(0, b.height, axes.vertical.label, {
+							textBaseLine: 'top'
+						}).
+						fill(defaults.color.label);
+					}
 				g.closeViewport();
 			//	g.rect(b.x, b.y, b.width, b.height).stroke('rgb(255,0,0)');
 			}

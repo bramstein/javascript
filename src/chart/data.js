@@ -18,18 +18,18 @@ var data = function () {
 		if (data.categories !== undefined && Object.isArray(data.categories) && data.categories.every(Object.isString)) {
 			categories = data.categories;
 
-			if (values.length !== categories.length) {
+			/*if (values.length !== categories.length) {
 				throw new TypeError('The data does not match the number of categories.');
-			}
+			}*/
 
 			if (data.subcategories !== undefined && Object.isArray(data.subcategories) && data.subcategories.every(Object.isString)) {
 				subcategories = data.subcategories;
 
-				if (!values.every(function (set) {
+				/*if (!values.every(function (set) {
 					return Object.isArray(set) && set.length === subcategories.length;
 				})) {
 					throw new TypeError('The data does not match the number of subcategories.');
-				}
+				}*/
 			}
 		}
 
