@@ -1,0 +1,208 @@
+The core module extends the JavaScript language with various new features and helper functions. Due to its prototypical nature, the core JavaScript language is easily and naturally extended. The extensions fall in the following categories:
+
+* Array extensions;
+* Object extensions;
+* Function extensions;
+* Mathematics extensions;
+* Support for getter and setter properties;
+* Functional pattern matching.
+
+Array Extensions
+================
+The Array prototype is extended in two ways: support JavaScript's version 1.6 and 1.8 so-called array extra's [1, 2], and a set of additional helper functions to deal with common array operations. The array extra's includes functions like: forEach, map, reduce (equal to foldr and foldl functionality in functional programming languages), filter, every, some, and several other methods. The array extra functions are new---but unofficial---extensions to the JavaScript language defined by the Mozilla developers. Nevertheless these functions have wide support in browsers such as Firefox, Opera, Chrome and Safari. Unfortunately, Internet Explorer does not support them. The core array extra module implements these functions in pure JavaScript and adds them to the Array prototype if they are not already natively supported. This enables the use of the Array extra methods in all browsers.
+
+An example of how this improves clarity follows:
+
+  function add(a, b) {
+    return a + b;
+  }
+
+  [1, 2, 4, 1, 6, 5].reduce(add, 0); // returns 19
+
+Without Array Extra's this would have to be implemented using a for loop and accumulation variable.
+
+The additional helper functions included are methods that are strangely omitted from the JavaScript specification, such as a peek function (pop and push are available), contains (to check if an array contains a value), and an isEmpty method to test for empty arrays.
+
+Object Extensions
+=================
+In contrast to the other extension modules, the object module does not extend the Object prototype, which is considered bad practice [3]. (TODO: perhaps side bar explaining why) Instead the module extends the the global Object object. The consequence is that methods in the extension module should be called with an Object prefix and have the object they operate on passed in as the first argument.
+
+So instead of:
+  obj.someMethod();
+We will need to write:
+  Object.someMethod(obj); 
+
+The most important function in the object module is "extends" which takes in two or more objects and copies all properties from the second (or third, fourth, etc. depending on how many arguments were passed in as arguments) to the first object. If there is a conflict in property names (i.e. the objects have one or more property names in common) it is first checked if the original property is a built-in property in which case it is kept, otherwise it is overwritten by the last property of that name. The "extends" function is used extensively to extend the properties and prototypes of other objects.
+
+The Array Extra's functions are very useful in dealing with arrays. Unfortunately they do not work transparently on objects (TODO: sidebar on why). For that reason, the object module introduces the same methods contained in the Array Extra's but tailored to deal with objects. This means that functions such as forEach, map, reduce, filter, every, and some can also be used on objects. The functionality and interface is identical to the Array Extra's.
+
+Other functions added to the global Object are designed for more accurate type checking. Although JavaScript is dynamically typed, it is sometimes useful to check for the type of a variable (TODO: perhaps a sidebar with the type problems in JavaScript). There are functions for checking the types of: atoms, numbers, strings, booleans, arrays, and functions. Combined with the array or object extra extensions, it makes it very easy to do input validation. For example, to check if all values in an array are of the type "number" we can just write:
+
+  [1, 2, '3'].every(Object.isNumber); // returns false (third argument is a string)
+
+If this is a common desire, we could also add a new function by extending the Array prototype and currying the every method with the Object.isNumber method.
+
+  Object.extend(Array.prototype, {
+    isNumber: this.every.curry(Object.isNumber)
+  });
+
+  // this now works (still returns false)
+  [1, 2, '3'].isNumber();
+
+It is however recommended to keep the number of extensions to the built-in objects to a minimum to prevent name clashes and other interoperability problems.
+
+Function Extensions
+===================
+The function module extends the Function prototype with a small number of useful functions. The most notable functions are bind, curry, and defaults. Most of these are self-descriptive, but a short example of each follows:
+
+Usually, object methods in JavaScript have a "this" property refering to the instance the method is operating on. The bind method allows binding the this property of a method to any object. Sometimes it may also be useful to bind a function to an object as in the following case:
+
+  function print() {
+    console.log(this.firstname + " " + this.lastname);
+  }
+  var myPrint = print.bind({ firstname: 'Bram', lastname: 'Stein' });
+  myPrint(); // prints "Bram Stein"
+
+Given the add function used in the Array extensions sub chapter:
+  var add1 = add.curry(1);
+  add1(3); // returns 4
+
+The defaults function is similar to curry except that it only "curries"  a function when one or more of the arguments are missing. In effect this adds default values to optional function parameters. For example:
+
+  var myAdd = add.defaults(1, 1);
+  myAdd();     // returns 2
+  myAdd(4);    // returns 5
+  myAdd(2, 6); // returns 8
+
+Mathematics Extensions
+======================
+The math module extends the Math prototype with a set of new methods for rounding, generating correct random integers [4] (TODO: look this up), and measuring number properties such as accuracy, precision and the number of digits.
+
+Getter and Setter Properties
+============================
+The property module adds support for adding getter and setter properties to any object. In fact, it acts as a factory for creating functions that add getter and setter properties to objects. A getter and setter property is defined as a method that when called without a parameter returns the value of its property and when called with a parameter to set the value of the property to that value.
+
+This allows developers to define standard properties and mix them into objects that they desire to have those properties. Instead of redefining an often used property many times, it is created once and added to other objects as desired [5].
+
+  // create the property name, parameters, and default values
+  var addSize = property('size', {
+    width: 100,
+    height: 100
+  });
+
+  // add the property to a new (empty) object
+  var myObject = addSize({});
+
+  myObject.size(); // returns {width: 100, height: 100}
+  myObject.size({width: 200}) // sets width to 200 and returns {width: 200, height: 100}
+
+The example also shows that by taking in the "setter" value as an object, the property is not restricted to a fixed number of arguments or the order of arguments.
+
+Functional Pattern Matching
+===========================
+Pattern matching is a form of conditional branching which allows you to concisely match on data structure patterns and bind variables at the same time [6]. Pattern matching is supported in some functional languages such as ML, Haskell, OCaml, and Erlang. This module implements pattern matching for the JavaScript language in an efficient and concise way. The following is an example of pattern matching:
+
+var fact = fun(
+    [0, function ()  1],
+    [$, function (n) n * fact(n - 1)]
+);
+
+The above function implements a simple factorial function using the pattern matching library. When you call fact(10) the value ‘10’ is matched against the first pattern ‘0’. This match fails and the next pattern is evaluated. The ‘$’ in the next pattern is an example of a parameter. A parameter matches anything, so the match succeeds and ‘10’ is passed as an argument to the anonymous function. Since this is a recursive function it will match the second pattern until the argument to the function reaches zero and then terminates. Note that this example uses JavaScript 1.8 syntax, code in previous JavaScript versions will be slightly more verbose.
+
+(TODO: something about the implementation & maybe unification library)
+
+Another common use of pattern matching is to determine if a value is of a certain type and perform an action depending on the result. For example, say we have a print function which logs its value to the console. We would however like to customize the output for some data types. We can accomplish this using pattern matching as follows:
+
+  var print = fun(
+    // match and return Date values
+    [Date, function (d) ...],
+
+    // match and return String values
+    [String, function (str) ...],
+
+    // match and return any other type
+    [$, function (o) ...]
+  );
+
+If the type of the value is Date, the first anonymous function will be executed and its value passed as argument. The same applies to values of type String. Any other value will be passed to the last anonymous function whose pattern acts as a catch-all. 
+
+Object extraction
+-----------------
+Patterns can also contain wildcards, which can be used to ‘mask out’ or ignore certain parts of the value it is matched against. This can be used to concisely extract properties for large and deeply nested objects. For example:
+  var data = {
+    label: 'Plot #1',
+    type: 'points',
+    values: [2.1, 5.6, 2.4, 3.4]
+  };
+
+  var parse = fun(
+    [{label: _, type: _, values: $}, function (v) console.log(v)]
+  );
+
+  parse(data); // prints out [2.1, 5.6, 2.4, 3.4]
+
+Algebraic data types
+--------------------
+Pattern matching can also be used with Sjoerd Visscher's Algebraic data type library [7]. In the following example we define a simple binary tree data type. The tree can contain either Void or a Bt tuple. The tuple consists of a value, and two branches called left and right. In the ML programming language we would define a polymorphic binary tree like this:
+
+  datatype 'a binarytree = Void | Bt of 'a * 'a binarytree * 'a binarytree
+
+In JavaScript―using the ADT library―it looks like this (note that this binary tree is not polymorphic, its values are Numbers.) All the code examples from now are written in JavaScript 1.8 because the ADT library uses that as well. However, apart from the slightly more verbose syntax, there's nothing that wouldn't work in other JavaScript versions. 
+
+  var BinaryTree = Data(function(binarytree) ({
+    Void : {},
+    Bt: {
+        v: Number, L: binarytree, R: binarytree
+    }
+  }));
+
+We can then create a simple binary tree instance using this definition. A visual representation of this binary tree is shown on the right.
+
+  var bt = Bt(4, 
+             Bt(2, Bt(1,Void,Void), 
+                   Bt(3,Void,Void)), 
+             Bt(8, Bt(6, Bt(5,Void,Void), 
+                         Bt(7,Void,Void)), 
+                   Bt(9,Void,Void)));
+
+We can now define various functions, for example to calculate the number of leafs (nodes without children) in the tree, or a function to test whether a value is a member of the binary tree. It is possible to use the data types in patterns, for example the numLeafs method first matches on an empty node, then a leaf node and finally on any other kind of node. The isMember method shows that the matching is not limited to one function parameter; the value to search for is taken as the first parameter and the binary tree as the second parameter.
+
+  var numLeafs = fun(
+    [Void, function() 0],              // empty node
+    [Bt(_, Void, Void), function() 1], // leaf node
+    [Bt(_, $, $), function(L, R) numLeafs(L) + numLeafs(R)]
+  );
+
+  var isMember = fun(
+    [_, Void, function() false],
+    [$, Bt($, $, $), function(x, v, L, R) x === v || (isMember(x, L) || isMember(x, R))]
+  );
+
+  numLeafs(bt);     // 5
+  isMember(10, bt); // false
+  isMember(3, bt);  // true
+
+The following two functions return a list of all the elements using in order and pre order traversals of the binary tree.
+
+  var inorder = fun(
+    [Void, function() []],
+    [Bt($, $, $), function(v, L, R) inorder(L).concat([v], inorder(R))]
+  );
+
+  var preorder = fun(
+   [Void, function() []],
+   [Bt($, $, $), function(v, L, R) [v].concat(preorder(L), preorder(R))]
+  );
+
+  inorder(bt);      // [1,2,3,4,5,6,7,8,9]
+  preorder(bt);     // [4,2,1,3,8,6,5,7,9]
+
+A real implementation of a binary tree would of course not use the data types and functions defined in this article for performance reasons, but a binary tree serves as a good introduction to both pattern matching and algebraic data types in JavaScript.
+
+[1] New in JavaScript 1.6, Mozilla Developer Center, URL <https://developer.mozilla.org/en/New_in_JavaScript_1.6>, Visited: 2009-02-13.
+[2] New in JavaScript 1.8, Mozilla Developer Center, URL <https://developer.mozilla.org/en/New_in_JavaScript_1.8>, Visited: 2009-02-13.
+[3] Extending Object.prototype considered harmful
+[4] Graphics Gems XX
+[5] JavaScript: The Good Parts, Douglas Crockford, O'Reilly, ISBN: 978-0-596-51774-8
+[6] Conditional (programming), Pattern Matching, Wikipedia, URL <http://en.wikipedia.org/wiki/Conditional_statement#Pattern_matching>, Visited: 2009-02-13
+[7] Sjoerd Visser, Algebraic Data Types in JavaScript, URL <http://w3future.com/weblog/stories/2008/06/16/adtinjs.xml>, Visited: 2009-02-13, Created: 2008-06-16.

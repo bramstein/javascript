@@ -3,7 +3,7 @@ Object.extend(defaults.type, {
 	scatter: function (canvasIdentifier, d, options) {
 		var my = {
 				ratio: {
-					horizontal: 1.61,
+					horizontal: 1,
 					vertical: 1
 				}
 			},

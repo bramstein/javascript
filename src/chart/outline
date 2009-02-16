@@ -22,6 +22,8 @@ Introduction to the design of the chart library and how its component based natu
 
 * graphics: The graphics object is a specialized chart drawing API, with support for setting up custom interval viewports that make drawing data easier. It also explains how and why all drawing is performed in device pixel space (to get sharp edges).
 
+* chart: Super-"class" for all chart types.
+
 Chart types
 ===========
 Overview of the chart types currently supported in the library, each including a description of its use and design rationale:
