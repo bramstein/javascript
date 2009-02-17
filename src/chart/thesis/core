@@ -78,6 +78,8 @@ Mathematics Extensions
 ======================
 The math module extends the Math prototype with a set of new methods for rounding, generating correct random integers [4] (TODO: look this up), and measuring number properties such as accuracy, precision and the number of digits.
 
+The math module also implements interval arithmetic. (TODO: more...)
+
 Getter and Setter Properties
 ============================
 The property module adds support for adding getter and setter properties to any object. In fact, it acts as a factory for creating functions that add getter and setter properties to objects. A getter and setter property is defined as a method that when called without a parameter returns the value of its property and when called with a parameter to set the value of the property to that value.

@@ -1,44 +1,36 @@
-The graphics module is an abstract layer
+The graphics module is an abstract layer built on top of the HTML5 Canvas API. It abstracts away less used methods and implements higher level functionality such the ability to create view-ports and to draw points in various ways.
 
+The API is built on the chaining principle; methods return the object on which they were invoked. This allows for very succinct way of drawing graphics:
 
-API
---------
-*Chaining
-*layer on top of HTML Canvas
-*path, shapes
+  graphics.
+    beginPath().
+      moveTo(10, 10).
+	  lineTo(20, 20).
+    endPath().
+    stroke('#00000');
 
-Shape includes the following methods:
-* beginViewport
-* closeViewport
-* beginPath
-* stroke
-* fill
-* beginClip
-* closeClip
-* rect
-* line
-* points: circle, triangle, cross, diamond, vdash, hdash, ellipse, square
-* text
+The graphics API has two basic types of methods, one to create shapes and the other to create paths. Shapes include the following methods: beginViewport, closeViewport, beginPath, stroke, fill, rect, line, points (circle, triangle, cross, diamond, vdash, hdash, ellipse, square), and text. Paths include the following methods: lineTo, moveTo, arcTo, bezierCurveTo, quadraticCurveTo, closePath, endPath. Shapes can be considered ready-made instances of paths (although the implementation might differ) and they define a higher level interface to drawing complex paths.
 
-Path includes the following methods:
-lineTo
-moveTo
-arcTo
-bezierCurveTo
-quadraticCurveTo
-closePath
-endPath
+The graphics object does not expose path methods, instead the beginPath of the shape set returns a set of functions that can create paths. Once the user is creating a path there is no way, other than by calling either the closePath or endPath methods (which returns the shapes set of methods), to return to the shape group. This enforces the correct creation of paths and shapes (i.e. the API ensures that only valid method call combinations are made.)
 
+Custom view-ports
+-----------------
+The chart library implements its own transformation stack instead of using the one provided by the HTML5 Canvas API. The reason for this is to have complete control over how lines are drawn. This can only be achieved by not using the built-in transformation stack. An example of one of the problems is that line width is not implemented consistently across browsers and transformation states. Some browsers will use the line width associated with the transformation matrix when the path was created, while others will use the line width associated with the transformation matrix when the path was stroked. The following HTML5 Canvas example demonstrates this problem.
 
+  ctx.lineWidth = 2;
+  ctx.save();
+  ctx.scale(1.5, 1.5);
+  ctx.lineTo(10, 10);
+  ctx.store();
+  ctx.stroke();
+
+Some implementations will stroke the path with a line width of 2, while others will use a line width of 3 (2 scaled by 1.5). Unfortunately---and unlike other graphics APIs, such as OpenGL [1]---the HTML5 Canvas element does not specify a stack for rendering properties such as line width. To overcome this problem, it was a necessity to implement a custom transformation stack. The graphics supports this through two methods: beginViewport and closeViewport. Instead of offering more general scale and translate methods, these methods deal with the concept of a viewport; a two dimensional area, with its own custom coordinate system. The beginViewport method takes four required parameters (x, y, width, and height) and three optional ones (horizontal interval, vertical interval, and polar.) When the horizontal and vertical intervals are specified, all drawing between the beginViewport and closeViewport are done in those intervals. This simplifies drawing data points by removing the need for transforming the data into the charts view port; data can simply be plotted to the screen without transformation. Viewports can also be nested without problems.
+
+The last optional parameter is polar, which---when turned---on transforms the coordinates to all drawing methods from polar to Cartesian. This makes it possible to also transparently plot polar data.
 
 Crisp line drawing
 ------------------
 Although it has support for some vector operations, the HTML5 Canvas element is not a vector based API, it basically draws bitmaps. As such, it becomes a necessity to manually ensure that lines are drawn on screen pixels instead of on pixel boundaries resulting in an approximation (blurred lines.)[3] (TODO: clarify this with a picture) The graphics module internally ensures that all lines and rectangles are drawn on screen pixels and never on the boundaries. As this "rounding" to screen pixels is done consistently, the resulting image is not affected, other than being slightly moved up or down (depending on the implementation of the rounding.)
-
-Custom view-ports
------------------
-
-
 
 Fonts/Text support
 ------------------
@@ -50,5 +42,10 @@ Browser support
 ---------------
 Firefox, Opera and Safari all support various subsets of the HTML5 Canvas tag. Fortunately, and apart from a text API, there is a common subset of functionality that is sufficient for use in the chart library. Unfortunately, the only browser that does not support HTML5 Canvas is also the browser with the largest market share: Internet Explorer. Fortunately there are JavaScript implementations available that provide a HTML5 Canvas API for Internet Explorer and convert the API calls into VML elements [7]. By using one of these JavaScript implementations, the chart library supports all major browsers.
 
-
+[1] OpenGL 2.1 Reference Manual, Silicon Graphics Inc, URL <http://www.opengl.org/sdk/docs/man/xhtml/glPushAttrib.xml>, Visited: 2009-02-17.
+[2]
 [3] "Applying styles and colors", Eric Shepherd, Mozilla Developer Center, URL <https://developer.mozilla.org/en/Canvas_tutorial/Applying_styles_and_colors#Line_styles>, Visited: 2009-02-15
+[4]
+[5]
+[6]
+[7]
