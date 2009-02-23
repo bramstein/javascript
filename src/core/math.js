@@ -8,6 +8,10 @@
 			var t = Math.pow(10, precision || 1);
 			return Math.ceil(x / t) * t;
 		},
+		truncate: function (x, precision) {
+			var t = Math.pow(10, precision || 1);
+			return Math.round(x * t) / t;
+		},
 		roundTo: function (x, precision) {
 			return Math.round(x / precision) * precision;
 		},

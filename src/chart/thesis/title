@@ -1,1 +1,0 @@
-The title module creates a title component, which simply draws a title and subtitle string on the screen. Both values are optional. No title or subtitle will be drawn if they are not supplied. Font information is retrieved from the default settings.

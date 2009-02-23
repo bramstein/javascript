@@ -29,6 +29,7 @@
 		<script type="text/javascript" src="chart/chart.scatter.js"></script>
 		<script type="text/javascript" src="chart/chart.bar.js"></script>
 		<script type="text/javascript" src="chart/chart.line.js"></script>
+		<script type="text/javascript" src="chart/chart.plot.js"></script>
 
 		<script type="text/javascript">
 		<![CDATA[
@@ -92,7 +93,7 @@
 				};
 
 				var plot = defaults.type.scatter('scatter-anscombe', d, { title: 'Anscombe\'s Quartet of Datasets' });
-				plot.bounds({width: 300, height: 300});
+				plot.bounds({width: 350, height: 300});
 				plot.draw();
 			}
 
@@ -180,9 +181,37 @@
 				plot.draw();
 			}
 
+			function stacked() {
+				var d = {
+					categories: ['Q1', 'Q2'],
+					subcategories: ['West', 'East', 'South', 'North'],
+					data: [
+						[38, 22, 15, 25],
+						[25, 27, 20, 28]
+					]
+				};
+
+				var plot = defaults.type.bar('bar-stacked', d, {title: 'Percentage of Total Sales', stacked: true});
+				plot.bounds({width: 300, height: 200});
+				plot.draw();
+			}
+
+			function vertical() {
+				var d = {
+					categories: ['West', 'South', 'East', 'North'],
+					data: [38, 25, 22, 15]
+				};
+
+				var plot = defaults.type.bar('bar-vertical', d, {title: 'Percentage of Total Sales', reverse: true});
+				plot.bounds({width: 350, height: 200});
+				plot.draw();
+			}
+
 			function bar() {
 				sales();
 				bonds();
+				stacked();
+				vertical();
 			}
 
 			function scatter() {
@@ -193,6 +222,77 @@
 			function line() {
 				linesales();
 				linesdepartments();
+
+			}
+
+			function sine(x, y) {
+				return Interval.add(Interval.sin(x), y);
+			}
+
+
+			function sinewave() {
+				var plot = defaults.type.plot('plot-sine', sine, {
+					title: 'Sine Wave',
+					axes: {
+						horizontal: axis({
+							from: -Math.PI,
+							to: Math.PI,
+							ticks: {
+								major: [-Math.PI, -Math.PI / 2, 0, Math.PI /  2, Math.PI],
+								labels: ['-π', '-½π', '0', '½π', 'π']
+							}
+						}),
+						vertical: axis({
+							from: -1,
+							to: 1,
+							ticks: {
+								major: 3
+							}
+						})
+					},
+					draw: {
+						horizontal: {
+							grid: true
+						},
+						vertical: {
+							grid: true
+						}
+					}
+				});
+				plot.bounds({width: 350, height: 200});
+				plot.draw();
+			}
+
+			function rose(r, t) {
+			//	return Interval.add(t, r);
+				return Interval.add(Interval.cos({from: t.from * 4, to: t.to * 4}), r);
+			//	return Interval.add({from: 3 + t.from * 2, to: 3 + t.to * 2}, r);
+			}
+
+			function polarrose() {
+				var plot = defaults.type.plot('plot-rose', rose, {
+					title: 'Polar Rose',
+					axes: {
+						polar: axis({
+							from: -1,
+							to: 1,
+							ticks: {
+								major: [-1, 1]
+							}
+						})
+					},
+					range: {
+						from: 0,
+						to: Math.PI * 2
+					}
+				});
+				plot.bounds({width: 350, height: 350});
+				plot.draw();
+			}
+
+			function func() {
+				sinewave();
+				polarrose();
 			}
 
 			function draw() {
@@ -200,6 +300,7 @@
 				bar();
 				scatter();
 				line();
+				func();
 			}
 		]]>
 		</script>
@@ -241,11 +342,17 @@
 		<div class="right">
 			<canvas id="bar-bonds" width="400" height="200"></canvas>
 		</div>
+		<div class="left">
+			<canvas id="bar-stacked" width="300" height="200"></canvas>
+		</div>
+		<div class="right">
+			<canvas id="bar-vertical" width="350" height="200"></canvas>
+		</div>
 		<!--<div>
 			<canvas id="canvas-context" width="300" height="200"></canvas>
 		</div>-->
 		<div class="left">
-			<canvas id="scatter-anscombe" width="300" height="300"></canvas>
+			<canvas id="scatter-anscombe" width="350" height="300"></canvas>
 		</div>
 		<div class="right">
 			<canvas id="scatter-challenger" width="300" height="300"></canvas>
@@ -255,6 +362,13 @@
 		</div>
 		<div class="right">
 			<canvas id="line-departments" width="450" height="200"></canvas>
+		</div>
+
+		<div class="left">
+			<canvas id="plot-sine" width="350" height="200"></canvas>
+		</div>
+		<div class="right">
+			<canvas id="plot-rose" width="350" height="350"></canvas>
 		</div>
 	</body>
 </html>

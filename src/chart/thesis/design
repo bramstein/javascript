@@ -1,5 +1,0 @@
-(TODO: Something about components)
-
-Each chart type is an instance of the chart super "class" (the word class here does not imply classical inheritance, but rather an object that shares the same methods and some state with another object.)
-
-The canvas is the area filled with data elements, such as axes, grids, lines, bars, points, etc. A chart contains an canvas and several supporting elements, such as titles and legends. A composite chart is a chart that contains more than one chart.

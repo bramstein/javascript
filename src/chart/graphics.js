@@ -38,15 +38,28 @@ var graphics = function () {
 			coordinate = [],
 			textBuffer = [];
 
-		function transform(x, y) {
+		function transform(x, y, forceCartesian) {
+			if (!forceCartesian) {
+				return transformation.reduceRight(function (i, item) {
+					return item.multiply(i);
+				}, coordinate.peek() ? toCartesian($V([x, y, 1])) : $V([x, y, 1]));
+			}
+			else {
+				return transformation.reduceRight(function (i, item) {
+					return item.multiply(i);
+				}, $V([x, y, 1]));
+			}
+		}
+
+		function inverseTransform(x, y) {
 			return transformation.reduceRight(function (i, item) {
-				return item.multiply(i);
+				return item.inverse().multiply(i);
 			}, coordinate.peek() ? toCartesian($V([x, y, 1])) : $V([x, y, 1]));
 		}
 
 		function transform_length(w, h) {
-			var o = transform(0, 0),
-				r = transform(w, h);
+			var o = transform(0, 0, true),
+				r = transform(w, h, true);
 			return r.subtract(o);
 		}
 
@@ -326,6 +339,17 @@ var graphics = function () {
 				textBuffer = [];
 
 				return shape;
+			};
+
+			shape.pixelSize = function () {
+				var origin = inverseTransform(0, 0),
+					dimension = inverseTransform(1, 1),
+					result = dimension.subtract(origin);
+
+				return {
+					horizontal: result.e(1),
+					vertical: result.e(2)
+				};
 			};
 
 			shape.closeViewport = function () {

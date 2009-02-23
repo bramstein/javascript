@@ -1,11 +1,9 @@
--trend lines
--reference lines
--fix sub category bar width and spacing
--add support for highlighting data points
--perhaps move axes creation into chart (and add options to specify ticks)
--test composite chart
--add minimum size to chart bounds
--try validation and range calculation based on input format specification
+-move legend above chart instead of to the right if possible.
+-custom axis settings as options parameter to charts (to override default settings easily)
++fixed order with reversed bar charts
++added function plotting chart type
++added support for stacked bar charts
++fixed sub category bar width and spacing
 +added line chart
 +added axis label(s)
 +changed chart bounds to automatically lay out the chart upon setting its size
@@ -75,6 +73,13 @@
 +test vertical category axis (fixed, working now).
 +add endPath and closePath and remove stroke and fill from path.
 +remove itransform & itransform_length from graphics.
+-trend lines
+-reference lines
+-add support for highlighting data points
+-perhaps move axes creation into chart (and add options to specify ticks)
+-test composite chart
+-add minimum size check to chart bounds
+-try validation and range calculation based on input format specification
 -more precise bounding box of data area using graphics (reduces border space, increases data area)
 -implement circle with area parameter
 -guarantee inclusion property for interval arithmetic (should fix data points lying exactly on a grid line, among other things)
@@ -90,4 +95,3 @@
 -reimplement simple vector and matrix library
 -add option to jLayout to support different coordinate systems.
 -implement flow layout
--move legend above chart instead of to the right if possible.

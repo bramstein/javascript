@@ -1,5 +1,0 @@
-The legend module creates a component capable of drawing legend items.
-
-It supports the following types of legend items: point (circle, cross, triangle, diamond, and square), line or bar. These three types are sufficient to represent all chart types currently supported in the library.
-
-The legend component maintains a flow layout internally to lay out the individual legend items. This means the the items in a legend are dynamically arranged. If the legend is placed in a vertical position, the items will be laid out in one column, or given enough space multiple columns. When the legend is placed in a horizontal position, for example on top of a chart, the legend items will naturally "flow" into a row formation.

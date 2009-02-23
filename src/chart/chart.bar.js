@@ -22,7 +22,8 @@ Object.extend(defaults.type, {
 
 			that,
 			
-			reverse = options.reverse && options.reverse === true;
+			reverse = options.reverse && options.reverse === true,
+			stacked = options.stacked && options.stacked === true;
 
 		if (input.categories.isEmpty()) {
 			throw new TypeError('A bar chart must contain at least one category');
@@ -33,15 +34,40 @@ Object.extend(defaults.type, {
 				range.vertical.from = Math.min(range.vertical.from, v);
 				range.vertical.to = Math.max(range.vertical.to, v);
 			});
+
+			if (reverse) {
+				input.categories.reverse();
+				input.subcategories.reverse();
+				input.values.reverse();
+			}
 		}
 		else {
-			// one or more categories and subcategories
-			input.values.forEach(function (set) {
-				set.forEach(function (v) {
-					range.vertical.from = Math.min(range.vertical.from, v);
-					range.vertical.to = Math.max(range.vertical.to, v);
+			if (reverse) {
+				input.categories.reverse();
+				input.subcategories.reverse();
+				input.values.reverse();
+				input.values = input.values.map(Array.reverse);
+			}
+
+			if (!stacked) {
+				// one or more categories and subcategories
+				input.values.forEach(function (set) {
+					set.forEach(function (v) {
+						range.vertical.from = Math.min(range.vertical.from, v);
+						range.vertical.to = Math.max(range.vertical.to, v);
+					});
 				});
-			});
+			}
+			else {
+				input.values.forEach(function (set) {
+					var t = 0;
+					set.forEach(function (v) {
+						t += v;
+					});
+					range.vertical.from = Math.min(range.vertical.from, t);
+					range.vertical.to = Math.max(range.vertical.to, t);
+				});
+			}
 
 			my.legend = legend({
 				labels: input.subcategories,
@@ -74,7 +100,6 @@ Object.extend(defaults.type, {
 				var i = 0;
 				if (input.subcategories.isEmpty()) {					
 					input.values.forEach(function (v) {
-						//g.rect(i + 0.25, 0, 0.5, v).
 						if (reverse) {
 							g.rect(0, i + 0.25, v, 0.5).
 							fill(defaults.color.data.qualitative[0]);
@@ -86,20 +111,38 @@ Object.extend(defaults.type, {
 						i += 1;
 					});
 				}
-				else {
+				else if (!stacked) {
 					input.values.forEach(function (set) {
-						var size = 0.5 / set.length,
-							start =  0, j = 0;
+						var size = input.values.length / (set.length * input.values.length + 2),
+							start =  size / 2, j = 0;
 						set.forEach(function (v) {
 							if (reverse) {
-								g.rect(0, i + 0.25 + start, v, size).
+								g.rect(0, i + start, v, size).
 								fill(defaults.color.data.qualitative[j]);
 							}
 							else {
-								g.rect(i + 0.25 + start, 0, size, v).
+								g.rect(i + start, 0, size, v).
 								fill(defaults.color.data.qualitative[j]);
 							}
 							start += size;
+							j += 1;
+						});
+						i += 1;
+					});
+				}
+				else if (stacked) {
+					input.values.forEach(function (set) {
+						var start = 0, j = 0;
+						set.forEach(function (v) {
+							if (reverse) {
+								g.rect(start, i + 0.25, v, 0.5).
+								fill(defaults.color.data.qualitative[j]);
+							}
+							else {
+								g.rect(i + 0.25, start, 0.5, v).
+								fill(defaults.color.data.qualitative[j]);
+							}
+							start += v;
 							j += 1;
 						});
 						i += 1;

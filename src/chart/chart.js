@@ -12,20 +12,28 @@ var chart = function () {
 				height: 0
 			};
 
-		if (my.axes === undefined) {
+		if (my.axes === undefined && options.axes === undefined) {
 			throw new TypeError('A subclass of chart must specify axes.');
 		}
 
 		g = graphics(canvasIdentifier);
 	
 		options = options || {};
+		my.axes = my.axes || {};
 
 		// Axes can be overridden by a user supplied value
 		if (options.axes) {
-			my.axes = {
-				horizontal: options.axes.horizontal || my.axes.horizontal,
-				vertical: options.axes.vertical || my.axes.vertical
-			};
+			if (options.axes.polar !== undefined || my.axes.polar !== undefined) {
+				my.axes = {
+					polar: options.axes.polar || my.axes.polar
+				};
+			}
+			else {
+				my.axes = {
+					horizontal: options.axes.horizontal || my.axes.horizontal,
+					vertical: options.axes.vertical || my.axes.vertical
+				};
+			}
 		}
 
 		// Title & Subtitle
