@@ -3,7 +3,8 @@
 var chart = function () {
 	return function (canvasIdentifier, options, shared) {
 		var that = {},
-			g, c, t, l, le,
+			other = {},
+			g, c, t, l, le, tl,
 			my = shared || {},
 			mybounds = {
 				x: 0,
@@ -77,10 +78,29 @@ var chart = function () {
 			draw: my.draw
 		});
 
+		tl  = jLayout.grid({
+			items: [le, t],
+			rows: 2
+		});
+
+		other = bounds(other);
+		other = insets(other);
+		other = container(other, tl);
+
+		other.draw = function (g) {
+			var b = other.bounds();
+			g.beginViewport(b.x, b.y, b.width, b.height);
+			t.draw(g);
+			le.draw(g);
+			g.closeViewport();
+		//	g.rect(b.x, b.y, b.width, b.height).
+		//	stroke('rgb(255, 0, 255)');
+		//	console.log(b);
+		};
+
 		l = jLayout.border({
 			center: c,
-			south: t,
-			east: le
+			south: other,
 		});
 
 		// Mixin the following properties
@@ -110,9 +130,10 @@ var chart = function () {
 				g.beginViewport(b.x, b.y, b.width, b.height).
 					rect(0, 0, b.width, b.height).
 					fill(defaults.color.background.chart);
-				t.draw(g);
+				//t.draw(g);
+				other.draw(g);
 				c.draw(g, that.plot);
-				le.draw(g);
+				//le.draw(g);
 				g.closeViewport();
 			},
 		});

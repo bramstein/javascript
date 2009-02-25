@@ -93,8 +93,8 @@ var legend = function () {
 		}
 
 		l = jLayout.grid({
-			'rows': rows,
-			'columns': 1,
+			'rows': 1,
+			'columns': rows,
 			'items': myitems.reverse()
 		});
 
@@ -114,10 +114,10 @@ var legend = function () {
 		});
 
 		that.insets({
-			top: 5,
-			bottom: 5,
-			left: 20,
-			right: 0
+			top: 15,
+			bottom: 0,
+			left: 35,
+			right: 5
 		});
 
 		return that;

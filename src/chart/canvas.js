@@ -395,7 +395,7 @@ var canvas = function () {
 							}
 						}
 					g.closeViewport();
-				//	g.rect(data.x, data.y, data.width, data.height).stroke('rgb(255, 0, 0)');
+					//g.rect(data.x, data.y, data.width, data.height).stroke('rgb(255, 0, 0)');
 
 					if (axes.horizontal.label && options.draw.horizontal.label) {
 						g.text(data.x + (data.width / 2), 0, axes.horizontal.label, {
@@ -411,7 +411,7 @@ var canvas = function () {
 						fill(defaults.color.label);
 					}
 				g.closeViewport();
-			//	g.rect(b.x, b.y, b.width, b.height).stroke('rgb(255,0,0)');
+				//g.rect(b.x, b.y, b.width, b.height).stroke('rgb(0,0,255)');
 			}
 		});
 

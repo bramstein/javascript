@@ -139,7 +139,7 @@
 				};
 
 				var plot = defaults.type.bar('bar-bonds', d, { title: 'Bond Yields'});
-				plot.bounds({width: 400, height: 200});
+				plot.bounds({width: 300, height: 200});
 				plot.draw();
 			}
 
@@ -192,7 +192,7 @@
 				};
 
 				var plot = defaults.type.bar('bar-stacked', d, {title: 'Percentage of Total Sales', stacked: true});
-				plot.bounds({width: 300, height: 200});
+				plot.bounds({width: 300, height: 300});
 				plot.draw();
 			}
 
@@ -264,8 +264,8 @@
 			}
 
 			function rose(r, t) {
-			//	return Interval.add(t, r);
-				return Interval.add(Interval.cos({from: t.from * 4, to: t.to * 4}), r);
+				return Interval.add(t, r);
+			//	return Interval.add(Interval.cos({from: t.from * 4, to: t.to * 4}), r);
 			//	return Interval.add({from: 3 + t.from * 2, to: 3 + t.to * 2}, r);
 			}
 
@@ -297,10 +297,43 @@
 
 			function draw() {
 				font = font();
+
+
+				var plot = defaults.type.plot('test', function (x) {return {from: -100, to: -100};}, {
+					axes: {
+						horizontal: axis({
+							from: 0,
+							to: 1,
+							ticks: {
+								major: 5
+							}
+						}),
+						vertical: axis({
+							from: 0,
+							to: 1,
+							ticks: {
+								major: 5
+							}
+						})
+					},
+					draw: {
+						horizontal: {
+							grid: false
+						},
+						vertical: {
+							grid: false
+						}
+					}
+				});
+				plot.bounds({width: 200, height: 200});
+				plot.draw();
+
 				bar();
 				scatter();
 				line();
 				func();
+
+
 			}
 		]]>
 		</script>
@@ -336,14 +369,16 @@
 		</style>
 	</head>
 	<body onload="draw();">
+		<canvas id="test" width="200" height="200"></canvas>
+
 		<div class="left">
 			<canvas id="bar-pcount" width="350" height="200"></canvas>
 		</div>
 		<div class="right">
-			<canvas id="bar-bonds" width="400" height="200"></canvas>
+			<canvas id="bar-bonds" width="300" height="200"></canvas>
 		</div>
 		<div class="left">
-			<canvas id="bar-stacked" width="300" height="200"></canvas>
+			<canvas id="bar-stacked" width="300" height="300"></canvas>
 		</div>
 		<div class="right">
 			<canvas id="bar-vertical" width="350" height="200"></canvas>
