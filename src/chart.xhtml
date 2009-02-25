@@ -30,6 +30,7 @@
 		<script type="text/javascript" src="chart/chart.bar.js"></script>
 		<script type="text/javascript" src="chart/chart.line.js"></script>
 		<script type="text/javascript" src="chart/chart.plot.js"></script>
+		<script type="text/javascript" src="chart/chart.histogram.js"></script>
 
 		<script type="text/javascript">
 		<![CDATA[
@@ -290,15 +291,28 @@
 				plot.draw();
 			}
 
+
 			function func() {
 				sinewave();
 				polarrose();
 			}
 
+
+
+			function histogram() {
+				var d = {
+					categories: ['60-65', '65-70', '70-75', '75-80', '80-85', '85-90'],
+					data: [3, 3, 8, 10, 5, 2]
+				};
+				var plot = defaults.type.histogram('test', d, {title: 'Heights of Black Cherry Trees'});
+				plot.bounds({width: 280, height: 250});
+				plot.draw();
+			}
+
 			function draw() {
 				font = font();
 
-
+/*
 				var plot = defaults.type.plot('test', function (x) {return {from: -100, to: -100};}, {
 					axes: {
 						horizontal: axis({
@@ -327,11 +341,12 @@
 				});
 				plot.bounds({width: 200, height: 200});
 				plot.draw();
-
+*/
 				bar();
 				scatter();
 				line();
 				func();
+				histogram();
 
 
 			}
@@ -369,7 +384,7 @@
 		</style>
 	</head>
 	<body onload="draw();">
-		<canvas id="test" width="200" height="200"></canvas>
+		<canvas id="test" width="400" height="300"></canvas>
 
 		<div class="left">
 			<canvas id="bar-pcount" width="350" height="200"></canvas>
