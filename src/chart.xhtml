@@ -227,13 +227,13 @@
 			}
 
 			function sine(x, y) {
-				return Interval.add(Interval.sin(x), y);
+				return Interval.add(Interval.sin(x), y)
 			}
 
 
 			function sinewave() {
 				var plot = defaults.type.plot('plot-sine', sine, {
-					title: 'Sine Wave',
+					/*title: 'Sine Wave',*/
 					axes: {
 						horizontal: axis({
 							from: -Math.PI,
@@ -253,14 +253,20 @@
 					},
 					draw: {
 						horizontal: {
-							grid: true
+							grid: false,
+							labels: false,
+							axis: false,
+							ticks: false
 						},
 						vertical: {
-							grid: true
+							grid: false,
+							labels: false,
+							axis: false,
+							ticks: false
 						}
 					}
 				});
-				plot.bounds({width: 350, height: 200});
+				plot.bounds({width: 350, height: 350});
 				plot.draw();
 			}
 
@@ -415,7 +421,7 @@
 		</div>
 
 		<div class="left">
-			<canvas id="plot-sine" width="350" height="200"></canvas>
+			<canvas id="plot-sine" width="350" height="350"></canvas>
 		</div>
 		<div class="right">
 			<canvas id="plot-rose" width="350" height="350"></canvas>

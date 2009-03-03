@@ -156,7 +156,8 @@ var graphics = function () {
 				// draw stroked rectangles. Unfortunately this sometimes creates
 				// rounding errors in drawings resulting in visual artifacts.
 				context.beginPath();
-					context.rect(Math.round(x), Math.round(y), Math.round(width), Math.round(height));
+				//	context.rect(Math.round(x), Math.round(y), Math.round(width), Math.round(height));
+					context.rect(round(x), round(y), Math.round(width), Math.round(height));
 				context.closePath();
 				return shape;
 			};

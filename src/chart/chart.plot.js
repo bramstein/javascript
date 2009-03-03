@@ -56,6 +56,9 @@ Object.extend(defaults.type, {
 						g.square((horizontal.from + horizontal.to) / 2, (vertical.from + vertical.to) / 2, pixelSize).fill('rgb(255, 0, 0)');
 					}
 					else {
+						if (Interval.width(horizontal) > pixel.horizontal * 4 && Interval.width(vertical) > pixel.vertical * 4) {
+							g.rect(horizontal.from, vertical.from, Interval.width(horizontal), Interval.width(vertical)).stroke('rgb(128, 128, 128)');
+						}
 						that.subdivide(g, horizontal, vertical);	
 					}
 				}
