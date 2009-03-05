@@ -20,6 +20,9 @@
 		otherwise Java will use the old (and broken) built in version.
 	-->
 	<scriptdef name="rhinounit" src="lib/rhino-unit/rhinoUnitAnt.js" language="javascript">
+		<classpath>
+			<path refid="js.lib"/>
+		</classpath>
 		<attribute name="options"/>
 		<attribute name="ignoredglobalvars"/>
 		<attribute name="haltOnFirstFailure"/>
