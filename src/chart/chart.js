@@ -79,7 +79,7 @@ var chart = function () {
 		});
 
 		tl  = jLayout.grid({
-			items: [/*le,*/ t],
+			items: [le, t],
 			rows: 2
 		});
 
@@ -91,7 +91,7 @@ var chart = function () {
 			var b = other.bounds();
 			g.beginViewport(b.x, b.y, b.width, b.height);
 			t.draw(g);
-			//le.draw(g);
+			le.draw(g);
 			g.closeViewport();
 		//	g.rect(b.x, b.y, b.width, b.height).
 		//	stroke('rgb(255, 0, 255)');
