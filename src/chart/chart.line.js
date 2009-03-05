@@ -1,4 +1,4 @@
-
+/*global defaults, data, axis, legend, chart, font*/
 /**
  	{
  		categories: ['2000', '2001', '2003'],
@@ -19,7 +19,7 @@
  */
 Object.extend(defaults.type, {
 	line: function (canvasIdentifier, d, options) {
-			var my = {
+        var my = {
 				ratio: {
 					horizontal: 1.61,
 					vertical: 1

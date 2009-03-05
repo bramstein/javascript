@@ -1,6 +1,7 @@
+/*global defaults, data, axis, chart*/
 Object.extend(defaults.type, {
 	histogram: function (canvasIdentifier, d, options) {
-			var my = {
+        var my = {
 				ratio: {
 					horizontal: 1.61,
 					vertical: 1

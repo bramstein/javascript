@@ -134,7 +134,7 @@ var graphics = function () {
 
 				context.save();
 				context.beginPath();
-					context.rect(x, y, width, height);
+                context.rect(x, y, width, height);
 				context.clip();
 			};
 
@@ -156,8 +156,8 @@ var graphics = function () {
 				// draw stroked rectangles. Unfortunately this sometimes creates
 				// rounding errors in drawings resulting in visual artifacts.
 				context.beginPath();
-				//	context.rect(Math.round(x), Math.round(y), Math.round(width), Math.round(height));
-					context.rect(round(x), round(y), Math.round(width), Math.round(height));
+				context.rect(Math.round(x), Math.round(y), Math.round(width), Math.round(height));
+                //context.rect(round(x), round(y), Math.round(width), Math.round(height));
 				context.closePath();
 				return shape;
 			};
@@ -167,8 +167,8 @@ var graphics = function () {
 					p2 = transform(x2, y2);
 
 				context.beginPath();
-					context.moveTo(round(p1.e(1)), round(p1.e(2)));
-					context.lineTo(round(p2.e(1)), round(p2.e(2)));
+                context.moveTo(round(p1.e(1)), round(p1.e(2)));
+                context.lineTo(round(p2.e(1)), round(p2.e(2)));
 				context.closePath();
 				return shape;
 			};
@@ -190,9 +190,9 @@ var graphics = function () {
 				y = round(p.e(2));
 	
 				context.beginPath();
-				context.moveTo(x - size /2, y - h / 2); // left
+				context.moveTo(x - size / 2, y - h / 2); // left
 				context.lineTo(x + size / 2, y - h / 2); // right
-				context.lineTo(x, y + h /2); // top
+				context.lineTo(x, y + h / 2); // top
 				context.closePath();
 				return shape;
 			};

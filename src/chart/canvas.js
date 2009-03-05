@@ -268,7 +268,7 @@ var canvas = function () {
 						}
 					}
 					else if (options.draw.horizontal.labels) {
-						g.text(size * i + (size / 2), range['vertical'].from /*+ tick['horizontal'] * -2*/, s, {
+						g.text(size * i + (size / 2), range.vertical.from /*+ tick['horizontal'] * -2*/, s, {
 							textAlign: 'center', 
 							textBaseLine: 'top',
 							background: defaults.color.background.data,
@@ -293,11 +293,11 @@ var canvas = function () {
 
 				// Vertical major ticks and labels
 				axes.vertical.ticks.major.forEach(function (s, i, a) {
-					var size = (Interval.width(range['vertical']) / (a.length));
+					var size = (Interval.width(range.vertical) / (a.length));
 
 					if (range.vertical.numeric) {
 						// don't draw the tick or the label where the axes cross
-						if (s !== offset['horizontal'] || range['horizontal'].from >= 0 || range['horizontal'].to <= 0) { 
+						if (s !== offset.horizontal || range.horizontal.from >= 0 || range.horizontal.to <= 0) { 
 							if (options.draw.horizontal.grid && cartesian) {
 								g.line(range.horizontal.from, s, range.horizontal.to, s).
 								stroke(defaults.color.grid);
@@ -306,7 +306,7 @@ var canvas = function () {
 							if (options.draw.vertical.labels) {
 								g.text(
 									offset.vertical, s, axes.vertical.ticks.labels[i] || s, {
-										textAlign: (Math.isNegative(sign['vertical']) ? 'left' : 'right'), 
+										textAlign: (Math.isNegative(sign.vertical) ? 'left' : 'right'), 
 										textBaseLine: 'middle',
 										background: defaults.color.background.data,
 										font: defaults.font.labels,
@@ -326,7 +326,7 @@ var canvas = function () {
 						}
 					}
 					else if (options.draw.vertical.labels) {
-						g.text(range['horizontal'].from, size * i + (size / 2), s, {
+						g.text(range.horizontal.from, size * i + (size / 2), s, {
 							textAlign: 'right', 
 							textBaseLine: 'middle',
 							background: defaults.color.background.data,
@@ -351,22 +351,12 @@ var canvas = function () {
 
 				// The base horizontal axis
 				if (options.draw.horizontal.axis) {
-					g.line(
-						range['horizontal'].from, 
-						offset['horizontal'],
-						range['horizontal'].to,
-						offset['horizontal']
-					).stroke(defaults.color.axes);
+					g.line(range.horizontal.from, offset.horizontal, range.horizontal.to, offset.horizontal).stroke(defaults.color.axes);
 				}
 
 				// The base vertical axis
 				if (options.draw.vertical.axis) {
-					g.line(
-						offset['vertical'],
-						range['vertical'].from,
-						offset['vertical'],
-						range['vertical'].to
-					).stroke(defaults.color.axes);
+					g.line(offset.vertical, range.vertical.from, offset.vertical, range.vertical.to).stroke(defaults.color.axes);
 				}
 			},
 			draw: function (g, f) {
@@ -382,35 +372,34 @@ var canvas = function () {
 					beginViewport(data.x, data.y, data.width, data.height, {range: range}).
 						rect(range.horizontal.from, range.vertical.from, Interval.width(range.horizontal), Interval.width(range.vertical)).
 						fill(defaults.color.background.data);
-						that.drawAxes(g);
+                    
+                that.drawAxes(g);
 
-						if (f) {
-							if (!cartesian) {
-								g.beginViewport(range.horizontal.from, range.vertical.from, Interval.width(range.horizontal), Interval.width(range.vertical), { polar: true});
-								f(g);
-								g.closeViewport();	
-							}
-							else {
-								f(g);
-							}
-						}
-					g.closeViewport();
+                if (f) {
+                    if (!cartesian) {
+                        g.beginViewport(range.horizontal.from, range.vertical.from, Interval.width(range.horizontal), Interval.width(range.vertical), { polar: true});
+                        f(g);
+                        g.closeViewport();	
+                    }
+                    else {
+                        f(g);
+                    }
+                }
+                g.closeViewport();
 					//g.rect(data.x, data.y, data.width, data.height).stroke('rgb(255, 0, 0)');
 
-					if (axes.horizontal.label && options.draw.horizontal.label) {
-						g.text(data.x + (data.width / 2), 0, axes.horizontal.label, {
-							textAlign: 'center'
-						}).
-						fill(defaults.color.label);
-					}
+                if (axes.horizontal.label && options.draw.horizontal.label) {
+                    g.text(data.x + (data.width / 2), 0, axes.horizontal.label, {
+                        textAlign: 'center'
+                    }).fill(defaults.color.label);
+                }
 
-					if (axes.vertical.label && options.draw.vertical.label) {
-						g.text(0, b.height, axes.vertical.label, {
-							textBaseLine: 'top'
-						}).
-						fill(defaults.color.label);
-					}
-				g.closeViewport();
+                if (axes.vertical.label && options.draw.vertical.label) {
+                    g.text(0, b.height, axes.vertical.label, {
+                        textBaseLine: 'top'
+                    }).fill(defaults.color.label);
+                }
+                g.closeViewport();
 				//g.rect(b.x, b.y, b.width, b.height).stroke('rgb(0,0,255)');
 			}
 		});

@@ -6,7 +6,7 @@ var lexer = function (str) {
         PARENTHESES: /\(|\)/
     };
     
-    console.log(tokens.NUMBER.match(str));
+    //projec.log(tokens.NUMBER.match(str));
     
 };
 

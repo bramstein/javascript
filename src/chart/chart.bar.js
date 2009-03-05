@@ -1,4 +1,4 @@
-
+/*global defaults, data, legend, axis, chart*/
 Object.extend(defaults.type, {
 	bar: function (canvasIdentifier, d, options) {
 		var my = {

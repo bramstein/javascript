@@ -1,5 +1,5 @@
 
-/*global bounds, insets, graphics, jLayout, container, title, canvas, defaults*/
+/*global bounds, insets, graphics, jLayout, container, title, canvas, defaults, legend*/
 var chart = function () {
 	return function (canvasIdentifier, options, shared) {
 		var that = {},
@@ -100,7 +100,7 @@ var chart = function () {
 
 		l = jLayout.border({
 			center: c,
-			south: other,
+			south: other
 		});
 
 		// Mixin the following properties
@@ -135,7 +135,7 @@ var chart = function () {
 				c.draw(g, that.plot);
 				//le.draw(g);
 				g.closeViewport();
-			},
+			}
 		});
 		return that;
 	};

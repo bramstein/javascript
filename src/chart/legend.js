@@ -1,4 +1,4 @@
-
+/*global bounds, insets, maximum, font, defaults, jLayout, container */
 /*
 	var items = {
 		labels: ['Set1', 'Set2', 'Set3']
@@ -20,8 +20,12 @@ var legend = function () {
 
 			Object.extend(that, {
 				doLayout: function () {},
-				isVisible: function () { return true; },
-				preferredSize: function () { return that.minimumSize(); },
+				isVisible: function () {
+                    return true;
+                },
+				preferredSize: function () {
+                    return that.minimumSize();
+                },
 				minimumSize: function () {
 					var insets = that.insets(),
 						labelSize = font.size(label, defaults.font.labels);
@@ -64,7 +68,7 @@ var legend = function () {
 				}
 			});
 			return that;
-		}
+		};
 	}();
 
 	return function (items) {

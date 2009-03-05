@@ -1,3 +1,5 @@
+/*global defaults, chart, Interval*/
+
 Object.extend(defaults.type, {
 	plot: function (canvasIdentifier, f, options) {
 		var my = {
