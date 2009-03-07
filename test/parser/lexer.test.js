@@ -15,10 +15,10 @@ testCases(test,
     },
 
     function checkNumber() {
-        var i = l.tokenize('3 * 5'),
+        var i = l.tokenize('3 55 12#1'),
             r = {};
         while (r = i.next()) {
-            project.log(r.token + " " + r.value + ", at " + r.pos);
+            project.log(r.token + " \"" + r.value + "\", at " + r.pos);
         }
     },
 
