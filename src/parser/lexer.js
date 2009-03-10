@@ -27,16 +27,14 @@ var lexer = function (tokens) {
                             
                             buffer = buffer.substring(tokens[i].pattern.lastIndex);
                             tokens[i].pattern.lastIndex = 0;
-                                              
-                            return {
-                                type: tokens[i].type,
+                            
+                            return Object.extend(Object.clone(tokens[i]), {
                                 value: r[0],
                                 pos: currentPosition,
-                                toString: function () {
-                                //    return ('Type: ' + this.type + ', Value: ' + this.value + ', at position: ' + this.pos);
+                                toString: function() {
                                     return this.value;
                                 }
-                            };
+                            });
                         }
                     };
                     

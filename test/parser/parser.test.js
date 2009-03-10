@@ -11,7 +11,11 @@ testCases(test,
 	},
     
     function checkParser() {
-        project.log(parser.parse('3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3 % 2'));
+        project.log(parser.parse('3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3'));
+    },
+    
+    function checkFunction() {
+        project.log(parser.parse('sin(1, cos (4), 6)'));
     },
     
     function tearDown() {

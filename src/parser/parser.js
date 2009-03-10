@@ -1,51 +1,74 @@
 
 var parser = function () {
-
-    var operators = [
+    var constants = [
         {
-            name: 'ADD',
-            token: '\\+',
-            precedence: 10
-        },
-        {
-            name: 'SUB',
-            token: '-',
-            precedence: 10
-        },
-        {
-            name: 'DIV',
-            token: '\\/',
-            precedence: 9
-        },
-        {
-            name: 'MUL',
-            token: '\\*',
-            precedence: 9
-        },
-        {
-            name: 'POW',
-            token: '\\^',
-            precedence: 8,
-            associative: false
-        },
-        {
-            name: 'MOD',
-            token: '%',
-            precedence: 9
+            name: 'pi'
         }
     ];
 
     var functions = [
+        {
+            name: 'sin'
+        },
+        {
+            name: 'cos'
+        },
+        {
+            name: 'abs'
+        },
+        {
+            name: 'fmod',
+            parameters: 2
+        },
+        {
+            name: 'sqrt'
+        },
+        {
+            name: 'exp'
+        },
+        {
+            name: 'log'
+        }
     ];
 
+    var operators = [
+        {
+            name: 'add',
+            token: '+',
+            precedence: 1
+        },
+        {
+            name: 'sub',
+            token: '-',
+            precedence: 1
+        },
+        {
+            name: 'div',
+            token: '/',
+            precedence: 2
+        },
+        {
+            name: 'mul',
+            token: '*',
+            precedence: 2
+        },
+        {
+            name: 'pow',
+            token: '^',
+            precedence: 3,
+            associative: false
+        },
+        {
+            name: 'mod',
+            token: '%',
+            precedence: 2
+        }
+    ];
+        
     var tokens = [
         { 
             type: 'NUMBER',
-            pattern: /^(\d*\.\d+)|^(\d+)/g,
-        },    
-        {
-            type: 'OPERATOR',
-            pattern: new RegExp(('^(' + operators.map(function (o) { return o.token; }).join('|') + ')'), 'g')
+            pattern: /^(\d*\.\d+)|^(\d+)/g
         },
         {
             type: 'PARENTHESES_LEFT',
@@ -56,28 +79,36 @@ var parser = function () {
             pattern: /^\)/g
         },
         {
+            type: 'COMMA',
+            pattern: /^,/g
+        },
+        {
             type: 'SPACE',
             pattern: /^\s+/g 
-        }
+        }         
     ];
+
+    operators.forEach(function (op) {
+        op.type = 'OPERATOR';
+        op.precedence = op.precedence || 10;
+        op.associative = op.associative !== undefined ? op.associative : true;
+        op.pattern = new RegExp('^' + op.token.replace(/[.*+?^${}()|[\]\/\\]/g, '\\$&'), 'g');
+    });
+        
+    functions.forEach(function (f) {
+        f.type = 'FUNCTION';
+        f.pattern = new RegExp('^' + f.name, 'ig');
+        f.parameters = f.parameters || 1;
+    });
+    
+    constants.forEach(function (c) {
+        c.type = 'CONSTANT';
+        c.pattern = new RegExp('^' + c.name, 'ig');
+    });
+        
+    tokens.append(operators, functions);
     
     var lex = lexer(tokens);
-
-    function precedence(op) {
-        if (op.value === '+' || op.value === '-') {
-            return 0;
-        }
-        else if (op.value === '*' || op.value === '/' || op.value === '%') {
-            return 1;
-        }
-        else {
-            return 2;
-        }
-    }
-
-    function associative(op) {
-        return op.value !== '^';
-    }
 
     return {
         parse: function (str) {
@@ -90,25 +121,35 @@ var parser = function () {
                 if (token.type === 'NUMBER') {
                     output.push(token);
                 }
-            //    else if (token.type === 'FUNCTION') {
-            //        stack.push(token);
-            //    }
-           //     else if (token.type === 'COMMA') {
-           //     }
+                else if (token.type === 'CONSTANT') {
+                    output.push(token);
+                }
+                else if (token.type === 'FUNCTION') {
+                    stack.push(token);
+                }
+                else if (token.type === 'COMMA') {
+                    while (stack.peek().type !== 'PARENTHESES_LEFT') {
+                        output.push(stack.pop());
+                    
+                        if (!stack.isEmpty()) {
+                            throw new Error('Misplaced comma or missing parentheses.');
+                        }
+                    }
+                }
                 else if (token.type === 'OPERATOR') {
                     while (!stack.isEmpty() && stack.peek().type === 'OPERATOR' && (
-                            (associative(token) && precedence(token) <= precedence(stack.peek())) || 
-                            (!associative(token) && precedence(token) < precedence(stack.peek()))
+                            (token.associative && token.precedence <= stack.peek().precedence) || 
+                            (!token.associative && token.precedence < stack.peek().precedence)
                             )) {
                         output.push(stack.pop());
                     }
                     stack.push(token);
                 }
-                else if (token.type === 'PAREN_LEFT') {
+                else if (token.type === 'PARENTHESES_LEFT') {
                     stack.push(token);
                 }
-                else if (token.type === 'PAREN_RIGHT') {
-                    while (stack.peek().type !== 'PAREN_LEFT') {
+                else if (token.type === 'PARENTHESES_RIGHT') {
+                    while (stack.peek().type !== 'PARENTHESES_LEFT') {
                         output.push(stack.pop());
                         
                         if (stack.isEmpty()) {
@@ -124,7 +165,7 @@ var parser = function () {
             
             if (!stack.isEmpty()) {
                 while (!stack.isEmpty()) {
-                    if (stack.peek().type === 'PAREN_LEFT' || stack.peek().type === 'PAREN_RIGHT') {
+                    if (stack.peek().type === 'PARENTHESES_LEFT' || stack.peek().type === 'PARENTHESES_RIGHT') {
                         throw new Error('Mismatched parentheses.');
                     }
                     output.push(stack.pop());
