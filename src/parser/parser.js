@@ -106,8 +106,8 @@ var parser = function () {
         c.pattern = new RegExp('^' + c.name, 'ig');
     });
         
-    tokens.append(operators, functions);
-    
+    tokens.append(operators, functions, constants, [ { type: 'VARIABLE', pattern: /^[a-zA-Z\.]+/g } ]);
+    project.log(tokens.peek().pattern);
     var lex = lexer(tokens);
 
     return {
@@ -124,6 +124,9 @@ var parser = function () {
                 else if (token.type === 'CONSTANT') {
                     output.push(token);
                 }
+                else if (token.type === 'VARIABLE') {
+                    output.push(token);
+                }
                 else if (token.type === 'FUNCTION') {
                     stack.push(token);
                 }
@@ -136,7 +139,7 @@ var parser = function () {
                         }
                     }
                 }
-                else if (token.type === 'OPERATOR') {
+                else if (token.type === 'OPERATOR') {                
                     while (!stack.isEmpty() && stack.peek().type === 'OPERATOR' && (
                             (token.associative && token.precedence <= stack.peek().precedence) || 
                             (!token.associative && token.precedence < stack.peek().precedence)
@@ -164,6 +167,7 @@ var parser = function () {
             }
             
             if (!stack.isEmpty()) {
+                project.log(stack);
                 while (!stack.isEmpty()) {
                     if (stack.peek().type === 'PARENTHESES_LEFT' || stack.peek().type === 'PARENTHESES_RIGHT') {
                         throw new Error('Mismatched parentheses.');
