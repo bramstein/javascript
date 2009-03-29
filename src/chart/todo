@@ -1,5 +1,8 @@
 -move legend above chart instead of to the right if possible.
 -custom axis settings as options parameter to charts (to override default settings easily)
++switched graphics to use pre-multiplied transformation matrices
++removed dependency on Sylvester (nice library, but too big for the small part the chart library uses)
++reimplemented simple vector and matrix library
 +fixed order with reversed bar charts
 +added function plotting chart type
 +added support for stacked bar charts
@@ -92,6 +95,5 @@
 -drawing into canvas buffer and dynamically inserting an image through a data URL.
 -test text drawing API on Firefox3.1
 -implement div overlaying canvas for text drawing
--reimplement simple vector and matrix library
 -add option to jLayout to support different coordinate systems.
 -implement flow layout

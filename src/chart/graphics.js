@@ -32,7 +32,9 @@ var graphics = function () {
 		return t;
 	}
 
-
+	/**
+     * Calculate the determinant of a 3x3 matrix
+	 */
 	function mdet(m) {
 		return  m[0][0] * m[1][1] * m[2][2] + 
 				m[0][1] * m[1][2] * m[2][0] + 
@@ -41,13 +43,15 @@ var graphics = function () {
 				m[0][1] * m[1][0] * m[2][2] - 
 				m[0][2] * m[1][1] * m[2][0];
 	}
-	// [
-	// 	[0, 1, 2], // 0
-	//  [0, 1, 2], // 1
-	//  [0, 1, 2] // 2
-	// ]
-	// [0, 1, 2]
+
+	/**
+     * Multiple a 3x3 matrix with a 3 dimensional vector
+	 */
 	function mvecmul(m, v) {
+		if (m === undefined) {
+			return v;
+		}
+
 		return [
 			m[0][0] * v[0] + m[0][1] * v[1] + m[0][2] * v[2],
 			m[1][0] * v[0] + m[1][1] * v[1] + m[1][2] * v[2],
@@ -55,11 +59,17 @@ var graphics = function () {
 		];
 	}
 
+	/**
+     * Subtract two 3d dimensional vectors
+	 */
 	function vsub(a, b) {
 		return [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
 	}
 
 
+	/**
+     * Invert a 3x3 matrix
+     */
 	function minv(m) {
 		var det = 1 /mdet(m);
 		return [
@@ -81,11 +91,9 @@ var graphics = function () {
 		];
 	}
 
-	// [
-	// 	[0, 1, 2], // 0
-	//  [0, 1, 2], // 1
-	//  [0, 1, 2] // 2
-	// ]
+	/**
+	 * Multiply two 3x3 matrices
+	 */
 	function mmul(a, b) {
 		return [
 			[
@@ -109,27 +117,22 @@ var graphics = function () {
 	return function (identifier) {
 		var context = null,
 			canvas = document.getElementById(identifier),
-			transformation = [],
+			ptransformation = [],
+			itransformation = [],
 			coordinate = [],
 			textBuffer = [];
 
 		function transform(x, y, forceCartesian) {
 			if (!forceCartesian) {
-				return transformation.reduceRight(function (i, item) {
-					return mvecmul(item, i);
-				}, coordinate.peek() ? toCartesian([x, y, 1]) : [x, y, 1]);
+				return mvecmul(ptransformation.peek(), coordinate.peek() ? toCartesian([x, y, 1]) : [x, y, 1]);
 			}
 			else {
-				return transformation.reduceRight(function (i, item) {
-					return mvecmul(item, i);
-				}, [x, y, 1]);
+				return mvecmul(ptransformation.peek(), [x, y, 1]);
 			}
 		}
 
 		function inverseTransform(x, y) {
-			return transformation.reduceRight(function (i, item) {
-				return mvecmul(minv(item), i);
-			}, coordinate.peek() ? toCartesian([x, y, 1]) : [x, y, 1]);
+			return mvecmul(itransformation.peek(), coordinate.peek() ? toCartesian([x, y, 1]) : [x, y, 1]);
 		}
 
 		function transform_length(w, h) {
@@ -391,7 +394,8 @@ var graphics = function () {
 							from: 0,
 							to: Interval.width(view.vertical)
 						}
-					};
+					},
+					m;
 
 				if (options && options.range) {
 					range.horizontal = options.range.horizontal || range.horizontal;
@@ -403,12 +407,27 @@ var graphics = function () {
 
 				context.save();
 				context.translate(Math.round(origin[0]), Math.round(origin[1]));
-				
-				transformation.push([
+
+				m = [
 						[scale.horizontal, 0, -range.horizontal.from * scale.horizontal],
 						[0, scale.vertical, -range.vertical.from * scale.vertical],
 						[0, 0, 1]
-					]);
+					];
+
+				if (ptransformation.isEmpty()) {
+					ptransformation.push(m);
+				}
+				else {
+					ptransformation.push(mmul(ptransformation.peek(), m));
+				}
+
+
+				if (itransformation.isEmpty()) {
+					itransformation.push(minv(m));
+				}
+				else {
+					itransformation.push(mmul(itransformation.peek(), minv(m)));
+				}
 
 				coordinate.push((options && options.polar === true) || false);
 
@@ -429,7 +448,8 @@ var graphics = function () {
 			};
 
 			shape.closeViewport = function () {
-				transformation.pop();
+				ptransformation.pop();
+				itransformation.pop();
 				coordinate.pop();
 				context.restore();
 				textBuffer = [];
