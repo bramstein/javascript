@@ -409,10 +409,10 @@ var graphics = function () {
 				context.translate(Math.round(origin[0]), Math.round(origin[1]));
 
 				m = [
-						[scale.horizontal, 0, -range.horizontal.from * scale.horizontal],
-						[0, scale.vertical, -range.vertical.from * scale.vertical],
-						[0, 0, 1]
-					];
+					[scale.horizontal, 0, -range.horizontal.from * scale.horizontal],
+					[0, scale.vertical, -range.vertical.from * scale.vertical],
+					[0, 0, 1]
+				];
 
 				if (ptransformation.isEmpty()) {
 					ptransformation.push(m);
@@ -420,7 +420,6 @@ var graphics = function () {
 				else {
 					ptransformation.push(mmul(ptransformation.peek(), m));
 				}
-
 
 				if (itransformation.isEmpty()) {
 					itransformation.push(minv(m));

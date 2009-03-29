@@ -1,5 +1,6 @@
 eval(loadFile("src/core/object.js"));
 eval(loadFile("src/core/array.js"));
+eval(loadFile("src/core/array.extra.js"));
 eval(loadFile("src/core/function.js"));
 
 testCases(test, 

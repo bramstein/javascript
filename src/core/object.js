@@ -107,20 +107,6 @@
 			Clone.prototype = obj;
 			return new Clone();
 		},
-		equals: function (a, b) {
-			var ca = 0;
-
-			// Two objects are considered equal if: they have the same amount
-			// of keys; the key names are equal, and the key values are equal.
-			// If every property of a is in b and is equal, and both objects are
-			// of the same size we know they are equal
-			return a && b && Object.isObject(a) && Object.isObject(b) &&  Object.every(a, function (value, key) {
-				ca += 1;
-				return b.hasOwnProperty(key) && ((Object.isObject(value) && Object.equals(value, b[key])) || value.equals(b[key]));
-			}) && ca === Object.reduce(b, function (rv) { 
-				return (rv += 1); 
-			}, 0);
-		},
 		reduce: function (obj, fun, initial) {
 			var key, initialKey;
 
@@ -142,38 +128,6 @@
 				}
 			}
 			return initial;
-		}
-	});
-
-	/*jslint eqeqeq: false */
-	[Boolean, String, Function].forEach(function (value) {
-		Object.extend(value.prototype, {
-			equals: function (v) {
-				return this == v;
-			}
-		});
-	});
-
-	Object.extend(Number.prototype, {
-		equals: function (v) {
-			return this == v || isNaN(this) && isNaN(v);
-		}
-	});
-	/*jslint eqeqeq: true */
-
-	Object.extend(Date.prototype, {
-		equals: function (v) {
-			return this.valueOf() === v.valueOf();
-		}
-	});
-
-	Object.extend(RegExp.prototype, {
-		equals: function (v) {
-			return v instanceof RegExp && 
-				this.source === v.source &&
-				this.global === v.global &&
-				this.ignoreCase === v.ignoreCase &&
-				this.multiline === v.multiline;
 		}
 	});
 })();
