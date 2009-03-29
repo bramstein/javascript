@@ -7,7 +7,7 @@
  * closePath().
  * fill();
  */
-/*global document, $V, $M, Interval, defaults, font*/
+/*global document, Interval, defaults, font*/
 var graphics = function () {
 	var path = {};
 	var shape = {};
@@ -17,8 +17,9 @@ var graphics = function () {
 	 * Converts polar coordinates to cartesian.
 	 */
 	function toCartesian(v) {
-		return $V([v.e(1) * Math.cos(v.e(2)), v.e(1) * Math.sin(v.e(2)), 1]);
+		return [v[0] * Math.cos(v[1]), v[0] * Math.sin(v[1]), 1];
 	}
+
 
 	/**
 	 * Rounds numbers to the nearest .5 number.
@@ -31,6 +32,80 @@ var graphics = function () {
 		return t;
 	}
 
+
+	function mdet(m) {
+		return  m[0][0] * m[1][1] * m[2][2] + 
+				m[0][1] * m[1][2] * m[2][0] + 
+				m[0][2] * m[2][0] * m[2][1] - 
+				m[0][0] * m[1][2] * m[2][1] - 
+				m[0][1] * m[1][0] * m[2][2] - 
+				m[0][2] * m[1][1] * m[2][0];
+	}
+	// [
+	// 	[0, 1, 2], // 0
+	//  [0, 1, 2], // 1
+	//  [0, 1, 2] // 2
+	// ]
+	// [0, 1, 2]
+	function mvecmul(m, v) {
+		return [
+			m[0][0] * v[0] + m[0][1] * v[1] + m[0][2] * v[2],
+			m[1][0] * v[0] + m[1][1] * v[1] + m[1][2] * v[2],
+			m[2][0] * v[0] + m[2][1] * v[1] + m[2][2] * v[2]
+		];
+	}
+
+	function vsub(a, b) {
+		return [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+	}
+
+
+	function minv(m) {
+		var det = 1 /mdet(m);
+		return [
+			[
+				(m[1][1] * m[2][2] - m[1][2] * m[2][1]) * det,
+				(m[0][2] * m[2][1] - m[0][1] * m[2][2]) * det,
+				(m[0][1] * m[1][2] - m[0][2] * m[1][1]) * det
+			],
+			[
+				(m[1][2] * m[2][0] - m[1][0] * m[2][2]) * det,
+				(m[0][0] * m[2][2] - m[0][2] * m[2][0]) * det,
+				(m[0][2] * m[1][0] - m[0][0] * m[1][2]) * det
+			],
+			[
+				(m[1][0] * m[2][1] - m[1][1] * m[2][0]) * det,
+				(m[0][1] * m[2][0] - m[0][0] * m[2][1]) * det,
+				(m[0][0] * m[1][1] - m[0][1] * m[1][0]) * det
+			]
+		];
+	}
+
+	// [
+	// 	[0, 1, 2], // 0
+	//  [0, 1, 2], // 1
+	//  [0, 1, 2] // 2
+	// ]
+	function mmul(a, b) {
+		return [
+			[
+				a[0][0] * b[0][0] + a[0][1] * b[1][0] + a[0][2] * b[2][0],
+				a[0][0] * b[0][1] + a[0][1] * b[1][1] + a[0][2] * b[2][1],
+				a[0][0] * b[0][2] + a[0][1] * b[1][2] + a[0][2] * b[2][2]
+			],
+			[
+				a[1][0] * b[0][0] + a[1][1] * b[1][0] + a[1][2] * b[2][0],
+				a[1][0] * b[0][1] + a[1][1] * b[1][1] + a[1][2] * b[2][1],
+				a[1][0] * b[0][2] + a[1][1] * b[1][2] + a[1][2] * b[2][2]
+			],
+			[
+				a[2][0] * b[0][0] + a[2][1] * b[1][0] + a[2][2] * b[2][0],
+				a[2][0] * b[0][1] + a[2][1] * b[1][1] + a[2][2] * b[2][1],
+				a[2][0] * b[0][2] + a[2][1] * b[1][2] + a[2][2] * b[2][2]
+			]
+		];
+	}
+
 	return function (identifier) {
 		var context = null,
 			canvas = document.getElementById(identifier),
@@ -41,26 +116,26 @@ var graphics = function () {
 		function transform(x, y, forceCartesian) {
 			if (!forceCartesian) {
 				return transformation.reduceRight(function (i, item) {
-					return item.multiply(i);
-				}, coordinate.peek() ? toCartesian($V([x, y, 1])) : $V([x, y, 1]));
+					return mvecmul(item, i);
+				}, coordinate.peek() ? toCartesian([x, y, 1]) : [x, y, 1]);
 			}
 			else {
 				return transformation.reduceRight(function (i, item) {
-					return item.multiply(i);
-				}, $V([x, y, 1]));
+					return mvecmul(item, i);
+				}, [x, y, 1]);
 			}
 		}
 
 		function inverseTransform(x, y) {
 			return transformation.reduceRight(function (i, item) {
-				return item.inverse().multiply(i);
-			}, coordinate.peek() ? toCartesian($V([x, y, 1])) : $V([x, y, 1]));
+				return mvecmul(minv(item), i);
+			}, coordinate.peek() ? toCartesian([x, y, 1]) : [x, y, 1]);
 		}
 
 		function transform_length(w, h) {
 			var o = transform(0, 0, true),
 				r = transform(w, h, true);
-			return r.subtract(o);
+			return vsub(r, o);
 		}
 
 		if (canvas && canvas.getContext !== undefined && canvas.getContext('2d') !== undefined) {
@@ -69,7 +144,7 @@ var graphics = function () {
 			['lineTo', 'moveTo', 'arcTo', 'bezierCurveTo', 'quadraticCurveTo'].forEach(function (n) {
 				path[n] = function (x, y) {
 					var p = transform(x, y);
-					context[n].apply(context, [round(p.e(1)), round(p.e(2))]);
+					context[n].apply(context, [round(p[0]), round(p[1])]);
 					return path;
 				};
 			});
@@ -127,10 +202,10 @@ var graphics = function () {
 			shape.beginClip = function (x, y, width, height) {
 				var p = transform(x, y),
 					d = transform_length(width, height);
-				x = round(p.e(1));
-				y = round(p.e(2));
-				width = Math.ceil(d.e(1));
-				height = Math.ceil(d.e(2));
+				x = round(p[0]);
+				y = round(p[1]);
+				width = Math.ceil(d[0]);
+				height = Math.ceil(d[1]);
 
 				context.save();
 				context.beginPath();
@@ -145,10 +220,10 @@ var graphics = function () {
 			shape.rect = function (x, y, width, height) {
 				var p = transform(x, y),
 					d = transform_length(width, height);
-				x = p.e(1);
-				y = p.e(2);
-				width = d.e(1);
-				height = d.e(2);
+				x = p[0];
+				y = p[1];
+				width = d[0];
+				height = d[1];
 
 				// we don't use the round functions here because a filled
 				// rectangle is already drawn crisp. If the rectangular path
@@ -167,16 +242,16 @@ var graphics = function () {
 					p2 = transform(x2, y2);
 
 				context.beginPath();
-                context.moveTo(round(p1.e(1)), round(p1.e(2)));
-                context.lineTo(round(p2.e(1)), round(p2.e(2)));
+                context.moveTo(round(p1[0]), round(p1[1]));
+                context.lineTo(round(p2[0]), round(p2[1]));
 				context.closePath();
 				return shape;
 			};
 
 			shape.circle = function (x, y, radius) {
 				var p = transform(x, y);
-				x = round(p.e(1));
-				y = round(p.e(2));
+				x = round(p[0]);
+				y = round(p[1]);
 				context.beginPath();
 				context.arc(x, y, radius / 2, 0, Math.PI * 2, false);
 				context.closePath();
@@ -186,8 +261,8 @@ var graphics = function () {
 			shape.triangle = function (x, y, size) {
 				var p = transform(x, y),
 					h = size * Math.sqrt(3) / 2;
-				x = round(p.e(1));
-				y = round(p.e(2));
+				x = round(p[0]);
+				y = round(p[1]);
 	
 				context.beginPath();
 				context.moveTo(x - size / 2, y - h / 2); // left
@@ -200,8 +275,8 @@ var graphics = function () {
 			shape.cross = function (x, y, size) {
 				var p = transform(x, y);
 
-				x = round(p.e(1));
-				y = round(p.e(2));
+				x = round(p[0]);
+				y = round(p[1]);
 
 				context.beginPath();
 				context.moveTo(x - size / 2, y);
@@ -216,9 +291,9 @@ var graphics = function () {
 			shape.diamond = function (x, y, size) {
 				var p = transform(x, y);
 				context.save();
-				context.translate(p.e(1), p.e(2));
+				context.translate(p[0], p[1]);
 				context.rotate(Math.PI / 4);
-				context.translate(-p.e(1), -p.e(2));
+				context.translate(-p[0], -p[1]);
 				shape.square(x, y, size);
 				context.restore();
 				return shape;
@@ -227,8 +302,8 @@ var graphics = function () {
 			shape.vdash = function (x, y, size) {
 				var p = transform(x, y);
 
-				x = p.e(1);
-				y = p.e(2);
+				x = p[0];
+				y = p[1];
 
 				context.beginPath();
 				context.moveTo(round(x), round(y));
@@ -241,8 +316,8 @@ var graphics = function () {
 			shape.hdash = function (x, y, size) {
 				var p = transform(x, y);
 
-				x = p.e(1);
-				y = p.e(2);
+				x = p[0];
+				y = p[1];
 
 				context.beginPath();
 				context.moveTo(round(x), round(y));
@@ -255,12 +330,12 @@ var graphics = function () {
 				var p = transform(x, y),
 					r = transform_length(hr, vr);
 				context.save();
-				context.translate(round(p.e(1)), round(p.e(2)));
+				context.translate(round(p[0]), round(p[1]));
 				context.beginPath();
-				if (r.e(1) !== 0) {
-					context.scale(1, r.e(2) / r.e(1));
+				if (r[0] !== 0) {
+					context.scale(1, r[1] / r[0]);
 				}
-				context.arc(0, 0, r.e(1), 0, Math.PI * 2, false);
+				context.arc(0, 0, r[0], 0, Math.PI * 2, false);
 				context.closePath();
 				context.restore();
 				return shape;
@@ -269,8 +344,8 @@ var graphics = function () {
 			shape.square = function (x, y, size) {
 				var p = transform(x, y);
 
-				x = Math.round(p.e(1)) - size / 2;
-				y = Math.round(p.e(2)) - size / 2;
+				x = Math.round(p[0]) - size / 2;
+				y = Math.round(p[1]) - size / 2;
 
 				context.beginPath();
 				context.rect(x, y, size, size);
@@ -281,7 +356,7 @@ var graphics = function () {
 			shape.text = function (x, y, str, options) {
 				var p = transform(x, y);
 				options.font = font.parse(options.font);
-				textBuffer.push([context, round(p.e(1)), round(p.e(2)), str, options]);
+				textBuffer.push([context, round(p[0]), round(p[1]), str, options]);
 				return shape;
 			}.defaults(0, 0, "", {});
 
@@ -327,13 +402,13 @@ var graphics = function () {
 				scale.vertical = Interval.width(view.vertical) / Interval.width(range.vertical);
 
 				context.save();
-				context.translate(Math.round(origin.e(1)), Math.round(origin.e(2)));
+				context.translate(Math.round(origin[0]), Math.round(origin[1]));
 				
-				transformation.push($M([
+				transformation.push([
 						[scale.horizontal, 0, -range.horizontal.from * scale.horizontal],
 						[0, scale.vertical, -range.vertical.from * scale.vertical],
 						[0, 0, 1]
-					]));
+					]);
 
 				coordinate.push((options && options.polar === true) || false);
 
@@ -345,11 +420,11 @@ var graphics = function () {
 			shape.pixelSize = function () {
 				var origin = inverseTransform(0, 0),
 					dimension = inverseTransform(1, 1),
-					result = dimension.subtract(origin);
+					result = vsub(dimension, origin);
 
 				return {
-					horizontal: result.e(1),
-					vertical: result.e(2)
+					horizontal: result[0],
+					vertical: result[1]
 				};
 			};
 
