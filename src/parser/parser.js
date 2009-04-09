@@ -1,4 +1,5 @@
 
+/*global lexer*/
 var parser = function () {
     var constants = [
         {
@@ -92,7 +93,7 @@ var parser = function () {
         op.type = 'BINARY_OPERATOR';
         op.precedence = op.precedence || 10;
         op.associative = op.associative !== undefined ? op.associative : true;
-        op.pattern = new RegExp('^' + op.token.replace(/[.*+?^${}()|[\]\/\\]/g, '\\$&'), 'g');
+        op.pattern = new RegExp('^' + op.token.replace(/[.*+?\^${}()|\[\]\/\\]/g, '\\$&'), 'g');
     });
         
     functions.forEach(function (f) {
@@ -118,7 +119,7 @@ var parser = function () {
                 stack = [],
                 v1, v2;
             
-            while(token = iterator.next()) {
+            while ((token = iterator.next())) {
             
                 if (token.type === 'NUMBER' || token.type === 'CONSTANT' || token.type === 'VARIABLE') {
                     output.push(token);
@@ -186,9 +187,9 @@ var parser = function () {
             }
             
             if (output.length !== 1) {
-                project.log("input created more than one parse tree");
-                project.log(output[0]);
-                project.log(output[1]);
+              //  project.log("input created more than one parse tree");
+              //  project.log(output[0]);
+              //  project.log(output[1]);
             }
             return output;
         }

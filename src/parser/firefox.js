@@ -1,7 +1,7 @@
 
-var flexer = function (tokens) {
-    var tokenNames = ['NUMBER', 'OPERATOR', 'PAREN_OPEN', 'PAREN_CLOSE', 'IDENTIFIER', 'SPACE'];
-    var tokens = /(\d+)|(\+|\*|-|\/)|(\()|(\))|([a-zA-Z_]+)|(\s+)/gy;
+var flexer = function () {
+    var tokenNames = ['NUMBER', 'OPERATOR', 'PAREN_OPEN', 'PAREN_CLOSE', 'IDENTIFIER', 'SPACE'],
+    	tokens = new RegExp('(\\d+)|(+|\\*|-|\\/)|(\\()|(\\))|([a-zA-Z_]+)|(\\s+)', 'gy');
     
     return {
         tokenize: function (str) {

@@ -31,12 +31,12 @@ var lexer = function (tokens) {
                             return Object.extend(Object.clone(tokens[i]), {
                                 value: r[0],
                                 pos: currentPosition,
-                                toString: function() {
+                                toString: function () {
                                     return this.value;
                                 }
                             });
                         }
-                    };
+                    }
                     
                     if (buffer.length !== 0) {
                         throw new Error('Unknown input: ' + buffer);

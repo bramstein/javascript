@@ -71,7 +71,7 @@ var graphics = function () {
      * Invert a 3x3 matrix
      */
 	function minv(m) {
-		var det = 1 /mdet(m);
+		var det = 1 / mdet(m);
 		return [
 			[
 				(m[1][1] * m[2][2] - m[1][2] * m[2][1]) * det,
