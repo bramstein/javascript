@@ -17,6 +17,7 @@
 				var container = $('.layout');
 
 				function relayout() {
+					console.log(this);
 					container.layout({resize: false});
 				}
 				relayout();
@@ -50,6 +51,7 @@
 				height: 100%;
 				padding: 0;
 				margin: 0;
+				overflow: hidden;
 			}
 
 			.layout {
