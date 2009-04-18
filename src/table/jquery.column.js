@@ -1,3 +1,10 @@
+/*!
+ * jQuery Column cell selector v0.12
+ *
+ * Licensed under the new BSD License.
+ * Copyright 2009, Bram Stein
+ * All rights reserved.
+ */
 /*global jQuery*/
 (function ($) {
 	var equationRegExp = /([\+\-]?\d*)[nN]([\+\-]?\d*)/,
