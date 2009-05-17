@@ -1,5 +1,5 @@
 /*!
- * jQuery Column cell selector v0.12
+ * jQuery Column cell selector v0.13
  *
  * Licensed under the new BSD License.
  * Copyright 2009, Bram Stein
