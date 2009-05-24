@@ -1,3 +1,4 @@
+-set legend/title padding to the padding of the canvas so that they are aligned properly.
 -move legend above chart instead of to the right if possible.
 -custom axis settings as options parameter to charts (to override default settings easily)
 +switched graphics to use pre-multiplied transformation matrices

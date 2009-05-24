@@ -125,7 +125,7 @@
 					[27.1, 0]
 				];
 				var plot = defaults.type.scatter('scatter-challenger', c, { title: 'Challenger Shuttle Disaster - O-Ring Damage', subtitle: 'Temperature vs Damage Index' });
-				plot.bounds({width: 300, height: 300});
+				plot.bounds({width: 350, height: 300});
 				plot.draw();
 			}
 
@@ -140,7 +140,7 @@
 				};
 
 				var plot = defaults.type.bar('bar-bonds', d, { title: 'Bond Yields'});
-				plot.bounds({width: 300, height: 200});
+				plot.bounds({width: 350, height: 300});
 				plot.draw();
 			}
 
@@ -150,7 +150,7 @@
 					data: [1.5, 3, 2.2, -0.3]
 				};
 				var plot = defaults.type.bar('bar-pcount', d, {title: 'Employee turnover'});
-				plot.bounds({width: 350, height: 200});
+				plot.bounds({width: 350, height: 300});
 				plot.draw();
 			}
 
@@ -193,7 +193,7 @@
 				};
 
 				var plot = defaults.type.bar('bar-stacked', d, {title: 'Percentage of Total Sales', stacked: true});
-				plot.bounds({width: 300, height: 300});
+				plot.bounds({width: 350, height: 300});
 				plot.draw();
 			}
 
@@ -204,7 +204,7 @@
 				};
 
 				var plot = defaults.type.bar('bar-vertical', d, {title: 'Percentage of Total Sales', reverse: true});
-				plot.bounds({width: 350, height: 200});
+				plot.bounds({width: 350, height: 300});
 				plot.draw();
 			}
 
@@ -223,87 +223,7 @@
 			function line() {
 				linesales();
 				linesdepartments();
-
 			}
-
-			function sine(x, y) {
-				return Interval.add(Interval.sin(x), y)
-			}
-
-
-			function sinewave() {
-				var plot = defaults.type.plot('plot-sine', sine, {
-					title: 'Sine Wave',
-					axes: {
-						horizontal: axis({
-							from: -Math.PI,
-							to: Math.PI,
-							ticks: {
-								major: [-Math.PI, -Math.PI / 2, 0, Math.PI /  2, Math.PI],
-								labels: ['-π', '-½π', '0', '½π', 'π']
-							}
-						}),
-						vertical: axis({
-							from: -1,
-							to: 1,
-							ticks: {
-								major: 3
-							}
-						})
-					},
-					draw: {
-						/*horizontal: {
-							grid: true,
-							labels: false,
-							axis: false,
-							ticks: false
-						},
-						vertical: {
-							grid: false,
-							labels: false,
-							axis: false,
-							ticks: false
-						}*/
-					}
-				});
-				plot.bounds({width: 350, height: 200});
-				plot.draw();
-			}
-
-			function rose(r, t) {
-			//	return Interval.add(t, r);
-				return Interval.add(Interval.cos({from: t.from * 4, to: t.to * 4}), r);
-			//	return Interval.add({from: 3 + t.from * 2, to: 3 + t.to * 2}, r);
-			}
-
-			function polarrose() {
-				var plot = defaults.type.plot('plot-rose', rose, {
-					title: 'Polar Rose',
-					axes: {
-						polar: axis({
-							from: -1,
-							to: 1,
-							ticks: {
-								major: [-1, 1]
-							}
-						})
-					},
-					range: {
-						from: 0,
-						to: Math.PI * 2
-					}
-				});
-				plot.bounds({width: 350, height: 350});
-				plot.draw();
-			}
-
-
-			function func() {
-				sinewave();
-				polarrose();
-			}
-
-
 
 			function histogram() {
 				var d = {
@@ -311,50 +231,17 @@
 					data: [3, 3, 8, 10, 5, 2]
 				};
 				var plot = defaults.type.histogram('test', d, {title: 'Heights of Black Cherry Trees'});
-				plot.bounds({width: 280, height: 250});
+				plot.bounds({width: 349, height: 300});
 				plot.draw();
 			}
 
 			function draw() {
 				font = font();
 
-/*
-				var plot = defaults.type.plot('test', function (x) {return {from: -100, to: -100};}, {
-					axes: {
-						horizontal: axis({
-							from: 0,
-							to: 1,
-							ticks: {
-								major: 5
-							}
-						}),
-						vertical: axis({
-							from: 0,
-							to: 1,
-							ticks: {
-								major: 5
-							}
-						})
-					},
-					draw: {
-						horizontal: {
-							grid: false
-						},
-						vertical: {
-							grid: false
-						}
-					}
-				});
-				plot.bounds({width: 200, height: 200});
-				plot.draw();
-*/
 				bar();
 				scatter();
 				line();
-				func();
 				histogram();
-
-
 			}
 		]]>
 		</script>
@@ -375,7 +262,7 @@
 			}
 
 			div {
-				margin-bottom: 3em;
+				margin-bottom: 2em;
 			}
 
 			.left {
@@ -390,29 +277,27 @@
 		</style>
 	</head>
 	<body onload="draw();">
-		<canvas id="test" width="400" height="300"></canvas>
+		<div class="left">
+			<canvas id="bar-pcount" width="350" height="300"></canvas>
+		</div>
+		<div class="right">
+			<canvas id="bar-bonds" width="350" height="300"></canvas>
+		</div>
 
 		<div class="left">
-			<canvas id="bar-pcount" width="350" height="200"></canvas>
+			<canvas id="bar-stacked" width="350" height="300"></canvas>
 		</div>
 		<div class="right">
-			<canvas id="bar-bonds" width="300" height="200"></canvas>
+			<canvas id="bar-vertical" width="350" height="300"></canvas>
 		</div>
-		<div class="left">
-			<canvas id="bar-stacked" width="300" height="300"></canvas>
-		</div>
-		<div class="right">
-			<canvas id="bar-vertical" width="350" height="200"></canvas>
-		</div>
-		<!--<div>
-			<canvas id="canvas-context" width="300" height="200"></canvas>
-		</div>-->
+
 		<div class="left">
 			<canvas id="scatter-anscombe" width="350" height="300"></canvas>
 		</div>
 		<div class="right">
-			<canvas id="scatter-challenger" width="300" height="300"></canvas>
+			<canvas id="scatter-challenger" width="350" height="300"></canvas>
 		</div>
+
 		<div class="left">
 			<canvas id="line-sales" width="350" height="200"></canvas>
 		</div>
@@ -420,11 +305,10 @@
 			<canvas id="line-departments" width="450" height="200"></canvas>
 		</div>
 
+
 		<div class="left">
-			<canvas id="plot-sine" width="350" height="200"></canvas>
-		</div>
-		<div class="right">
-			<canvas id="plot-rose" width="350" height="350"></canvas>
+			<canvas id="test" width="350" height="300"></canvas>
+
 		</div>
 	</body>
 </html>

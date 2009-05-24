@@ -32,7 +32,7 @@ Object.extend(defaults.type, {
 
 		my.axes = {
 			horizontal: axis({categories: input.categories, label: 'Height (feet)'}),
-			vertical: axis(Object.extend(range.vertical, {ticks: {major: 10}, label: 'Frequency'}))
+			vertical: axis(Object.extend(range.vertical, {ticks: {major: 10}, label: 'Freq.'}))
 		};
 
 		that = chart(canvasIdentifier, options, my);
