@@ -24,20 +24,22 @@
 				$('.nested-center').layout();
 
 				// then we set the outer one to a fixed size, and turn resizing off
-				$('.nested').bounds({width: 600, height: 400}).layout({resize: false});
+				$('.nested').width(600).height(400).layout({resize: false});
 
 
 				// we can also specify everything in code; in this example
 				// we create two columns of equal size.
+
 				$('.code').layout({
 					type: 'grid', 
 					items: [
-						$('.col-1').bounds({width: 400}), 
-						$('.col-2').bounds({width: 400})
+						$('.col-1').width(400), 
+						$('.col-2').width(400)
 					], 
 					vgap: 3, 
 					hgap: 3
 				});
+
 			});
 		</script>
 		<style>
@@ -106,7 +108,7 @@
 		</div>
 
 		<h1>3x2 flex-grid</h1>
-		<div class="flex-grid {layout: {type: 'flex-grid', hgap: 3, vgap: 3, columns: 3, rows: 2}}">
+		<div class="flex-grid {layout: {type: 'flexGrid', hgap: 3, vgap: 3, columns: 3, rows: 2}}">
 			<div class="c">
 				One
 			</div>
