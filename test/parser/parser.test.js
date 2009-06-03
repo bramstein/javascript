@@ -6,21 +6,22 @@ eval(loadFile("src/parser/parser.js"));
 //var p;
 
 function evaluate(tree) {
- project.log(Object.isArray(tree));
+	project.log(Object.isArray(tree));
 
-
-    if (tree.type === 'NUMBER') {
-        return tree.value;
-    }
-    else if (tree[0].type === 'BINARY_OPERATOR') {
-        if (tree[0].token === '+') {
-            return evaluate(tree[1]) + evaluate(tree[2]);
-        }
-        else if (tree[0].token === '*') {
-            return evaluate(tree[1]) * evaluate(tree[2]);
-        }
-    }
-     }
+	project.log(tree[1]);
+   	if (tree.type === 'NUMBER') {
+		project.log(tree.value);
+		return tree.value;
+    	}
+    	else if (tree[0].type === 'BINARY_OPERATOR') {
+        	if (tree[0].token === '+') {
+			return evaluate(tree[1]) + evaluate(tree[2]);
+        	}
+        	else if (tree[0].token === '*') {
+            		return evaluate(tree[1]) * evaluate(tree[2]);
+        	}
+    	}
+}
 
 
 testCases(test, 

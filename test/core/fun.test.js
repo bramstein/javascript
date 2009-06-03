@@ -196,6 +196,10 @@ testCases(test,
 		assert.that(extract({key: $('a')}, {key: 'b', str: 'hello world', t: 'test'}).a, eq('b'));
 	},
 
+    function checkExtractUnavailable() {
+        assert.that(extract({hm: $('a')}, {hello: 'world'}).a, eq(undefined));
+    },
+
 	function checkExtractNameClash() {
 		assert.that(extract([$('a'), $('a')], [1, 2]).a, eq(2));
 	},
