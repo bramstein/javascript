@@ -1,0 +1,6 @@
+
+if (jQuery) {
+	(function ($) {
+		
+	}(jQuery));
+}

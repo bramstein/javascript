@@ -1,5 +1,11 @@
 
-
+/*!
+ * JavaScript Core Object v0.51
+ *
+ * Licensed under the new BSD License.
+ * Copyright 2008-2009, Bram Stein
+ * All rights reserved.
+ */
 (function () {
 	Object.extend = function (obj) {
 		var i = 1, key, len = arguments.length;

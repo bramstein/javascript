@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/xhtml; charset=utf-8" />
+		<title>Data relations</title>
+		<style>
+			td {
+				vertical-align: top;
+			}
+
+			div {
+				border: 1px solid rgb(180,180,180);
+				padding: 0.5em;
+				display: inline-block;
+			}
+
+			table {
+				padding: 0.5em;
+				border-collapse: collapse;
+			}
+
+			th,td {
+				padding: 0.1em 1.5em;
+			}
+
+			thead {
+				border-bottom: 1px solid rgb(180,180,180);
+			}
+
+			tfoot {
+				border-top: 1px solid rgb(180,180,180);
+			}
+
+			body {
+				font-family: Verdana, Arial, Sans-Serif;
+				font-size: 0.95em;
+			}
+
+			h1, h2 {
+				font-weight: normal;
+				font-family: Georgia, Times, Serif;
+			}
+
+			table tr.highlight {
+				border: 2px solid rgb(100,100,100);
+			}
+
+			table col.highlight {
+				border: 2px solid rgb(100,100,100);
+				text-align: right;
+			}
+
+			table td.highlight, table th.highlight {
+				border-right: 2px solid rgb(100,100,100);
+				border-left: 2px solid rgb(100,100,100);
+			}
+
+			table thead th.highlight {
+				border-top: 2px solid rgb(100,100,100);
+			}
+
+			table tfoot td.highlight {
+				border-bottom: 2px solid rgb(100,100,100);
+			}
+
+			table th {
+				text-align: left;
+			}		
+
+			table col.numeric {
+				text-align: right;
+				background-color: red;
+				border: 1px solid rgb(0,250,0);
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Quantative to categorical relationships</h1>
+<!--
+-add column selectors to jQuery
+
+http://www.nabble.com/Re%3A-highlight-table-column-on-hover-p7074977.html
+
+-->
+		<h2>Between one set of quantitative values and one set of categorical subdivisions</h2>
+		<div>
+		<table>
+			<colgroup>
+				<col/>
+				<col class="highlight" style="text-align: right"/>
+			</colgroup>
+			<thead>
+				<tr>
+					<th>Salesperson</th>
+					<th>QTD Sales</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Robert Jones</td>
+					<td>13,803</td>
+				</tr>
+				<tr class="highlight">	
+					<td>Mandy Rodriguez</td>
+					<td>20,374</td>
+				</tr>
+				<tr>	
+					<td>Terri Moore</td>
+					<td>28,520</td>
+				</tr>
+				<tr>	
+					<td>John Donnelly</td>
+					<td>34,786</td>
+				</tr>
+				<tr>	
+					<td>Jennifer Taylor</td>
+					<td>36,973</td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td>Total</td>
+					<td>$134,456</td>
+				</tr>
+			</tfoot>
+		</table>
+		</div>
+		<h2>Between one set of quantitative values and the intersection of multiple categories</h2>
+		<div>
+		<table>
+			<colgroup>
+				<col/>
+				<col/>
+				<col class="highlight"/>
+				<col/>
+			</colgroup>
+			<thead>
+				<tr>
+					<th>Salesperson</th>
+					<th class="numeric">Jan</th>
+					<th class="numeric">Feb</th>
+					<th class="numeric">Mar</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Robert Jones</td>
+					<td class="numeric">2,834</td>
+					<td class="numeric">4,838</td>
+					<td class="numeric">6,131</td>
+				</tr>
+				<tr>
+					<td>Mandy Rodriguez</td>
+					<td class="numeric">5,890</td>
+					<td class="numeric">6,482</td>
+					<td class="numeric">8,002</td>
+				</tr>
+				<tr class="highlight">
+					<td>Terri Moore</td>
+					<td class="numeric">7,398</td>
+					<td class="numeric">9,374</td>
+					<td class="numeric">11,748</td>
+				</tr>
+				<tr>
+					<td>John Donnelly</td>
+					<td class="numeric">9,375</td>
+					<td class="numeric">12,387</td>
+					<td class="numeric">13,024</td>
+				</tr>
+				<tr>
+					<td>Jennifer Taylor</td>
+					<td class="numeric">10,393</td>
+					<td class="numeric">12,383</td>
+					<td class="numeric">14,197</td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td>Total</td>
+					<td>$35,890</td>
+					<td>$45,464</td>
+					<td>$53,102</td>
+				</tr>
+			</tfoot>
+		</table>
+		</div>
+		<h2>Between one set of quantitative values and the intersection of hierarchical categories</h2>
+		<div>
+		<table>
+			<thead>
+				<tr>
+					<th>Product line</th>
+					<th>Product family</th>
+					<th>Product</th>
+					<th>Sales</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td rowspan="6">Hardware</td>
+					<td rowspan="3">Printer</td>
+					<td>PPS</td>
+					<td>6,131</td>
+				</tr>
+				<tr>
+					<td>PXT</td>
+					<td>8,002</td>
+				</tr>
+				<tr>
+					<td>PQT</td>
+					<td>11,748</td>
+				</tr>
+				<tr>
+					<td rowspan="3">Router</td>
+					<td>RRZ</td>
+					<td>13,024</td>
+				</tr>
+				<tr>
+					<td>RTS</td>
+					<td>14,197</td>
+				</tr>
+				<tr>
+					<td>RQZ</td>
+					<td>23,293</td>
+				</tr>
+				<tr class="highlight">
+					<td rowspan="6">Software</td>
+					<td rowspan="3">Business</td>
+					<td>ACT</td>
+					<td>12,393</td>
+				</tr>
+				<tr>
+					<td>SPR</td>
+					<td>9,393</td>
+				</tr>
+				<tr>
+					<td>DBM</td>
+					<td>5,392</td>
+				</tr>
+				<tr>
+					<td rowspan="3">Game</td>
+					<td>ZAP</td>
+					<td>10,363</td>
+				</tr>
+				<tr>
+					<td>ZAM</td>
+					<td>15,709</td>
+				</tr>
+				<tr>
+					<td>ZOW</td>
+					<td>13,881</td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="3">Total</td>
+					<td>$143,526</td>
+				</tr>
+			</tfoot>
+		</table>
+		</div>
+		<h1>Quantitative to quantitative relationships</h1>
+		<h2>Among one set of quantitative values associated with multiple categorical subdivisions</h2>
+		<div>
+		<table>
+			<thead>
+				<tr>
+					<th>Salesperson</th>
+					<th>Jan</th>
+					<th class="highlight">Feb</th>
+					<th>Mar</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Robert Jones</td>
+					<td>2,834</td>
+					<td class="highlight">4,838</td>
+					<td>6,131</td>
+				</tr>
+				<tr>
+					<td>Mandy Rodriguez</td>
+					<td>5,890</td>
+					<td class="highlight">6,482</td>
+					<td>8,002</td>
+				</tr>
+				<tr class="highlight">
+					<td>Terri Moore</td>
+					<td>7,398</td>
+					<td class="highlight">9,374</td>
+					<td>11,748</td>
+				</tr>
+				<tr>
+					<td>John Donnelly</td>
+					<td>9,375</td>
+					<td class="highlight">12,387</td>
+					<td>13,024</td>
+				</tr>
+				<tr>
+					<td>Jennifer Taylor</td>
+					<td>10,393</td>
+					<td class="highlight">12,383</td>
+					<td>14,197</td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td>Total</td>
+					<td>$35,890</td>
+					<td class="highlight">$45,464</td>
+					<td>$53,102</td>
+				</tr>
+			</tfoot>
+		</table>
+		</div>
+	</body>
+</html>
