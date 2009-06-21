@@ -1,5 +1,11 @@
 
-
+/*!
+ * JavaScript Core Array Extra v0.46
+ *
+ * Licensed under the new BSD License.
+ * Copyright 2008-2009, Bram Stein
+ * All rights reserved.
+ */
 (function () {
 	Object.extend(Array.prototype, {
 		filter: function (fun, thisObj) {

@@ -1,5 +1,11 @@
 
-
+/*!
+ * JavaScript Core Array v0.39
+ *
+ * Licensed under the new BSD License.
+ * Copyright 2008-2009, Bram Stein
+ * All rights reserved.
+ */
 (function () {
 	Object.extend(Array.prototype, {
 		isEmpty: function () {
