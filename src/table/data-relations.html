@@ -1,10 +1,23 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html
-  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 	<head>
-		<meta http-equiv="Content-Type" content="text/xhtml; charset=utf-8" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>Data relations</title>
+		<script type="text/javascript" src="../../lib/jquery-1.3.2.js"></script>
+		<script type="text/javascript" src="jquery.column.js"></script>
+		<script type="text/javascript" src="jquery.text-align.js"></script>
+		<script type="text/javascript">
+			$(function() {
+				$('#one td:nth-col(2)').textAlign(',');
+				$('#two td:nth-col(2)').textAlign(',');
+				$('#two td:nth-col(3)').textAlign(',');
+				$('#two td:nth-col(4)').textAlign(',');
+				$('#three td:nth-col(4)').textAlign(',');
+				$('#four td:nth-col(2)').textAlign(',');
+				$('#four td:nth-col(3)').textAlign(',');
+				$('#four td:nth-col(4)').textAlign(',');
+			});
+		</script>
 		<style>
 			td {
 				vertical-align: top;
@@ -74,19 +87,14 @@
 				background-color: red;
 				border: 1px solid rgb(0,250,0);
 			}
+
 		</style>
 	</head>
 	<body>
 		<h1>Quantative to categorical relationships</h1>
-<!--
--add column selectors to jQuery
-
-http://www.nabble.com/Re%3A-highlight-table-column-on-hover-p7074977.html
-
--->
 		<h2>Between one set of quantitative values and one set of categorical subdivisions</h2>
 		<div>
-		<table>
+		<table id="one">
 			<colgroup>
 				<col/>
 				<col class="highlight" style="text-align: right"/>
@@ -129,7 +137,7 @@ http://www.nabble.com/Re%3A-highlight-table-column-on-hover-p7074977.html
 		</div>
 		<h2>Between one set of quantitative values and the intersection of multiple categories</h2>
 		<div>
-		<table>
+		<table id="two">
 			<colgroup>
 				<col/>
 				<col/>
@@ -188,7 +196,7 @@ http://www.nabble.com/Re%3A-highlight-table-column-on-hover-p7074977.html
 		</div>
 		<h2>Between one set of quantitative values and the intersection of hierarchical categories</h2>
 		<div>
-		<table>
+		<table id="three">
 			<thead>
 				<tr>
 					<th>Product line</th>
@@ -264,7 +272,7 @@ http://www.nabble.com/Re%3A-highlight-table-column-on-hover-p7074977.html
 		<h1>Quantitative to quantitative relationships</h1>
 		<h2>Among one set of quantitative values associated with multiple categorical subdivisions</h2>
 		<div>
-		<table>
+		<table id="four">
 			<thead>
 				<tr>
 					<th>Salesperson</th>
