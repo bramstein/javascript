@@ -5,10 +5,10 @@
  * Copyright 2009, Bram Stein
  * All rights reserved.
  */
-/*global jQuery*/
+/*global jQuery, document*/
 (function ($) {
 	$.extend($.fn, {
-        textOverflow: function (str) {
+        textOverflow: function (str, autoUpdate) {
             var more = str || '…',
                 style = document.documentElement.style,
                 textOverflow = style.hasOwnProperty('textOverflow') || style.hasOwnProperty('OTextOverflow');
@@ -20,7 +20,13 @@
                         originalText = element.text(),
                         originalWidth = element.width(),
                         low = 0, mid = 0,
-                        high = originalText.length;
+                        high = originalText.length,
+                        reflow = function () {
+                            if (originalWidth !== element.width()) {
+                                element.text(originalText);
+                                element.textOverflow(str, false);
+                            }
+                        };
 
                     if (element.css('overflow') !== 'visible') {
                         element.after(clone.hide());
@@ -42,15 +48,11 @@
                             }
                         }
                        
-                        /*    
-                        setInterval(function () {
-                            if (originalWidth !== element.width()) {
-                                element.text(originalText);
-                                element.textOverflow(str);
-                            }
-                        }, 200);
-                        */
                         clone.remove();
+                        
+                        if (autoUpdate) {    
+                            setInterval(reflow, 200);
+                        }
                     }
                 });
             } else {
