@@ -7,7 +7,7 @@
  */
 /*global jQuery*/
 (function ($) {
-	$.extend(jQuery.fn, {
+	$.extend($.fn, {
 		textAlign: function (string) {
 			var items = $(this),
 				maxLeft = 0,
