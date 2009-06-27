@@ -1,11 +1,11 @@
 /*!
- * jQuery Text Overflow v0.02
+ * jQuery Text Overflow v0.51
  *
  * Licensed under the new BSD License.
  * Copyright 2009, Bram Stein
  * All rights reserved.
  */
-/*global jQuery, document*/
+/*global jQuery, document, setInterval*/
 (function ($) {
 	$.extend($.fn, {
         textOverflow: function (str, autoUpdate) {
@@ -25,6 +25,7 @@
                             if (originalWidth !== element.width()) {
                                 element.text(originalText);
                                 element.textOverflow(str, false);
+								originalWidth = element.width();
                             }
                         };
 
@@ -47,7 +48,6 @@
                                 element.html(originalText.substr(0, low - 1) + more);
                             }
                         }
-                       
                         clone.remove();
                         
                         if (autoUpdate) {    
