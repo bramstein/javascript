@@ -1,4 +1,4 @@
-
+/*global jQuery*/
 if (jQuery) {
 	(function ($) {
 		
