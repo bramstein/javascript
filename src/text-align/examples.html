@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>Text Overflow Example</title>
+		<title>Text Alignment Example</title>
 		<script type="text/javascript" src="../../lib/jquery-1.3.2.js"></script>
 		<script type="text/javascript" src="../table/jquery.column.js"></script>
 		<script type="text/javascript" src="jquery.text-align.js"></script>
@@ -27,13 +27,13 @@
 			}
 
 			table {
-				padding: 1em;
+				padding: 0.75em;
 				display: inline-block;
 				border: 1px solid rgb(180,180,180);
 				border-collapse: collapse;
 			}
 
-			th,td {
+			th, td {
 				padding: 0.1em 1.5em;
 				vertical-align: top;
 				text-align: left;
@@ -58,9 +58,7 @@
 
 			table col.highlight {
 				border: 2px solid rgb(100,100,100);
-				text-align: right;
 			}
-
 
 			table td.highlight, table th.highlight {
 				border-right: 2px solid rgb(100,100,100);
@@ -74,11 +72,18 @@
 			table tfoot td.highlight {
 				border-bottom: 2px solid rgb(100,100,100);
 			}
+
+			pre {
+				background-color: rgb(240, 240, 240);
+				display: inline-block;
+				padding: 2em;
+			}
 		</style>
 	</head>
 	<body>
-		<h1>jQuery text alignment plugin</h1>
-		<p>Imagine you have worked hard to make the table below look good, but one thing keeps bugging you: the alignment of the numbers. You would like to align the contents of each cell on the comma character. Unfortunately, no browser supports aligning table cells on characters. This is where the <a href="http://www.bramstein.com/projects/text-align/">jQuery text alignment plugin</a> comes in; it adds support for aligning text based on characters to all browsers.</p>
+		<h1>jQuery Text Alignment Plugin</h1>
+		<p>Imagine you have worked hard to make your tables look good, but one thing keeps bugging you; the alignment of the text in table cells. For example, you would like to align the contents of each cell on the comma character. Unfortunately, no browser supports aligning table cells on characters. This is where the <a href="http://www.bramstein.com/projects/text-align/">jQuery Text Alignment Plugin</a> comes in; it adds support for aligning text based on characters to all browsers.</p>
+		<p>Assuming your table looks somewhat like the one below:</p>
 		<table>
 			<colgroup>
 				<col/>
@@ -137,13 +142,13 @@
 		</table>
 		<p>The following code example shows how to use the <a href="http://www.bramstein.com/projects/column/">jQuery column cell selector</a> and the <a href="http://www.bramstein.com/projects/text-align/">jQuery text alignment</a> plugins to select the cells of the last three columns and align them on the comma character.</p>
 		<code>
-			<pre>
+<pre>
 var myCells = $('table#example td');
 
 myCells.nthCol(1).textAlign(',');
 myCells.nthCol(2).textAlign(',');
 myCells.nthCol(3).textAlign(',');
-			</pre>
+</pre>
 		</code>
 		<p>Alternatively, you could also use the column selector, which is slightly less efficient, but nonetheless a valid way of selecting all three columns. It is however a good idea to get into the habit of re-using elements you have previously selected, as seen in the above example.</p>
 		<code>
@@ -153,7 +158,7 @@ $('table#example td:nth-col(2)').textAlign(',');
 $('table#example td:nth-col(3)').textAlign(',');
 </pre>
 		</code>
-<p>Both ways will result in the following table. Note that cells without the align character are aligned as if they ended with the character. The aligned text as a whole is aligned according to the inherited text alignment property (left in this case.)</p>
+<p>Both ways will result in the following table:</p>
 		<table id="example">
 			<colgroup>
 				<col/>
@@ -210,5 +215,5 @@ $('table#example td:nth-col(3)').textAlign(',');
 				</tr>
 			</tfoot>		
 		</table>
-		<p>More details and API documentation can be found on the <a href="http://www.bramstein.com/projects/text-align/">jQuery text alignment plugin website</a>.</p>
+		<p>Note that cells without the align character are aligned as if they ended with the character. The text as a whole is aligned according to the inherited text alignment property (left in this case.) More details and API documentation can be found on the <a href="http://www.bramstein.com/projects/text-align/">jQuery text alignment plugin website</a>.</p>
 	</body>
