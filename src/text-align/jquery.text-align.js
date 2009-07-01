@@ -13,14 +13,21 @@
 				maxLeft = 0,
 				maxRight = 0;
 
-			if (string === 'start' || string === 'end' || string === 'left' || string === 'right' || string === 'justify') {
+			if (string === 'start' || string === 'end' || string === 'left' || string === 'right' || string === 'justify' || string === 'center') {
 				return items.css({textAlign: string});
 			} else if (string.length === 1) {
 				items.each(function () {
 					var that = $(this),
 						str = that.text(),
-						left = $('<span>' + str.slice(0, str.indexOf(string)) + '</span>'),
+                        left, right;
+                        
+                    if (str.indexOf(string) !== -1) {    
+						left = $('<span>' + str.slice(0, str.indexOf(string)) + '</span>');
 						right = $('<span>' + str.slice(str.indexOf(string)) + '</span>');
+                    } else {
+                        left = $('<span>' + str + '</span>');
+                        right = $('<span/>');
+                    }
 
 					left.css({display: 'inline-block', textAlign: 'right'});
 					right.css({display: 'inline-block', textAlign: 'left'});
