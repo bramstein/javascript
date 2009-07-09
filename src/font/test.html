@@ -17,10 +17,10 @@
                     context.translate(0, -canvasElement.height);
                     var f = font({baseLine: 'top'});
                     
-                    f.fill(context, 'Hello World!!!\nTesting\nsomething else\nsome otther', 50, 50);
-                    //f.fill(context, 'Hello World!!!', 50, 50);
+                    f.draw(context, 'Hello World!!!\nTesting\nsomething else\nsome other', 50, 50);
+                    //f.draw(context, 'Hello World!!!', 50, 50);
                     
-                    f.fill(context, 'something else', 50, 100);
+                    f.draw(context, 'The quick brown fox jumped over the lazy dog', 50, 100);
 				}
 			};
 

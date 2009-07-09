@@ -33,20 +33,19 @@ var font = function (properties) {
     var f = {
             family: 'sans-serif',
             size: 11,
-            lineHeight: 1.2,
+            lineHeight: 11,
             toString: function () {
                 return this.style + " " + this.variant + " " + this.weight + " " + this.size + "px " + this.family;
             }
         },
         horizontal = ['left', 'right', 'center'],
         vertical = ['top', 'bottom', 'middle'],
-        alignmentOptions = [].append(horizontal, ['start', 'end']);
+        alignmentOptions = [].append(horizontal, ['start', 'end']),
+        leading;
 
     properties = properties || {};
 
-    if (properties.lineHeight) {
-        f.lineHeight = (properties.lineHeight && typeof properties.lineHeight === 'number' && !isNaN(properties.lineHeight) && properties.lineHeight) || f.lineHeight;
-    }
+
         
     Object.forEach({ 
         style: ['normal', 'italic', 'oblique'],
@@ -63,6 +62,13 @@ var font = function (properties) {
     if (properties.family) {
         f.family = properties.family; 
     }
+    
+    if (properties.lineHeight) {
+        f.lineHeight = (properties.lineHeight && typeof properties.lineHeight === 'number' && !isNaN(properties.lineHeight) && properties.lineHeight) || f.lineHeight;
+        f.lineHeight *= f.size;
+    }
+    
+    leading = f.lineHeight - f.size;
   
     return {
         bbox: function (context, str, options) {
@@ -70,6 +76,10 @@ var font = function (properties) {
                 result = {
                     width: 0,
                     height: 0
+                },
+                anchor = {
+                    horizontal: 'left',
+                    vertical: 'top'
                 };
         
             if (str !== undefined && context) {
@@ -79,14 +89,14 @@ var font = function (properties) {
                 
                 str.split('\n').forEach(function (line) {
                     result.width = Math.max(context.measureText(line).width, result.width);
-                    result.height += f.size * f.lineHeight;
+                    result.height += f.lineHeight;
                 });
 
                 context.font = previousFont;
             }
             return result;        
         },
-        fill: function (context, str, x, y, options) {
+        draw: function (context, str, x, y, options) {
             var margin = {
                     top: 0,
                     bottom: 0,
@@ -99,6 +109,10 @@ var font = function (properties) {
                 },
                 align = 'left',
                 size = this.bbox(context, str, options),
+                outerSize = {
+                    width: 0,
+                    height: 0
+                },
                 textOffset = {
                     horizontal: 0,
                     vertical: 0
@@ -123,24 +137,27 @@ var font = function (properties) {
                 }
             }
             
-           // align = 'left';
-          //  anchor.horizontal = 'right';
-          //  anchor.vertical = 'bottom';
+            outerSize.width = size.width + margin.left + margin.right;
+            outerSize.height = size.height + margin.top + margin.bottom;
+            
+            align = 'center';
+            anchor.horizontal = 'left';
+            anchor.vertical = 'top';
             
             if (anchor.horizontal === 'center') {
-                bboxOffset.horizontal = -size.width / 2;
-                textOffset.horizontal = -size.width / 2;
+                bboxOffset.horizontal = -outerSize.width / 2;
+                textOffset.horizontal = -outerSize.width / 2;
             } else if (anchor.horizontal === 'right') {
-                bboxOffset.horizontal = -size.width;
-                textOffset.horizontal = -size.width;
+                bboxOffset.horizontal = -outerSize.width;
+                textOffset.horizontal = -outerSize.width;
             }
             
             if (anchor.vertical === 'middle') {
-                bboxOffset.vertical = size.height / 2;
-                textOffset.vertical = size.height / 2;
+                bboxOffset.vertical = outerSize.height / 2;
+                textOffset.vertical = outerSize.height / 2;
             } else if (anchor.vertical === 'bottom') {
-                bboxOffset.vertical = size.height;
-                textOffset.vertical = size.height;
+                bboxOffset.vertical = outerSize.height;
+                textOffset.vertical = outerSize.height;
             }
             
             if (align === 'center') {
@@ -152,18 +169,24 @@ var font = function (properties) {
             context.save();
             context.scale(1, -1);
             context.font = f.toString();
-            context.textBaseline = 'top';
+            context.textBaseline = 'alphabetic';
             context.textAlign = align;
             str.split('\n').forEach(function (line, i, a) {
-                context.fillText(line, x + textOffset.horizontal, -y + (i * f.size * f.lineHeight) - textOffset.vertical);
+                context.fillText(line, x + textOffset.horizontal + margin.left, (-y + i * f.lineHeight + f.lineHeight - leading / 2) - textOffset.vertical + margin.top);
             });
             context.restore();
             
-            // this draws the bounding box
+            // this draws the inner bounding box
             context.save();
             context.strokeStyle = 'orange';
-            context.translate(x + bboxOffset.horizontal, y + bboxOffset.vertical);
+            context.translate(x + bboxOffset.horizontal + margin.left, y + bboxOffset.vertical - margin.top);
             context.strokeRect(0, 0, size.width, -size.height);
+            context.restore();
+            
+            // this draws the outer bounding box
+            context.save();
+            context.strokeStyle = 'blue';
+            context.strokeRect(x + bboxOffset.horizontal, y + bboxOffset.vertical, outerSize.width, -outerSize.height);
             context.restore();
             
             // this draws the anchor point
@@ -171,8 +194,6 @@ var font = function (properties) {
             context.beginPath();
             context.arc(x, y, 1, 0, Math.PI * 2, false);
             context.fill();
-        },
-        stroke: function (context, str, x, y, options) {
         },
         toString: toString
     };
