@@ -7,20 +7,20 @@ var defaults = {
 		}
 	},
 	font: {
-		labels: {
+		labels: ffont({
 			size: 11
-		},
-		title: {
+		}),
+		title: ffont({
 			size: 11,
 			weight: 'bold'
-		},
-		subtitle: {
+		}),
+		subtitle: ffont({
 			size: 11,
 			style: 'italic'
-		},
-		inlineLabel: {
+		}),
+		inlineLabel: ffont({
 			size: 11
-		}
+		})
 	},
 	point: [
 		'circle',

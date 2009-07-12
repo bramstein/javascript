@@ -12,6 +12,7 @@
 		<script type="text/javascript" src="core/math.js"></script>
 		<script type="text/javascript" src="jlayout/jlayout.border.js"></script>
 		<script type="text/javascript" src="jlayout/jlayout.grid.js"></script>
+		<script type="text/javascript" src="chart/font_new.js"></script>
 		<script type="text/javascript" src="chart/defaults.js"></script>
 		<script type="text/javascript" src="chart/properties.js"></script>
 		<script type="text/javascript" src="chart/data.js"></script>
@@ -20,7 +21,7 @@
 		<script type="text/javascript" src="chart/axis.js"></script>
 		<script type="text/javascript" src="chart/font.js"></script>
 		<script type="text/javascript" src="chart/graphics.js"></script>
-	<!--	<script type="text/javascript" src="chart/text.mozilla.js"></script>-->
+
 		<script type="text/javascript" src="chart/text.canvas.js"></script>
 		<script type="text/javascript" src="chart/chart.js"></script>
 		<script type="text/javascript" src="chart/composite-chart.js"></script>
@@ -125,7 +126,7 @@
 					[26.2, 0],
 					[27.1, 0]
 				];
-				var plot = defaults.type.scatter('scatter-challenger', c, { title: 'Challenger Shuttle Disaster - O-Ring Damage', subtitle: 'Temperature vs Damage Index' });
+				var plot = defaults.type.scatter('scatter-challenger', c, { title: 'Challenger Shuttle Disaster\nO-Ring Damage', subtitle: 'Temperature vs Damage Index' });
 				plot.bounds({width: 350, height: 300});
 				plot.draw();
 			}

@@ -31,10 +31,24 @@ var title = function () {
 				var b = that.bounds();
 				g.beginViewport(b.x, b.y, b.width, b.height);
 				if (title.length !== 0) {
-					g.text(b.width / 2, b.height - that.insets().top, title, {textAlign: 'center', textBaseLine: 'top', font: defaults.font.title}).fill(defaults.color.title);
+
+					//g.text(b.width / 2, b.height - that.insets().top, title, {textAlign: 'center', textBaseLine: 'top', font: defaults.font.title}).fill(defaults.color.title);
+					g.text(b.width / 2, b.height - that.insets().top, title, defaults.font.title, {
+						anchor: {
+							horizontal: 'center',
+							vertical: 'top'
+						},
+						align: 'center'
+					});
 				}
 				if (subtitle.length !== 0) {
-					g.text(b.width / 2, that.insets().bottom, subtitle, {textAlign: 'center', textBaseLine: 'bottom', font: defaults.font.subtitle}).fill(defaults.color.subtitle);
+					g.text(b.width / 2, that.insets().bottom, subtitle, defaults.font.subtitle, {
+						anchor: {
+							vertical: 'bottom',
+							horizontal: 'center'
+						},
+						align: 'center'
+					});//textAlign: 'center', textBaseLine: 'bottom', font: defaults.font.subtitle}).fill(defaults.color.subtitle);
 				}
 				g.closeViewport();
 			//	g.rect(b.x, b.y, b.width, b.height).stroke('rgb(0, 255, 0)');

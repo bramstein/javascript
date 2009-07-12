@@ -58,11 +58,11 @@ var legend = function () {
 							}
 						});
 					}
-					g.text(insets.left + 9 + 4.5, (b.height / 2), label, {
-						font: defaults.font.labels,
-						textBaseLine: 'middle'
-					}).
-					fill(defaults.color.label);
+					g.text(insets.left + 9 + 4.5, (b.height / 2), label, defaults.font.labels, {
+						anchor: {
+							vertical: 'middle'
+						}
+					});
 					g.closeViewport();
 				//	g.rect(b.x, b.y, b.width, b.height).stroke('rgb(0, 255, 0)');
 				}

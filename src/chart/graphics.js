@@ -166,15 +166,7 @@ var graphics = function () {
 						context[p] = c;
 					}
 
-					if (!textBuffer.isEmpty()) {
-						textBuffer.forEach(function (args) {
-							defaults.text[n].apply(shape, args);
-						});
-						textBuffer = [];
-					}
-					else {
-						context[n].apply(context, []);
-					}
+					context[n].apply(context, []);
 
 					if (w) {
 						context.lineWidth = previousWidth;
@@ -356,12 +348,16 @@ var graphics = function () {
 				return shape;
 			};
 
-			shape.text = function (x, y, str, options) {
+			shape.text = function (x, y, str, font, options) {
 				var p = transform(x, y);
-				options.font = font.parse(options.font);
-				textBuffer.push([context, round(p[0]), round(p[1]), str, options]);
+			//	console.log(options);
+			//	console.log(font);
+			//	console.log(options);
+			//	options.font = font.parse(options.font);
+				font.draw(context, str, round(p[0]), round(p[1]), options);
+			//	textBuffer.push([context, round(p[0]), round(p[1]), str, options]);
 				return shape;
-			}.defaults(0, 0, "", {});
+			};
 
 			shape.clear = function () {
 				context.clearRect(0, 0, canvas.width, canvas.height);

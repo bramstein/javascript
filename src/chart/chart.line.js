@@ -106,14 +106,15 @@ Object.extend(defaults.type, {
 						p.endPath().
 						stroke(defaults.color.data.qualitative_highlight[i], 1.5);
 
-						g.text((j - 1) + 0.5, set.peek(), input.subcategories[i], {
-							textBaseLine: 'middle',
-							font: defaults.font.inlineLabel,
-							padding: {
+						g.text((j - 1) + 0.5, set.peek(), input.subcategories[i], defaults.font.inlineLabel, {
+							anchor: {
+								vertical: 'middle'
+							},
+							margin: {
 								left: 8
 							}
-						}).
-						fill(defaults.color.text);
+						});
+
 						i += 1;
 					});
 				}				

@@ -248,17 +248,16 @@ var canvas = function () {
 							}
 					
 							if (options.draw.horizontal.labels) {
-								g.text(s, offset.horizontal, axes.horizontal.ticks.labels[i] || s, {
-									textAlign: 'center', 
-									textBaseLine: (Math.isNegative(sign.horizontal) ? 'bottom' : 'top'),
-									background: defaults.color.background.data,
-									font: defaults.font.labels,
-									padding: {
+								g.text(s, offset.horizontal, axes.horizontal.ticks.labels[i] || s, defaults.font.labels, {
+									anchor: {
+										horizontal: 'center',
+										vertical: (Math.isNegative(sign.horizontal) ? 'bottom' : 'top')
+									},
+									margin: {
 										top: (Math.isNegative(sign.horizontal) ? 0 : tickSize * 2),
 										bottom: (Math.isNegative(sign.horizontal) ? tickSize * 2 : 0)
 									}
-								}).
-								fill(defaults.color.label);
+								});
 							}
 	
 							if (options.draw.horizontal.ticks) {
@@ -268,16 +267,15 @@ var canvas = function () {
 						}
 					}
 					else if (options.draw.horizontal.labels) {
-						g.text(size * i + (size / 2), range.vertical.from /*+ tick['horizontal'] * -2*/, s, {
-							textAlign: 'center', 
-							textBaseLine: 'top',
-							background: defaults.color.background.data,
-							font: defaults.font.labels,
-							padding: {
+						g.text(size * i + (size / 2), range.vertical.from, s, defaults.font.labels, {
+							anchor: {
+								horizontal: 'center',
+								vertical: 'top'
+							},
+							margin: {
 								top: tickSize * 2
 							}
-						}).
-						fill(defaults.color.label);
+						});
 					}
 				});
 
@@ -304,19 +302,20 @@ var canvas = function () {
 							}
 
 							if (options.draw.vertical.labels) {
+
 								g.text(
-									offset.vertical, s, axes.vertical.ticks.labels[i] || s, {
-										textAlign: (Math.isNegative(sign.vertical) ? 'left' : 'right'), 
-										textBaseLine: 'middle',
-										background: defaults.color.background.data,
-										font: defaults.font.labels,
-										padding: {
+									offset.vertical, s, axes.vertical.ticks.labels[i] || s, defaults.font.labels, {
+										anchor: {
+											horizontal: (Math.isNegative(sign.vertical) ? 'left' : 'right'),
+											vertical: 'middle'
+										},
+										margin: {
 											right: (Math.isNegative(sign.vertical) ? 0 : tickSize * 2),
 											left: (Math.isNegative(sign.vertical) ? tickSize * 2 : 0)
 										}
 									}
-								).
-								fill(defaults.color.label);
+								);
+
 							}
 
 							if (options.draw.vertical.ticks) {
@@ -326,12 +325,13 @@ var canvas = function () {
 						}
 					}
 					else if (options.draw.vertical.labels) {
-						g.text(range.horizontal.from, size * i + (size / 2), s, {
-							textAlign: 'right', 
-							textBaseLine: 'middle',
-							background: defaults.color.background.data,
-							font: defaults.font.labels,
-							padding: {
+
+						g.text(range.horizontal.from, size * i + (size / 2), s, defaults.font.labels, {
+							anchor: {
+								horizontal: 'right',
+								vertical: 'middle'
+							},
+							margin: {
 								right: tickSize * 2
 							}
 						}).
@@ -389,15 +389,21 @@ var canvas = function () {
 					//g.rect(data.x, data.y, data.width, data.height).stroke('rgb(255, 0, 0)');
 
                 if (axes.horizontal.label && options.draw.horizontal.label) {
-                    g.text(data.x + (data.width / 2), 0, axes.horizontal.label, {
-                        textAlign: 'center'
-                    }).fill(defaults.color.label);
+                    g.text(data.x + (data.width / 2), 0, axes.horizontal.label, defaults.font.labels, {
+                        anchor: {
+							horizontal: 'center'
+						}
+                    });
                 }
 
                 if (axes.vertical.label && options.draw.vertical.label) {
-                    g.text(0, b.height, axes.vertical.label, {
-                        textBaseLine: 'top'
-                    }).fill(defaults.color.label);
+
+                    g.text(0, b.height, axes.vertical.label, defaults.font.labels, {
+						anchor: {
+							vertical: 'top'
+						}
+                    });
+
                 }
                 g.closeViewport();
 				//g.rect(b.x, b.y, b.width, b.height).stroke('rgb(0,0,255)');
