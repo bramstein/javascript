@@ -47,7 +47,7 @@
 
 	<target name="test">
 		<rhinounit options="{verbose: true, stackTrace: true}" haltOnFirstFailure="false">
-			<fileset dir="test" includes="**/*.js"/>
+			<fileset dir="test" includes="**/*.test.js"/>
 		</rhinounit>
 	</target>
 

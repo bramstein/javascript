@@ -29,6 +29,9 @@ testCases(test,
      //   p = parser();
 	},
     
+    function nop() {
+    },
+    /*
     function checkIncorrectEnd() {
         function f() {
             parser.parse('4 * (5 + ) / ');
@@ -50,7 +53,7 @@ testCases(test,
     function checkFunction() {
     //    project.log(parser.parse('sin(1, cos (4), 6)'));
     },
-
+*/
     function tearDown() {
   //      p = null;
     }

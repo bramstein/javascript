@@ -46,6 +46,8 @@ testCases(test,
 	function checkIsPositive() {
 		assert.that(Math.isPositive(-1), isFalse());
 		assert.that(Math.isPositive(0), isTrue());
+        // JavaScript does not have negative zero.
+        assert.that(Math.isPositive(-0), isTrue());
 		assert.that(Math.isPositive(1), isTrue());
 	},
 
