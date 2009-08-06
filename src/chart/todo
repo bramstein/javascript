@@ -1,6 +1,7 @@
 -set legend/title padding to the padding of the canvas so that they are aligned properly.
 -move legend above chart instead of to the right if possible.
 -custom axis settings as options parameter to charts (to override default settings easily)
++test text drawing API on Firefox3.1
 +switched graphics to use pre-multiplied transformation matrices
 +removed dependency on Sylvester (nice library, but too big for the small part the chart library uses)
 +reimplemented simple vector and matrix library
@@ -94,7 +95,6 @@
 -look into SVG again (Rapheal library)
 -server side support with Rhino and a simple implementation of Canvas
 -drawing into canvas buffer and dynamically inserting an image through a data URL.
--test text drawing API on Firefox3.1
 -implement div overlaying canvas for text drawing
 -add option to jLayout to support different coordinate systems.
 -implement flow layout

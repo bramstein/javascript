@@ -25,7 +25,7 @@
 			return x < 0;
 		},
 		isPositive: function (x) {
-			return !Math.isNegative(x);
+			return x >= 0;
 		},
 		isEven: function (x) {
 			return x % 2 === 0;
