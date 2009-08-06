@@ -1,3 +1,5 @@
+eval(loadFile("src/core/object.js"));
+eval(loadFile("src/core/array.js"));
 eval(loadFile("src/preprocessor/preprocessor.js"));
 
 importClass(java.io.File);
