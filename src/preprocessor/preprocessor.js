@@ -41,6 +41,9 @@ var lexer = function (lines) {
 	}
 
 	return {
+        hasNext: function () {
+            return index < lines.length;
+        },
 		next: function () {
 			if (index < lines.length) {
 				m = tokens.exec(lines[index]);
@@ -51,7 +54,6 @@ var lexer = function (lines) {
 					return token('line', lines[index - 1], index);
 				}
 			}
-			
 			return false;
 		}
 	};
@@ -71,10 +73,9 @@ var preprocessor = function (source, definitions) {
 	l = lexer(lines);
 
     function block() {
-        if (statement()) {
-            block();
+        while (statement()) {
         }
-        return false;
+        return true;
     }
 
     function statement() {
@@ -102,10 +103,9 @@ var preprocessor = function (source, definitions) {
             
         if (token.id === 'endif') {
             return true;
-        } else {
-            throw "Missing endif.";
         }
-        return false;
+        project.log(token);
+        throw 'Missing #endif';
     }
 
     function defineStatement() {
@@ -120,4 +120,8 @@ var preprocessor = function (source, definitions) {
     }
 
     block();
+    
+    if (l.hasNext()) {
+        throw 'Unexpected statement: "' + token.id + '" at line: ' + token.position;
+    }
 };

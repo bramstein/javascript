@@ -1,6 +1,6 @@
 #define FAST
-
-//#else
+#define DEBUG
+#undef BROWSER
 
 function randomInt(from, to) {
 #ifdef FAST
@@ -11,9 +11,11 @@ function randomInt(from, to) {
 	to += 0.449;
 
 #ifdef DEBUG
+#ifndef BROWSER
     project.log('hello world');
 #else
     console.log('hello world');
+#endif
 #endif
 	return Math.round(from + (to - from) * Math.random());
 #endif
