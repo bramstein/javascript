@@ -36,11 +36,11 @@ var lexer = function (lines) {
 
 	function token(t, v, p) {
 		return {
-			type: t,
+			id: t,
 			value: v,
 			position: p,
 			toString: function () {
-				return this.type + ' = "' + this.value + '", at: ' + this.position + '\n';
+				return this.id + ' = "' + this.value + '", at: ' + this.position + '\n';
 			}
 		};
 	}
@@ -62,15 +62,105 @@ var lexer = function (lines) {
 	};
 };
 
+var parser = (function (lex) {
+    var originalSymbol = {
+            nud: function () {
+                this.error("Undefined.");
+            },
+            led: function (left) {
+                this.error("Missing operator.");
+            }
+        },
+        originalScope = {
+            define: function (n) {
+                // we don't care about redefinitions
+                this.def[n.value] = n;
+                n.nud = itself;
+                n.led = null;
+                n.std = null;
+                n.lbp = 0;
+                n.scope = scope;
+                return n;
+            },
+            find: function (n) {
+                var e = this;
+                while (true) {
+                    var o = e.def[n];
+                    if (o) {
+                        return o;
+                    }
+                    e = e.parent;
+                    if (!e) {
+                        return false;
+                    }
+                }
+            },
+            pop: function () {
+                scope = this.parent;
+            },
+            remove: function (n) {
+                var e = this;
+                while (true) {
+                    var o = e.def[n];
+                    if (o) {
+                        delete e.def[n];
+                        return true;
+                    }
+                    e = e.parent;
+                    if (!e) {
+                        return false;
+                    }
+                }
+            }
+        },
+        symbolTable = {},
+        token,
+        scope;
+    
+    var itself = function () {
+        return this;
+    }
+    
+    return { 
+        symbol: function (id, bp) {
+            var s = symbolTable[id];
+            bp = bp || 0;
+            
+            if (s) {
+                if (bp >= s.lbp) {
+                    s.lbp = bp;
+                }
+            } else {
+                s = Object.clone(originalSymbol);
+                s.id = s.value = id;
+                s.lbp = bp;
+                symbolTable[id] = s;
+            }
+            return s;
+        },
+        advance: function (id) {
+            if (id && token.id !== id) {
+                token.error('Expected "' + id + '".');
+            }
+            token = lex.next();
+            
+            return token;
+        },
+        newScope: function () {
+            var s = scope;
+            scope = Object.clone(originalScope);
+            scope.def = {};
+            scope.parent = s;
+            return scope;
+        },
+        currentToken = token
+    };
+}());
+
 var preprocessor = function (source, definitions) {
     var lines = [],
-        tokens = /^\s*#(ifdef|ifndef|endif|else|define|undef)\s*(\w*)$/,
-        i = 0,
-        m,
-        def = definitions || {},
-        skip = false,
-        output = [],
-		stack = [], v1, v2, block = [[]], token;
+        token;
+    
     if (typeof source === 'string') {
         lines = source.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
     } else {
@@ -79,9 +169,46 @@ var preprocessor = function (source, definitions) {
 
 	var l = lexer(lines);
 
+    var p = parser(l);
+
+    function block() {
+    }
+
+
+    function statement() {
+        var n = token, v;
+        if (n.std) {
+            p.advance();
+            return n.std();
+        }
+        return false;
+    }
+    
+    function statements() {
+        var a = [], s;
+        while (true) {
+            if (!token) {
+                break;
+            }
+            s = statement();
+            if (s) {
+                a.push(s);
+            }
+        }
+        return a.length === 0 ? null : a.length === 1 ? a[0] : a;
+    }
+    
+    function stmt(s, f) {
+        var x = this.symbol(s);
+        x.std = f;
+        return x;
+    }
+
+/*
 	while ((token = l.next())) {
 		project.log(token);
 	}
+    */
 /* 
 	[
 		line1,
