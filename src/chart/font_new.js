@@ -176,10 +176,10 @@ var ffont = function (properties) {
 			//console.log("----" + str);
 
 			if (str) {
-			context.fillStyle = colour;
-            str.toLocaleString().split('\n').forEach(function (line, i, a) {
-                context.fillText(line, x + textOffset.horizontal + margin.left, (-y + i * f.lineHeight + f.lineHeight - leading / 2) - textOffset.vertical + margin.top);
-            });
+				context.fillStyle = colour;
+            	str.toLocaleString().split('\n').forEach(function (line, i, a) {
+                	context.fillText(line, x + textOffset.horizontal + margin.left, (-y + i * f.lineHeight + f.lineHeight - leading / 2) - textOffset.vertical + margin.top);
+            	});
 			}
             context.restore();
             
@@ -203,7 +203,6 @@ var ffont = function (properties) {
             context.arc(x, y, 1, 0, Math.PI * 2, false);
             context.fill();
 */
-        },
-        toString: toString
+        }
     };
 };

@@ -1,4 +1,4 @@
-
+/*global ffont*/
 var defaults = {
 	text: {
 		fill: function (context, x, y, str, options) {

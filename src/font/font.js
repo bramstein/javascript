@@ -28,7 +28,7 @@ f.fill(context, str, x, y);
 f.stroke(context, str, x, y);
 
 */
-
+/*
 var font = function (properties) {
     var f = {
             family: 'sans-serif',
@@ -198,3 +198,4 @@ var font = function (properties) {
         toString: toString
     };
 };
+*/

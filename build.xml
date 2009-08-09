@@ -30,6 +30,17 @@
 		<element name="fileset" type="fileset"/>
 	</scriptdef>
 
+	<scriptdef name="preprocess" src="src/preprocessor/js-preprocess.js" language="javascript">
+		<classpath>
+			<path refid="js.lib"/>
+		</classpath>
+		<attribute name="defines" />
+		<attribute name="todir" />
+		<attribute name="file"/>
+		<attribute name="tofile"/>
+		<element name="fileset" type="fileset" />
+	</scriptdef>
+
 	<!--
 		Define the JSLINT task
 	-->
@@ -43,12 +54,19 @@
 
 	<target name="init">
 		<mkdir dir="dist"/>
+		<mkdir dir="pre"/>
 	</target>
 
 	<target name="test">
 		<rhinounit options="{verbose: true, stackTrace: true}" haltOnFirstFailure="false">
 			<fileset dir="test" includes="**/*.test.js"/>
 		</rhinounit>
+	</target>
+
+	<target name="preprocess">
+		<preprocess todir="pre" defines="DEBUG">
+			<fileset dir="test" includes="**/*.js"/>
+		</preprocess>
 	</target>
 
 	<target name="jslint">
