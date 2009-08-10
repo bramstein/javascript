@@ -64,7 +64,7 @@
 	</target>
 
 	<target name="preprocess">
-		<preprocess todir="pre" defines="DEBUG">
+		<preprocess todir="pre" defines="DEBUG, TARGET, FAST">
 			<fileset dir="test" includes="**/*.js"/>
 		</preprocess>
 	</target>

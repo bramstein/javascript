@@ -1,5 +1,5 @@
 /*!
- * JavaScript Preprocessor v0.31
+ * JavaScript Preprocessor v0.32
  *
  * Licensed under the new BSD License.
  * Copyright 2009, Bram Stein
@@ -25,17 +25,7 @@
  * define-statement ::= '#define' <identifier>
  * undef-statement  ::= '#undef' <identifier>
  *
- * <identifier>     ::= [A-Za-z0-9_]              
-
-
-FAQ:
-
-Q: What about #include directives?
-A: JavaScript would be better off with a proper module system, which maintains dependencies file inclusions and packaging.
-
-Q: The JSLint/Minification stage in my build process stops working because of the preprocessor directives.
-A: The simple solution is to run the preprocessor before running JSLint or minifying your code. Alternatively, you could set
-   up a filter in your build process that strips out all the preprocessor directives.
+ * <identifier>     ::= [A-Za-z0-9_]
  */
 /*global block*/
 var preprocess = function (source, definitions) {
@@ -203,10 +193,16 @@ if (typeof self !== 'undefined' && self.getTaskName !== 'undefined' && self.getT
 			file = attributes.get('file'),
 			tofile = attributes.get('tofile'),
 			filesets = elements.get('fileset'),
-			mapping = [], i = 0, j = 0, fileset, files = [],
+			mapping = [], i = 0, j = 0, l = 0, fileset, files = [], def = {},
 			fileToString = function (file) {
 				return '' + FileUtils.readFully(new FileReader(file)).toString();
 			};
+
+		defines = (defines + '').split(/,\s?/);
+
+		for (; l < defines.length; l += 1) {
+			def[defines[l]] = true;
+		}
 
 		if (file) {
 			if (tofile || todir) {
@@ -239,7 +235,7 @@ if (typeof self !== 'undefined' && self.getTaskName !== 'undefined' && self.getT
 			var out, result = [];
 			self.log('Preprocessing: ' + mapping[i].dst.toString());
 			try {
-				result = preprocess(fileToString(mapping[i].src), defines);
+				result = preprocess(fileToString(mapping[i].src), def);
 			} catch (e) {
 				self.fail(e);
 			}
