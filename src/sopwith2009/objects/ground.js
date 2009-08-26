@@ -202,7 +202,7 @@
 			199,199,199,199,199,199,199,199,199,199,199,199,199,199,199,
 			199,199,199,199,199,199,199,199,199,199,199,199,199,199,199,
 			199,199,199,199,199,199,199,199,199,199,199,199,199,199,199
-		],
+		]/*,
 		loground = [
 			179,179,179,179,179,179,179,179,179,179,179,179,179,179,179,
 			179,179,179,179,179,179,179,179,179,179,179,179,179,179,179,
@@ -404,11 +404,11 @@
 			179,179,179,179,179,179,179,179,179,179,179,179,179,179,179,
 			179,179,179,179,179,179,179,179,179,179,179,179,179,179,179,
 			179,179,179,179,179,179,179,179,179,179,179,179,179,179,179
-		];
+		]*/;
 
-	groundObject.bbox.x = 400;
+	//groundObject.bbox.x = 400;
 
-	groundObject.draw = function (graphics) {
+	groundObject.draw = function (graphics, state) {
 		var i = 0, len = ground.length, start = 0, end = 0, p = 0;
 
 		graphics.fillStyle = "#ffffff";
@@ -416,16 +416,16 @@
 		graphics.beginPath();
 		graphics.moveTo(0, graphics.canvas.height - (20 * this.scale.vertical));
 
-		if (this.bbox.x <= 161) {
+		if (state.x <= 161) {
 			start = 0;
 		} else {
-			start = Math.round(this.bbox.x - 161);
+			start = Math.round(state.x - 161);
 		}
 	
-		if (this.bbox.x >= ground.length - 161) {
+		if (state.x >= ground.length - 161) {
 			end = ground.length;
 		} else {
-			end = Math.round(this.bbox.x + 161);
+			end = Math.round(state.x + 161);
 		}
 		for(i = start; i < end; i += 1, p += 1) {
 			graphics.lineTo(p * this.scale.horizontal, graphics.canvas.height - (ground[i] * this.scale.vertical));
@@ -436,9 +436,15 @@
 		graphics.stroke();
 	};
 
-	groundObject.update = function (delta) {
-		var speed = 80 / (1/delta);
-		this.bbox.x = this.bbox.x + speed;
+	groundObject.update = function (state) {
+		//var speed = delta / 8;
+	//	this.bbox.x = this.bbox.x + 0.1 * delta;
+		//console.log(state.x);
+		//this.bbox.x = state.x;
+
+	//	if (this.bbox.x > 3000) {
+	//		this.bbox.x = 400;
+	//	}
 	};
 
 	game.objects.push(groundObject);

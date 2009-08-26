@@ -108,6 +108,9 @@
 				return !obj.hasOwnProperty(key); 
 			});
 		},
+		copy: function (obj) {
+			//http://oranlooney.com/static/functional_javascript/owl_util.js
+		},
 		clone: function (obj) {
 			function Clone() {}
 			Clone.prototype = obj;
