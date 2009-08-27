@@ -1,6 +1,6 @@
 
 /*!
- * JavaScript Core Object v0.51
+ * JavaScript Core Object v0.52
  *
  * Licensed under the new BSD License.
  * Copyright 2008-2009, Bram Stein
@@ -24,6 +24,8 @@
 	function getInternalType(value) {
 		return Object.prototype.toString.apply(value);
 	}
+    
+    function Clone() {}
 
 	Object.extend(Object, {
 		isAtom: function (value) {
@@ -108,11 +110,39 @@
 				return !obj.hasOwnProperty(key); 
 			});
 		},
-		copy: function (obj) {
-			//http://oranlooney.com/static/functional_javascript/owl_util.js
+        // Shallow or deep copy of an object. Code inspired by:
+        // * Oran Looney - http://oranlooney.com/static/functional_javascript/owl_util.js
+        // * Object-Oriented JavaScript, by Stoyan Stefanov
+		copy: function (obj, deep) {
+            var c, p, r;
+            
+            if (typeof obj !== 'object') {
+                return obj;
+            } else {
+                c = obj.valueOf();
+                
+                // Test for strict identity: if they are not equal we 
+                // can be sure this not a native type wrapper.
+                if (obj !== c) {
+                    return new obj.constructor(c);
+                }
+                
+                // We clone the prototype if possible, otherwise construct a clean object or array
+                if (obj instanceof obj.constructor && obj.constructor !== Object && !Object.isArray(obj)) {
+                    r = Object.clone(obj.constructor.prototype);
+                } else {
+                    r = Object.isArray(obj) ? [] : {};
+                }
+
+                for (p in obj) {
+                    if (obj.hasOwnProperty(p)) {
+                        r[p] = deep ? Object.copy(obj[p], deep) : obj[p]; 
+                    }
+                }
+                return r;
+            }
 		},
 		clone: function (obj) {
-			function Clone() {}
 			Clone.prototype = obj;
 			return new Clone();
 		},

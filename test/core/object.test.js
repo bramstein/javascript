@@ -135,6 +135,12 @@ testCases(test,
 		assert.that(o.one, eq(1));
 		assert.that(o.two, eq(2));
 	},
+    
+    function checkArrayClone() {
+        // Interestingly enough, cloning an array turns it into an object.
+        // This might seems a bit odd at first, but makes sense.
+        assert.that(Object.isArray(Object.clone([1, 2, 3])), isFalse());
+    },
 /*
 	function checkEquals() {
 		var o1 = {hello: 'world', bye: 'planet', a: [1, 2], o: {goodbye: 'you'}};
@@ -216,6 +222,50 @@ testCases(test,
 			isTrue());
 */
 	},
+    
+    function checkObjectCopy() {    
+        assert.that(Object.copy(1), eq(1));
+        assert.that(Object.copy('str'), eq('str'));
+        assert.that(Object.copy(new String('str')).valueOf(), eq('str'));
+        
+        assert.that(Object.copy([1])[0], eq(1));
+        assert.that(Object.isArray(Object.copy([1, 2, 3])), isTrue());
+        
+        assert.that(Object.copy({a: 1}).a, eq(1));
+        assert.that(Object.isObject(Object.copy({a: 1})), isTrue());
+        
+        assert.that(Object.copy({a: [1, 2]}).a[0], eq(1));
+    },
+    
+    function checkObjectShallowCopy() {
+        var a = {a: [1, 2]},
+            b = Object.copy(a),
+            c = {a: {b: 'str'}},
+            d = Object.copy(c);
+    
+        a.a[0] = 3;
+        
+        assert.that(b.a[0], eq(3));
+        
+        c.a.b = 'no';
+        
+        assert.that(d.a.b, eq('no'));    
+    },
+    
+    function checkObjectDeepCopy() {
+        var a = {a: [1, 2]},
+            b = Object.copy(a, true),
+            c = {a: {b: 'str'}},
+            d = Object.copy(c, true);
+    
+        a.a[0] = 3;
+        
+        assert.that(b.a[0], eq(1));
+        
+        c.a.b = 'no';
+        
+        assert.that(d.a.b, eq('str'));
+    },
 
 	function checkObjectReduce() {
 		var o = {a: 1, b: 2, c: 3, d: 4};
