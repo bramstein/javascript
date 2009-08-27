@@ -5,6 +5,16 @@ eval(loadFile("src/parser/parser.js"));
 
 //var p;
 
+function printTree(node) {
+    if (Object.isArray(node)) {
+        for (var i = 0; i < node.length; i += 1) {
+            printTree(node[i]);
+        }
+    } else if (Object.isObject(node)) {
+        project.log(node.toString());
+    }
+}
+/*
 function evaluate(tree) {
 	project.log(Object.isArray(tree));
 
@@ -22,7 +32,7 @@ function evaluate(tree) {
         	}
     	}
 }
-
+*/
 
 testCases(test, 
 	function setUp() {
@@ -34,16 +44,20 @@ testCases(test,
     /*
     function checkIncorrectEnd() {
         function f() {
-            parser.parse('4 * (5 + ) / ');
+       //     parser.parse('4 * (5 + ) / ');
         }
     
         shouldThrowException(function () {
             f();
         });
-    },
+    },*/
     
     function checkSimple() {
-        assert.that(evaluate(parser.parse('3 + 4')), eq(7));
+        var r = parser.parse('3 + 4');
+        //project.log(Object.isArray(r));
+        project.log(r);
+        printTree(r);
+       // assert.that(evaluate(parser.parse('3 + 4')), eq(7));
     },
     
     function checkNesting() {
@@ -53,7 +67,7 @@ testCases(test,
     function checkFunction() {
     //    project.log(parser.parse('sin(1, cos (4), 6)'));
     },
-*/
+
     function tearDown() {
   //      p = null;
     }
