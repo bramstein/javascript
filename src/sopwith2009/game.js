@@ -1,4 +1,4 @@
-	
+/*global geometry, document, setInterval*/	
 var game = (function () {
 	var context = null,
 		width = 320, height = 200, 
