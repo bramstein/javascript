@@ -19,7 +19,7 @@ var parser = function () {
         },
         {
             name: 'fmod',
-            parameters: 2
+            arity: 2
         },
         {
             name: 'sqrt'
@@ -29,6 +29,14 @@ var parser = function () {
         },
         {
             name: 'log'
+        },
+        {
+            name: 'min',
+            arity: -1
+        },
+        {
+            name: 'max',
+            arity: -1
         }
     ];
 
@@ -73,7 +81,8 @@ var parser = function () {
         },
         {
             type: 'PARENTHESES_LEFT',
-            pattern: /^\(/g
+            pattern: /^\(/g,
+            precedence: -1
         },
         {
             type: 'PARENTHESES_RIGHT',
@@ -99,7 +108,7 @@ var parser = function () {
     functions.forEach(function (f) {
         f.type = 'FUNCTION';
         f.pattern = new RegExp('^' + f.name, 'ig');
-        f.parameters = f.parameters || 1;
+        f.arity = f.arity || 1;
     });
     
     constants.forEach(function (c) {
@@ -117,26 +126,43 @@ var parser = function () {
                 token = {},
                 output = [],
                 stack = [],
-                v1, v2;
+                were = [],
+                count = [],
+                v1, v2, c, fun;
             
             while ((token = iterator.next())) {
             
                 if (token.type === 'NUMBER' || token.type === 'CONSTANT' || token.type === 'VARIABLE') {
                     output.push(token);
-                }
-                else if (token.type === 'FUNCTION') {
+                    if (!were.isEmpty()) {
+                        were.pop();
+                        were.push(true);
+                    }
+                } else if (token.type === 'FUNCTION') {
                     stack.push(token);
-                }
-                else if (token.type === 'COMMA') {
+                    count.push(0);
+                    if (!were.isEmpty()) {
+                        were.pop();
+                        were.push(true);
+                    }
+                    were.push(false);
+                } else if (token.type === 'COMMA') {
+                    
                     while (!stack.isEmpty() && stack.peek().type !== 'PARENTHESES_LEFT') {
                         output.push(stack.pop());
                     
-                        if (!stack.isEmpty()) {
+                        if (stack.isEmpty()) {
                             throw new Error('Misplaced comma or missing parentheses.');
                         }
                     }
-                }
-                else if (token.type === 'BINARY_OPERATOR') {  
+                    
+                    if (were.pop()) {
+                        c = count.pop();
+                        c += 1;
+                        count.push(c);
+                    }
+                    were.push(false);
+                } else if (token.type === 'BINARY_OPERATOR') {  
                     while (!stack.isEmpty() && stack.peek().type === 'BINARY_OPERATOR' && (
                             (token.associative && token.precedence <= stack.peek().precedence) || 
                             (!token.associative && token.precedence < stack.peek().precedence)
@@ -144,19 +170,17 @@ var parser = function () {
                         v1 = output.pop();
                         v2 = output.pop();
                         
-                        output.push([stack.pop(), v1, v2]);
+                        output.push([v2, v1, stack.pop()]);
                     }
                     stack.push(token);
-                }
-                else if (token.type === 'PARENTHESES_LEFT') {
+                } else if (token.type === 'PARENTHESES_LEFT') {
                     stack.push(token);
-                }
-                else if (token.type === 'PARENTHESES_RIGHT') {
+                } else if (token.type === 'PARENTHESES_RIGHT') {
                     while (!stack.isEmpty() && stack.peek().type !== 'PARENTHESES_LEFT') {
                         v1 = output.pop();
                         v2 = output.pop();
                     
-                        output.push([stack.pop(), v1, v2]);
+                        output.push([v2, v1, stack.pop()]);
                         
                         if (stack.isEmpty()) {
                             throw new Error('Mismatched parentheses.');
@@ -164,12 +188,22 @@ var parser = function () {
                     }
                     stack.pop();
                     if (!stack.isEmpty() && stack.peek().type === 'FUNCTION') {
-                        output.push(stack.pop());
+                        fun = stack.pop();
+                        c = count.pop();
+                        
+                        if (were.pop()) {
+                            c += 1;
+                            if (fun.arity === c || fun.arity === -1) {
+                                fun.arity = c;
+                                output.push(fun);
+                            } else {
+                                throw new Error('Incorrect number of arguments to function.');
+                            }
+                        }
                     }
                 }
             }
  
-            
             if (!stack.isEmpty()) {
                 while (!stack.isEmpty()) {
                     if (stack.peek().type === 'PARENTHESES_LEFT' || stack.peek().type === 'PARENTHESES_RIGHT') {
@@ -182,14 +216,8 @@ var parser = function () {
                         throw new Error('Binary operator "' + stack.peek().token + '" requires two arguments.');
                     }
                     
-                    output.push([stack.pop(), v1, v2]);
+                    output.push([v2, v1, stack.pop()]);
                 }
-            }
-            
-            if (output.length !== 1) {
-              //  project.log("input created more than one parse tree");
-              //  project.log(output[0]);
-              //  project.log(output[1]);
             }
             return output;
         }
