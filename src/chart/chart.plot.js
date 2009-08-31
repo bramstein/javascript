@@ -55,7 +55,7 @@ Object.extend(defaults.type, {
 
 				if (F.from <= 0 && 0 <= F.to) {
 					if (Interval.width(horizontal) <= pixel.horizontal && Interval.width(vertical) <= pixel.vertical) {
-						g.square((horizontal.from + horizontal.to) / 2, (vertical.from + vertical.to) / 2, pixelSize).fill('rgb(255, 0, 0)');
+						g.square(horizontal.from, vertical.from, pixelSize).fill('rgb(255, 0, 0)');
 					}
 					else {
 						//if (Interval.width(horizontal) > pixel.horizontal * 4 && Interval.width(vertical) > pixel.vertical * 4) {

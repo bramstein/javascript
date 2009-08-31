@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>InterPlot - Plotting with JavaScript, Canvas & Interval Arithmetic</title>
+		<link type="text/css" rel="stylesheet" href="interplot.css"/>
+	</head>
+	<body onload="init();">
+		<canvas id="plot" width="500" height="500">
+		</canvas>
+		<script type="text/javascript" src="../core/object.js"></script>
+		<script type="text/javascript" src="../core/array.js"></script>
+		<script type="text/javascript" src="../core/geometry.js"></script>
+		<script type="text/javascript" src="../core/math.js"></script>
+		<script type="text/javascript" src="../core/interval.js"></script>
+		<script type="text/javascript" src="../parser/lexer.js"></script>
+		<script type="text/javascript" src="../parser/parser.js"></script>
+		<script type="text/javascript" src="matrix.js"></script>
+		<script type="text/javascript" src="vector.js"></script>
+		<script type="text/javascript" src="interplot.js"></script>
+		<script type="text/javascript">
+			function s(x, y) {
+				return Interval.add(Interval.sin(x), y);
+			}
+
+			function init() {
+				p = interplot('plot');
+
+				p.plot(s, {from: -1, to: 1}, {from: 0, to: Math.PI * 2});
+			}
+		</script>
+	</body>
+</html>
+

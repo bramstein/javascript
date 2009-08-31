@@ -39,7 +39,7 @@ var lexer = function (tokens) {
                     }
                     
                     if (buffer.length !== 0) {
-                        throw new Error('Unknown input: ' + buffer);
+                        throw 'Unknown input: ' + buffer;
                     }
                     return false;
                 }

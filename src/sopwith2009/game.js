@@ -32,7 +32,9 @@ var game = (function () {
 		 */
 		currentState = {
 			player: {
-				position: 0,
+				x: 0,
+				y: 0,
+				rotation: 0,
 				velocity: 0.05,
 				fuel: 30,
 				bombs: 6,

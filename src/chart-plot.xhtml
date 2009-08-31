@@ -12,15 +12,16 @@
 		<script type="text/javascript" src="core/math.js"></script>
 		<script type="text/javascript" src="jlayout/jlayout.border.js"></script>
 		<script type="text/javascript" src="jlayout/jlayout.grid.js"></script>
+		<script type="text/javascript" src="chart/font_new.js"></script>
 		<script type="text/javascript" src="chart/defaults.js"></script>
 		<script type="text/javascript" src="chart/properties.js"></script>
 		<script type="text/javascript" src="chart/data.js"></script>
-		<script type="text/javascript" src="chart/interval.js"></script>
+		<script type="text/javascript" src="core/interval.js"></script>
 		<script type="text/javascript" src="chart/coordinate.js"></script>
 		<script type="text/javascript" src="chart/axis.js"></script>
 		<script type="text/javascript" src="chart/font.js"></script>
 		<script type="text/javascript" src="chart/graphics.js"></script>
-		<script type="text/javascript" src="chart/text.mozilla.js"></script>
+		<script type="text/javascript" src="chart/text.canvas.js"></script>
 		<script type="text/javascript" src="chart/chart.js"></script>
 		<script type="text/javascript" src="chart/composite-chart.js"></script>
 		<script type="text/javascript" src="chart/canvas.js"></script>
@@ -86,7 +87,7 @@
 						to: Math.PI * 2
 					}
 				});
-				plot.bounds({width: 340, height: 340});
+				plot.bounds({width: 500, height: 500});
 				plot.draw();
 			}
 
@@ -133,7 +134,7 @@
 			<canvas id="plot-sine" width="350" height="200"></canvas>
 		</div>
 		<div class="right">
-			<canvas id="plot-rose" width="350" height="350"></canvas>
+			<canvas id="plot-rose" width="500" height="500"></canvas>
 		</div>
 	</body>
 </html>
