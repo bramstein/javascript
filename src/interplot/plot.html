@@ -6,7 +6,7 @@
 		<link type="text/css" rel="stylesheet" href="interplot.css"/>
 	</head>
 	<body onload="init();">
-		<canvas id="plot" width="500" height="500">
+		<canvas id="plot" width="450" height="450">
 		</canvas>
 		<script type="text/javascript" src="../core/object.js"></script>
 		<script type="text/javascript" src="../core/array.js"></script>
@@ -26,7 +26,7 @@
 			function init() {
 				p = interplot('plot');
 
-				p.plot(s, {from: -1, to: 1}, {from: 0, to: Math.PI * 2});
+				//p.plot(s, {from: -1, to: 1}, {from: 0, to: Math.PI * 2});
 			}
 		</script>
 	</body>

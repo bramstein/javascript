@@ -10,70 +10,34 @@ function rose(r, t) {
 	return Interval.add(Interval.cos({from: t.from * 4, to: t.to * 4}), r);
 }
 
-function forward(e) {
-	if (buffer.length < 50) {
-		buffer.push(e.data);
-	} else {
-		buffer.push(e.data);
+function store(e) {
+	buffer.push(e);
+}
+
+function send(depth) {
+	if (depth <= 5 && buffer.length !== 0) {
 		postMessage(buffer);
 		buffer = [];
 	}
-	//postMessage(e.data);
 }
 
 function subdivide(eq, horizontal, vertical, depth, pixel) {
-	var hk = (horizontal.from + horizontal.to) / 2;
-	var vk = (vertical.from + vertical.to) / 2;
-	var w = [], i;
+	var hk = (horizontal.from + horizontal.to) / 2,
+		vk = (vertical.from + vertical.to) / 2;
 
 	depth += 1;
 
-	if (depth === 1) {
-		for (i = 0; i < 4; i += 1) {
-			w[i] = new Worker('worker.js');
-			w[i].onmessage = forward;
-		}
-		w[0].postMessage({
-			range: {
-				horizontal: {from: horizontal.from, to: hk},
-				vertical: {from: vertical.from, to: vk}
-			},
-			pixel: pixel,
-			'depth': depth
-		});
+	quadtree(eq, {from: horizontal.from, to: hk}, {from: vertical.from, to: vk}, depth, pixel);
+	send(depth);
 
-		w[1].postMessage({
-			range: {
-				horizontal: {from: horizontal.from, to: hk},
-				vertical: {from: vk, to: vertical.to}
-			},
-			pixel: pixel,
-			'depth': depth
-		});
+	quadtree(eq, {from: horizontal.from, to: hk}, {from: vk, to: vertical.to}, depth, pixel);
+	send(depth);
 
-		w[2].postMessage({
-			range: {
-				horizontal: {from: hk, to: horizontal.to},
-				vertical: {from: vk, to: vertical.to}
-			},
-			pixel: pixel,
-			'depth': depth
-		});
+	quadtree(eq, {from: hk, to: horizontal.to}, {from: vk, to: vertical.to}, depth, pixel);
+	send(depth);
 
-		w[3].postMessage({
-			range: {
-				horizontal: {from: hk, to: horizontal.to},
-				vertical: {from: vertical.from, to: vk}
-			},
-			pixel: pixel,
-			'depth': depth
-		});
-	} else {
-		quadtree(eq, {from: horizontal.from, to: hk}, {from: vertical.from, to: vk}, depth, pixel);
-		quadtree(eq, {from: horizontal.from, to: hk}, {from: vk, to: vertical.to}, depth, pixel);
-		quadtree(eq, {from: hk, to: horizontal.to}, {from: vk, to: vertical.to}, depth, pixel);
-		quadtree(eq, {from: hk, to: horizontal.to}, {from: vertical.from, to: vk}, depth, pixel);
-	}
+	quadtree(eq, {from: hk, to: horizontal.to}, {from: vertical.from, to: vk}, depth, pixel);
+	send(depth);
 }
 
 function quadtree(eq, horizontal, vertical, depth, pixel) {
@@ -81,7 +45,7 @@ function quadtree(eq, horizontal, vertical, depth, pixel) {
 
 	if (F.from <= 0 && 0 <= F.to) {
 		if ((Interval.width(horizontal) <= pixel.horizontal && Interval.width(vertical) <= pixel.vertical) || depth > 19) {
-			postMessage([horizontal, vertical]);
+			store([horizontal.from, horizontal.to, vertical.from, vertical.to]);
 		}
 		else {
 			subdivide(eq, horizontal, vertical, depth, pixel);	

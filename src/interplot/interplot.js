@@ -66,27 +66,60 @@ var interplot = function (c) {
 			context.translate(-range.horizontal.from * scale.horizontal, -range.vertical.from * scale.vertical);
 			context.scale(scale.horizontal, scale.vertical);
 			
-			worker.onmessage = function (event) {
-				event.data.forEach(function (d) {
-					var h = d[0],
-						v = d[1],
-						p;
-	
-					if (polar) {
-						p = vector.polarToCartesian([h.from, v.from, 1]);
-						context.fillRect(p[0], p[1], Interval.width(h), Interval.width(v));
-					} else {
-						context.fillRect(h.from, v.from, Interval.width(h), Interval.width(v));
-					}
-				});
-			};
+			var f = function (event) {
+				var i = 0, len = event.data.length;
+				for (; i < len; i += 1) {
+					var d = event.data[i];	
 
-			worker.postMessage({range: {
-						horizontal: range.horizontal,
-						vertical: vertical
+					if (polar) {
+						context.fillRect(d[0] * Math.cos(d[2]), d[0] * Math.sin(d[2]), d[1] - d[0], d[3] - d[2]);
+					} else {
+						context.fillRect(h.from, v.from, d[1] - d[0], d[3] - d[2]);
+					}
+				};
+			};
+			var hk = (range.horizontal.from + range.horizontal.to) / 2,
+				vk = (vertical.from + vertical.to) / 2,
+				w = [], i, depth = 0;
+
+			for (i = 0; i < 4; i += 1) {
+				w[i] = new Worker('worker.js');
+				w[i].onmessage = f;
+			}
+			w[0].postMessage({
+				range: {
+					horizontal: {from: horizontal.from, to: hk},
+					vertical: {from: vertical.from, to: vk}
 				},
 				pixel: pixel,
-				depth: 0
+				'depth': depth
+			});
+
+			w[1].postMessage({
+				range: {
+					horizontal: {from: horizontal.from, to: hk},
+					vertical: {from: vk, to: vertical.to}
+				},
+				pixel: pixel,
+				'depth': depth
+			});
+
+			w[2].postMessage({
+				range: {
+					horizontal: {from: hk, to: horizontal.to},
+					vertical: {from: vk, to: vertical.to}
+				},
+				pixel: pixel,
+				'depth': depth
+			});
+
+			w[3].postMessage({
+				range: {
+					horizontal: {from: hk, to: horizontal.to},
+					vertical: {from: vertical.from, to: vk}
+				},
+				pixel: pixel,
+				'depth': depth
 			});
 		}
 	};
