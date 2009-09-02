@@ -1,3 +1,18 @@
 canvas {
 	border: 1px solid rgb(220, 220, 220);
 }
+
+ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+input {
+    margin-right: 1em;
+}
+
+label {
+    width: 10em;
+    display: inline-block;
+}

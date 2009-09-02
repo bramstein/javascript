@@ -60,6 +60,18 @@ var parser = function (options) {
         
     tokens.append(operators, functions, constants, variables ? [ { type: 'VARIABLE', pattern: /^[a-zA-Z\._]+/g } ] : []);
 
+    tokens.forEach(function (t) {
+        t.toJSON = function () {
+            return {
+                value: this.value,
+                type: this.type,
+                pos: this.pos,
+                name: this.name,
+                arity: this.arity
+            };
+        };
+    });
+
     lex = lexer(tokens);
 
     return {

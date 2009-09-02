@@ -1,14 +1,6 @@
-importScripts('../core/object.js', '../core/array.js', '../core/math.js', '../core/interval.js');
+importScripts('../core/object.js', '../core/array.js', '../core/math.js', '../core/interval.js', '../parser/lexer.js', '../parser/parser.js', 'expression.js');
 
 var buffer = [];
-
-function s(x, y) {
-	return Interval.add(Interval.sin(x), y);
-}
-
-function rose(r, t) {
-	return Interval.add(Interval.cos({from: t.from * 4, to: t.to * 4}), r);
-}
 
 function store(e) {
 	buffer.push(e);
@@ -41,7 +33,7 @@ function subdivide(eq, horizontal, vertical, depth, pixel) {
 }
 
 function quadtree(eq, horizontal, vertical, depth, pixel) {
-	var F = rose(horizontal, vertical);
+	var F = expression.evaluate(eq, {x: horizontal, y: vertical});
 
 	if (F.from <= 0 && 0 <= F.to) {
 		if ((Interval.width(horizontal) <= pixel.horizontal && Interval.width(vertical) <= pixel.vertical) || depth > 19) {
@@ -56,7 +48,8 @@ function quadtree(eq, horizontal, vertical, depth, pixel) {
 onmessage = function (event) {
 	var range = event.data.range,
 		pixel = event.data.pixel,
-		depth = event.data.depth;
+		depth = 1,
+        eq = event.data.eq;
 
-	quadtree(null, range.horizontal, range.vertical, depth, pixel);	
+	quadtree(eq, range.horizontal, range.vertical, depth, pixel);	
 };

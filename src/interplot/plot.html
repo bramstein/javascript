@@ -2,12 +2,23 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>InterPlot - Plotting with JavaScript, Canvas & Interval Arithmetic</title>
+		<title>InterPlot - Plotting with JavaScript, Canvas &amp; Interval Arithmetic</title>
 		<link type="text/css" rel="stylesheet" href="interplot.css"/>
 	</head>
 	<body onload="init();">
+        <div id="controls">
 		<canvas id="plot" width="450" height="450">
 		</canvas>
+        <form id="f">
+            <ol>
+                <li><label for="eq">Equation:</label><input type="text" size="30" value="cos(y * 4) + x" id="eq"/><input type="checkbox" value="true" id="polar" checked="checked"/><label for="polar">Polar</label></li>
+                <li><label>Horizontal range:</label><input type="text" size="6" value="-1" id="hfrom"/><input type="text" size="6" value="1" id="hto"/></li>
+                <li><label>Vertical/Polar range:</label><input type="text" value="0" size="6" id="vfrom"/><input type="text" size="6" value="6.28" id="vto"/>
+            </ol>
+            
+            <input type="submit" value="Plot"/>
+        </form>
+        </div>
 		<script type="text/javascript" src="../core/object.js"></script>
 		<script type="text/javascript" src="../core/array.js"></script>
 		<script type="text/javascript" src="../core/geometry.js"></script>
@@ -15,18 +26,38 @@
 		<script type="text/javascript" src="../core/interval.js"></script>
 		<script type="text/javascript" src="../parser/lexer.js"></script>
 		<script type="text/javascript" src="../parser/parser.js"></script>
+        <script type="text/javascript" src="expression.js"></script>
 		<script type="text/javascript" src="matrix.js"></script>
 		<script type="text/javascript" src="vector.js"></script>
 		<script type="text/javascript" src="interplot.js"></script>
 		<script type="text/javascript">
-			function s(x, y) {
-				return Interval.add(Interval.sin(x), y);
-			}
-
 			function init() {
-				p = interplot('plot');
-
-				//p.plot(s, {from: -1, to: 1}, {from: 0, to: Math.PI * 2});
+                var p = interplot('plot'),
+                    f = document.getElementById('f');
+                
+                f.onsubmit = function () {
+                    var eq = document.getElementById('eq').value,
+                        hf = parseInt(document.getElementById('hfrom').value, 10),
+                        ht = parseInt(document.getElementById('hto').value, 10),
+                        vf = parseInt(document.getElementById('vfrom').value, 10),
+                        vt = parseInt(document.getElementById('vto').value, 10),
+                        polar = document.getElementById('polar').checked;
+                
+                    p.clear();
+                    
+                    if (polar) {
+                        p.plot(eq, {
+                            horizontal: {from: hf, to: ht},
+                            range: {from: vf, to: vt}
+                        });
+                    } else {
+                        p.plot(eq, {
+                            horizontal: {from: hf, to: ht},
+                            vertical: {from: vf, to: vt}
+                        });
+                    }
+                    return false;
+                };
 			}
 		</script>
 	</body>
