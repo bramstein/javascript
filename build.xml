@@ -54,7 +54,8 @@
 
 	<target name="init">
 		<mkdir dir="dist"/>
-		<mkdir dir="pre"/>
+		<mkdir dir="dist/preprocessed"/>
+		<mkdir dir="dist/release"/>
 	</target>
 
 	<target name="test">
@@ -63,9 +64,15 @@
 		</rhinounit>
 	</target>
 
-	<target name="preprocess">
-		<preprocess todir="pre" defines="DEBUG, TARGET, FAST">
-			<fileset dir="test" includes="**/*.js"/>
+	<target name="preprocess" depends="init">
+		<preprocess todir="dist/preprocessed" defines="DEBUG">
+			<fileset dir="src" includes="**/*.js"/>
+		</preprocess>
+	</target>
+
+	<target name="preprocess-dist" depends="init">
+		<preprocess todir="dist/preprocessed" defines="">
+			<fileset dir="src" includes="**/*.js"/>
 		</preprocess>
 	</target>
 
@@ -75,13 +82,13 @@
 		</jslint>
 	</target>
 
-	<target name="dist" depends="init">
-		<copy todir="dist">
-			<fileset dir="src" includes="**/*.js"/>
+	<target name="dist" depends="preprocess-dist">
+		<copy todir="dist/release">
+			<fileset dir="dist/preprocessed/" includes="**/*.js"/>
 		</copy>
 
-		<apply executable="java" parallel="false" dest="dist">
-	        <fileset dir="src" includes="**/*.js"/>
+		<apply executable="java" parallel="false" dest="dist/release/">
+	        <fileset dir="dist/preprocessed/" includes="**/*.js"/>
 	        <arg line="-jar"/>
     	    <arg path="lib/yuicompressor-2.4.2.jar"/>
     	    <arg line="-o"/>
