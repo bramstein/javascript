@@ -1,12 +1,17 @@
-
 /*!
- * JavaScript Core Object v0.52
+ * JavaScript Core Object v0.53
  *
  * Licensed under the new BSD License.
  * Copyright 2008-2009, Bram Stein
  * All rights reserved.
  */
 (function () {
+	function getInternalType(value) {
+		return Object.prototype.toString.apply(value);
+	}
+    
+    function Clone() {}
+
 	Object.extend = function (obj) {
 		var i = 1, key, len = arguments.length;
 		for (; i < len; i += 1) {
@@ -21,38 +26,38 @@
 		return obj;
 	};
 
-	function getInternalType(value) {
-		return Object.prototype.toString.apply(value);
-	}
-    
-    function Clone() {}
-
 	Object.extend(Object, {
 		isAtom: function (value) {
 			return ((typeof value !== 'object' || value === null) && 
 				typeof value !== 'function') || 
 				Object.isBoolean(value);
 		},
+
 		isNumber: function (value) {
-			// perhaps NaN should not be considered a number..
-			return typeof value === 'number';
+			return typeof value === 'number' && !isNaN(value);
 		},
+
 		isString: function (value) {
 			return typeof value === 'string';
 		},
+
 		isBoolean: function (value) {
 			return value !== null && 
 				typeof value === 'boolean';
 		},
+
 		isArray: function (value) {
 			return getInternalType(value) === '[object Array]';
 		},
+
 		isObject: function (value) {
 			return getInternalType(value) === '[object Object]';
 		},
+
 		isFunction: function (value) {
 			return typeof value === 'function';
 		},
+
 		filter: function (obj, fun, thisObj) {
 			var key, r = {}, val;
 			thisObj = thisObj || obj;
@@ -66,6 +71,7 @@
 			}
 			return r;
 		},
+
 		map: function (obj, fun, thisObj) {
 			var key, r = {};
 			thisObj = thisObj || obj;
@@ -76,6 +82,7 @@
 			}
 			return r;
 		},
+
 		forEach: function (obj, fun, thisObj) {
 			var key;
 			thisObj = thisObj || obj;
@@ -85,6 +92,7 @@
 				}
 			}
 		},
+
 		every: function (obj, fun, thisObj) {
 			var key;
 			thisObj = thisObj || obj;
@@ -95,6 +103,7 @@
 			}
 			return true;
 		},
+
 		some: function (obj, fun, thisObj) {
 			var key;
 			thisObj = thisObj || obj;
@@ -105,11 +114,29 @@
 			}
 			return false;
 		},
+
 		isEmpty: function (obj) {
 			return Object.every(obj, function (value, key) { 
 				return !obj.hasOwnProperty(key); 
 			});
 		},
+
+		values: function (obj) {
+			var r = [];
+			Object.forEach(obj, function (value) {
+				r.push(value);
+			});
+			return r;
+		},
+
+		keys: function (obj) {
+			var r = [];
+			Object.forEach(obj, function (value, key) {
+				r.push(key);
+			});
+			return r;
+		},
+
         // Shallow or deep copy of an object. Code inspired by:
         // * Oran Looney - http://oranlooney.com/static/functional_javascript/owl_util.js
         // * Object-Oriented JavaScript, by Stoyan Stefanov
@@ -142,10 +169,12 @@
                 return r;
             }
 		},
+
 		clone: function (obj) {
 			Clone.prototype = obj;
 			return new Clone();
 		},
+
 		reduce: function (obj, fun, initial) {
 			var key, initialKey;
 

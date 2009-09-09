@@ -44,6 +44,12 @@ testCases(test,
 		assert.that(Object.isBoolean(0), isFalse());
 	},
 
+	function checkIsNumber() {
+		assert.that(Object.isNumber(1), isTrue());
+		assert.that(Object.isNumber('sxds'), isFalse());
+		assert.that(Object.isNumber(NaN), isFalse());
+	},
+
 	function checkIsAtom() {
 		assert.that(Object.isAtom(null), isTrue());
 		assert.that(Object.isAtom(1), isTrue());
@@ -278,6 +284,19 @@ testCases(test,
 		}, 10), eq(20));
 	},
 
+	function checkValues() {
+		var o = {a: 1, b: 2, c: 3, d: 4};
+		// Note that Objects are unordered, so the array might not be sequential
+		assert.that(Object.values(o).every(function (v) { return v <= 4 && v >= 1; }), isTrue());
+		assert.that(Object.values(o).length, eq(4));
+	},
+
+	function checkKeys() {
+		var o = {a: 1, b: 2, c: 3, d: 4};
+
+		assert.that(Object.keys(o).every(function (v) { return ['a', 'b', 'c', 'd'].contains(v); }), isTrue());
+		assert.that(Object.keys(o).length, eq(4));
+	},
 
 	function tearDown() {
 		testObject = null;

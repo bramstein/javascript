@@ -3,7 +3,7 @@ eval(loadFile("src/core/array.js"));
 eval(loadFile("src/core/function.js"));
 eval(loadFile("src/core/fun.js"));
 eval(loadFile("src/core/math.js"));
-eval(loadFile("src/chart/interval.js"));
+eval(loadFile("src/core/interval.js"));
 
 var I;
 

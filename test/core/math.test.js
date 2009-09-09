@@ -1,7 +1,6 @@
 eval(loadFile("src/core/object.js"));
 eval(loadFile("src/core/array.js"));
 eval(loadFile("src/core/function.js"));
-eval(loadFile("src/core/fun.js"));
 eval(loadFile("src/core/math.js"));
 
 
@@ -49,6 +48,14 @@ testCases(test,
         // JavaScript does not have negative zero.
         assert.that(Math.isPositive(-0), isTrue());
 		assert.that(Math.isPositive(1), isTrue());
+	},
+
+	function checkEquals() {
+		assert.that(Math.equals(1, 1), isTrue());
+		assert.that(Math.equals(-1, -1), isTrue());
+		assert.that(Math.equals(2, 1, 1), isTrue());
+		assert.that(Math.equals(0.2 * 3, 0.6), isFalse());
+		assert.that(Math.equals(0.2 * 3, 0.6, 0.0000001), isTrue()); 
 	},
 
 	function tearDown() {

@@ -1,5 +1,10 @@
-
-/*global fun*/
+/*!
+ * JavaScript Core Math v0.13
+ *
+ * Licensed under the new BSD License.
+ * Copyright 2008-2009, Bram Stein
+ * All rights reserved.
+ */
 (function () {
 	var decimalSeparator = (1.5).toString()[1];
 
@@ -34,6 +39,14 @@
 			from -= 0.449;
 			to += 0.499;
 			return Math.round(from + (to - from) * Math.random());
+		},
+
+		clamp: function (value, min, max) {
+			return Math.min(Math.max(value, min), max);
+		},
+
+		equals: function (a, b, tolerance) {
+			return Math.abs(a - b) <= (tolerance || 0);
 		},
 
 		// These loosely use the Mathematica definitions of accuracy and
