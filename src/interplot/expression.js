@@ -81,7 +81,7 @@ var expression = (function () {
             if (output.length === 1) {
                 return output[0];
             } else {
-                throw 'Too many values.' + cons.y.from;
+                throw 'Too many values.';
             }
         };
 

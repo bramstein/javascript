@@ -1,4 +1,4 @@
-/*global parser, document*/
+/*global parser, document, Interval, matrix, vector, Worker, expression, */
 var interplot = function (c) {
 	var canvas = document.getElementById(c),
 		context = null,
@@ -68,7 +68,20 @@ var interplot = function (c) {
 				vk = (vertical.from + vertical.to) / 2,
                 
                 workers = [],
-                
+
+				plotPoints = function (event) {
+                    var i = 0, len = event.data.length, d;
+                    for (; i < len; i += 1) {
+                        d = event.data[i];	
+
+                        if (polar) {
+                            context.fillRect(d[0] * Math.cos(d[2]), d[0] * Math.sin(d[2]), d[1] - d[0], d[3] - d[2]);
+                        } else {
+                            context.fillRect(d[0], d[2], d[1] - d[0], d[3] - d[2]);
+                        }
+                    }
+                },              
+
                 initWorkers = function () {
                     var i = 0;
                     for (; i < 4; i += 1) {
@@ -80,19 +93,6 @@ var interplot = function (c) {
                     workers.forEach(function (w) {
                         w.terminate();
                     });
-                },
-                
-                plotPoints = function (event) {
-                    var i = 0, len = event.data.length, d;
-                    for (; i < len; i += 1) {
-                        d = event.data[i];	
-
-                        if (polar) {
-                            context.fillRect(d[0] * Math.cos(d[2]), d[0] * Math.sin(d[2]), d[1] - d[0], d[3] - d[2]);
-                        } else {
-                            context.fillRect(d[0], d[2], d[1] - d[0], d[3] - d[2]);
-                        }
-                    }
                 };
     
   
@@ -116,7 +116,7 @@ var interplot = function (c) {
 					horizontal: {from: horizontal.from, to: hk},
 					vertical: {from: vertical.from, to: vk}
 				},
-				pixel: pixel,
+				pixel: pixel
 			});
 
 			workers[1].postMessage({
@@ -125,7 +125,7 @@ var interplot = function (c) {
 					horizontal: {from: horizontal.from, to: hk},
 					vertical: {from: vk, to: vertical.to}
 				},
-				pixel: pixel,
+				pixel: pixel
 			});
 
 			workers[2].postMessage({
