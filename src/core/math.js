@@ -46,7 +46,7 @@
 		},
 
 		equals: function (a, b, tolerance) {
-			return Math.abs(a - b) <= (tolerance || 0);
+			return Math.abs(a - b) <= (tolerance || 0.000001);
 		},
 
 		// These loosely use the Mathematica definitions of accuracy and

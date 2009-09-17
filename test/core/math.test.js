@@ -54,7 +54,7 @@ testCases(test,
 		assert.that(Math.equals(1, 1), isTrue());
 		assert.that(Math.equals(-1, -1), isTrue());
 		assert.that(Math.equals(2, 1, 1), isTrue());
-		assert.that(Math.equals(0.2 * 3, 0.6), isFalse());
+		assert.that(Math.equals(0.2 * 3, 0.6), isTrue());
 		assert.that(Math.equals(0.2 * 3, 0.6, 0.0000001), isTrue()); 
 	},
 
