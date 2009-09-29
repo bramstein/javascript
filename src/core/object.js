@@ -58,6 +58,10 @@
 			return typeof value === 'function';
 		},
 
+		isDefined: function (value) {
+			return typeof value !== 'undefined';
+		},
+
 		filter: function (obj, fun, thisObj) {
 			var key, r = {}, val;
 			thisObj = thisObj || obj;

@@ -66,6 +66,12 @@ testCases(test,
 		assert.that(Object.isAtom(testFunction), isFalse());
 	},
 
+	function testIsDefined() {
+		assert.that(Object.isDefined(1), isTrue());
+		assert.that(Object.isDefined(null), isTrue());
+		assert.that(Object.isDefined(undefined), isFalse());
+	},
+
 	function checkObjectExtend() {
 		assert.that(Object.extend({}, {hello: 'world'}).hello, eq('world'));
 		assert.that(Object.extend({}, {hello: 'world'}, {hello: 'me'}).hello, eq('me'));

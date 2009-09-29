@@ -12,6 +12,195 @@
  * "to" property, it can be used with all interval methods. Again this is done
  * for performance reasons.
  */
+
+
+
+
+function TInterval(from, to) {
+	if (!(this instanceof TInterval)) {
+		return new TInterval(from, to);
+	}
+
+	this.from = from || 0;
+	this.to = to || 0;
+}
+
+(function () {
+	var PI_from = 13176794 / (1 << 22),
+		PI_to = 13176795 / (1 << 22),
+		PI_twice = {from: PI_from * 2, to: PI_to * 2},
+		PI_half = {from: PI_from / 2, to: PI_to / 2},
+		emptyError = 'Interval is empty.';
+
+	function powAux(v, j) {
+		var v1 = v, l = 1;
+
+		for (; l < j; l += 1) {
+			v1 = v1 * v;
+		}
+		return v1;
+	}
+
+	Object.extend(TInterval, {
+		EMPTY: new TInterval(0, -1),
+		PI: {
+			from: PI_from,
+			to: PI_to
+		},
+		abs: function (a) {
+			if (a.isEmpty()) {
+				return new TInterval(1, 0);
+			}
+			if (Math.isPositive(a.from)) {
+				return a;
+			}
+	        if (Math.isNegative(a.to)) {
+	            return a.negate();
+	        }
+			return new TInterval(0, Math.max(-a.from, a.to));
+	    },
+		pow: function (x, i) {
+			if (i === 0) {
+				return TInterval.EMPTY;
+			}
+			else if (i < 0) {
+				return TInterval.pow(x.invert(), -i);
+			}
+
+			if (x.from > 0) {
+				return new TInterval(powAux(x.from, i), powAux(x.to, i));
+			}
+			if (x.to < 0) {
+				if (Math.isEven(i)) {
+					return new TInterval(powAux(-x.to, i), powAux(-x.from, i));
+				}
+				else {
+					return new TInterval(-powAux(-x.from, i), -powAux(-x.to, i));
+				}
+			}
+
+			if (Math.isEven(i)) {
+				return new TInterval(0, powAux(Math.max(Math.abs(x.from), Math.abs(x.to)), i));
+			}
+			else {
+				return new TInterval(-powAux(-x.from, i), powAux(x.to, i));
+			}
+	    },
+		fmod: function (a, b) {
+			var n = Math.floor(a.from / (Math.isNegative(a.from) ? b.from : b.to));
+			return a.subtract(new TInterval(b.from * n, b.to * n));
+		},
+		cos: function (x) {
+			var tmp, f, t;
+
+			if (x.isEmpty()) {
+				return new TInterval(0, 0);
+			}
+
+			tmp = TInterval.fmod(x, PI_twice);	
+
+			if (tmp.width() >= PI_twice.from) {
+				return new TInterval(-1, 1);
+			}
+			if (tmp.from >= PI_to) {
+				return TInterval.cos(tmp.subtract(Interval.PI)).negate();
+			}
+			f = tmp.from;
+			t = tmp.to;
+			if (t <= PI_from) {
+				return new TInterval(Math.cos(t), Math.cos(f));
+			}
+			else if (t <= PI_twice.from) {
+				return new TInterval(-1, Math.cos(Math.min(PI_twice.from - t, f)));
+			}
+			else {
+				return new TInterval(-1, 1);
+			}
+		},
+		sin: function (x) {
+			return Interval.cos(x.subtract(PI_half));
+		},
+	    sqrt: function (x) {
+			if (Math.isNegative(x.from)) {
+				throw new TypeError('Negative argument to sqrt()');
+			}
+			else {
+				return new TInterval(Math.sqrt(x.from), Math.sqrt(x.to));
+			}
+	    },
+	    exp: function (x) {
+			var r = {
+				from: Math.exp(x.from),
+				to: Math.exp(x.to)
+			};
+	        if (Math.isNegative(r.from)) {
+				r.from = 0;
+	        }
+	        return r;
+	    },
+	    log: function (x) {
+	        if (Math.isNegative(x.from)) {
+				throw new TypeError('Negative argument to ln()');
+	        }
+	        else {
+				return new TInterval(Math.log(x.from), Math.log(x.to));
+	        }
+	    },
+		distance: function (a, b) {
+			return Math.max(Math.abs(a.from - b.from), Math.abs(a.to - b.to));
+		}
+	});
+
+	Object.extend(TInterval.prototype, {
+		negate: function (a) {
+			var f = -this.to,
+				t = -this.from;
+
+			this.from = f;
+			this.to = t;
+			return this;
+		},
+		add: function (b) {
+			this.from += b.from;
+			this.to += this.to;
+			return this;
+		},
+		subtract: function (b) {
+			this.from -= b.from;
+			this.to -= b.to;
+			return this;
+		},
+		multiply: function (b) {
+			var r = [this.from * b.from, this.from * b.to, this.to * b.from, this.to * b.to];
+			this.from = Math.min.apply(null, r);
+			this.to = Math.max.apply(null, r);
+			return this;
+		},
+		invert: function () {
+			var f = 1 / this.to,
+				t = 1 / this.from;
+			this.from = f;
+			this.to = t;
+			return this;
+		},
+		divide: function (b) {
+			return this.multiply(b.invert());
+		},
+		isEmpty: function () {
+			return !(this.from <= this.to);
+		},
+		isSubsetOf: function (b) {
+			return this.isEmpty() || (!this.isEmpty() && b.from <= this.from && this.to <= b.to);
+		},
+		contains: function (x) {
+			return !this.isEmpty() && this.from <= x && x <= this.to;
+		},
+		width: function () {
+			return this.to - this.from;
+		}
+	});
+}());
+
 var Interval = function () {
 	var PI_from = 13176794 / (1 << 22),
 		PI_to = 13176795 / (1 << 22),
