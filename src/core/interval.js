@@ -162,7 +162,7 @@ function TInterval(from, to) {
 		},
 		add: function (b) {
 			this.from += b.from;
-			this.to += this.to;
+			this.to += b.to;
 			return this;
 		},
 		subtract: function (b) {
@@ -197,6 +197,9 @@ function TInterval(from, to) {
 		},
 		width: function () {
 			return this.to - this.from;
+		},
+		middle: function () {
+			return (this.from + this.to) / 2;
 		}
 	});
 }());
