@@ -103,7 +103,7 @@ function TInterval(from, to) {
 				return new TInterval(-1, 1);
 			}
 			if (tmp.from >= PI_to) {
-				return TInterval.cos(tmp.subtract(Interval.PI)).negate();
+				return TInterval.cos(tmp.subtract(TInterval.PI)).negate();
 			}
 			f = tmp.from;
 			t = tmp.to;
@@ -118,7 +118,7 @@ function TInterval(from, to) {
 			}
 		},
 		sin: function (x) {
-			return Interval.cos(x.subtract(PI_half));
+			return TInterval.cos(x.subtract(PI_half));
 		},
 	    sqrt: function (x) {
 			if (Math.isNegative(x.from)) {
