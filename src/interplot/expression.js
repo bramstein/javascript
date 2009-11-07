@@ -1,4 +1,4 @@
-/*global parser, Interval*/
+/*global parser, Interval, TInterval*/
 var expression = (function () {
     var expressionLanguage = {
             operators: [
@@ -31,12 +31,13 @@ var expression = (function () {
                     var operands = [];
 
                     if (token.type === 'NUMBER') {
-                        output.push({from: token.value - 0, to: token.value - 0});
+                        output.push(new TInterval(token.value - 0, token.value - 0));
                     } else if (token.type === 'CONSTANT') {
                         if (token.name === 'pi') {
-                            output.push(Interval.PI);
+                            output.push(TInterval.PI);
                         } else if (constants[token.name] !== undefined) {
-                            output.push(constants[token.name]);
+							var t = constants[token.name];
+                            output.push(new TInterval(t.from, t.to));
                         }
                     } else if (token.type === 'BINARY_OPERATOR' || token.type === 'UNARY_OPERATOR' || token.type === 'FUNCTION') {
                         if (output.length < token.arity) {
@@ -47,31 +48,31 @@ var expression = (function () {
                         output = output.slice(0, output.length - token.arity);
 
                         if (token.name === 'add') {
-                            output.push(Interval.add(operands[0], operands[1]));
+							output.push(operands[0].add(operands[1]));
                         } else if (token.name === 'sub') {
-                            output.push(Interval.sub(operands[0], operands[1]));
+							output.push(operands[0].subtract(operands[1]));
                         } else if (token.name === 'div') {
-                            output.push(Interval.div(operands[0], operands[1]));
+                            output.push(operands[0].divide(operands[1]));
                         } else if (token.name === 'mul') {
-                            output.push(Interval.mul(operands[0], operands[1]));
+                            output.push(operands[0].multiply(operands[1]));
                         } else if (token.name === 'pow') {
-                            output.push(Interval.pow(operands[0], operands[1]));
+                            output.push(TInterval.pow(operands[0], operands[1]));
                         } else if (token.name === 'neg') {
-                            output.push(Interval.neg(operands[0]));
+                            output.push(operands[0].negate());
                         } else if (token.name === 'sin') {
-                            output.push(Interval.sin(operands[0]));
+                            output.push(TInterval.sin(operands[0]));
                         } else if (token.name === 'cos') {
-                            output.push(Interval.cos(operands[0]));
+                            output.push(TInterval.cos(operands[0]));
                         } else if (token.name === 'abs') {
-                            output.push(Interval.abs(operands[0]));
+                            output.push(TInterval.abs(operands[0]));
                         } else if (token.name === 'fmod') {
-                            output.push(Interval.fmod(operands[0], operands[1]));
+                            output.push(TInterval.fmod(operands[0], operands[1]));
                         } else if (token.name === 'sqrt') {
-                            output.push(Interval.sqrt(operands[0]));
+                            output.push(TInterval.sqrt(operands[0]));
                         } else if (token.name === 'exp') {
-                            output.push(Interval.exp(operands[0]));
+                            output.push(TInterval.exp(operands[0]));
                         } else if (token.name === 'log') {
-                            output.push(Interval.log(operands[0]));
+                            output.push(TInterval.log(operands[0]));
                         }
                     }
                 };
