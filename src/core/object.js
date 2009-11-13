@@ -34,16 +34,16 @@
 		},
 
 		isNumber: function (value) {
-			return typeof value === 'number' && !isNaN(value);
+			return (typeof value === 'number' || value instanceof Number) && !isNaN(value);
 		},
 
 		isString: function (value) {
-			return typeof value === 'string';
+			return typeof value === 'string' || value instanceof String;
 		},
 
 		isBoolean: function (value) {
 			return value !== null && 
-				typeof value === 'boolean';
+				(typeof value === 'boolean' || value instanceof Boolean);
 		},
 
 		isArray: function (value) {

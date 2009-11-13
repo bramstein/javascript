@@ -42,12 +42,14 @@ testCases(test,
 		assert.that(Object.isBoolean(false), isTrue());
 		assert.that(Object.isBoolean(null), isFalse());
 		assert.that(Object.isBoolean(0), isFalse());
+		assert.that(Object.isBoolean(new Boolean(true)), isTrue());
 	},
 
 	function checkIsNumber() {
 		assert.that(Object.isNumber(1), isTrue());
 		assert.that(Object.isNumber('sxds'), isFalse());
 		assert.that(Object.isNumber(NaN), isFalse());
+		assert.that(Object.isNumber(new Number(5)), isTrue());
 	},
 
 	function checkIsAtom() {
@@ -64,6 +66,8 @@ testCases(test,
 		assert.that(Object.isAtom(testArray), isFalse());
 		assert.that(Object.isAtom(testObject), isFalse());
 		assert.that(Object.isAtom(testFunction), isFalse());
+		assert.that(Object.isAtom(new Boolean(true)), isTrue());
+		assert.that(Object.isAtom(new Number(5)), isTrue());
 	},
 
 	function testIsDefined() {
