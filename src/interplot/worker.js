@@ -15,21 +15,21 @@ function send(depth) {
 }
 
 function subdivide(eq, horizontal, vertical, depth, pixel) {
-	var hk = (horizontal.from + horizontal.to) / 2,
-		vk = (vertical.from + vertical.to) / 2;
+	var hk = horizontal.middle(),
+		vk = vertical.middle();
 
 	depth += 1;
 
-	quadtree(eq, {from: horizontal.from, to: hk}, {from: vertical.from, to: vk}, depth, pixel);
+	quadtree(eq, new TInterval(horizontal.from, hk), new TInterval(vertical.from, vk), depth, pixel);
 	send(depth);
 
-	quadtree(eq, {from: horizontal.from, to: hk}, {from: vk, to: vertical.to}, depth, pixel);
+	quadtree(eq, new TInterval(horizontal.from, hk), new TInterval(vk, vertical.to), depth, pixel);
 	send(depth);
 
-	quadtree(eq, {from: hk, to: horizontal.to}, {from: vk, to: vertical.to}, depth, pixel);
+	quadtree(eq, new TInterval(hk, horizontal.to), new TInterval(vk, vertical.to), depth, pixel);
 	send(depth);
 
-	quadtree(eq, {from: hk, to: horizontal.to}, {from: vertical.from, to: vk}, depth, pixel);
+	quadtree(eq, new TInterval(hk, horizontal.to), new TInterval(vertical.from, vk), depth, pixel);
 	send(depth);
 }
 
@@ -37,7 +37,7 @@ function quadtree(eq, horizontal, vertical, depth, pixel) {
 	var F = expression.evaluate(eq, {x: horizontal, y: vertical});
 
 	if (F.from <= 0 && 0 <= F.to) {
-		if ((Interval.width(horizontal) <= pixel.horizontal && Interval.width(vertical) <= pixel.vertical) || depth > 19) {
+		if ((horizontal.width() <= pixel.horizontal && vertical.width() <= pixel.vertical) || depth > 19) {
 			store([horizontal.from, horizontal.to, vertical.from, vertical.to]);
 		}
 		else {
@@ -52,5 +52,5 @@ onmessage = function (event) {
 		depth = 1,
         eq = event.data.eq;
 
-	quadtree(eq, range.horizontal, range.vertical, depth, pixel);	
+	quadtree(eq, new TInterval(range.horizontal.from, range.horizontal.to), new TInterval(range.vertical.from, range.vertical.to), depth, pixel);	
 };
