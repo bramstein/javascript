@@ -20,6 +20,8 @@ testCases(test,
 		assert.that(Object.isArray(testObject), isFalse());
 		assert.that(Object.isArray(testFunction), isFalse());
 		assert.that(Object.isArray(arguments), isFalse());
+		assert.that(Object.isArray(new Array()), isTrue());
+		assert.that(Object.isArray(new Array(1)), isTrue());
 	},
 
 	function checkIsObject() {
@@ -28,6 +30,9 @@ testCases(test,
 		assert.that(Object.isObject(testArray), isFalse());
 		assert.that(Object.isObject(1), isFalse());
 		assert.that(Object.isObject(testFunction), isFalse());
+		assert.that(Object.isObject(new Object()), isTrue());
+		assert.that(Object.isObject(new Number()), isFalse());
+		assert.that(Object.isObject(new Array()), isFalse());
 	},
 
 	function checkIsFunction() {
@@ -35,6 +40,7 @@ testCases(test,
 		assert.that(Object.isFunction(Date), isTrue());
 		assert.that(Object.isFunction(1), isFalse());
 		assert.that(Object.isFunction(testObject), isFalse());
+		assert.that(Object.isFunction(new Number()), isFalse());
 	},
 
 	function checkIsBoolean() {
@@ -68,6 +74,7 @@ testCases(test,
 		assert.that(Object.isAtom(testFunction), isFalse());
 		assert.that(Object.isAtom(new Boolean(true)), isTrue());
 		assert.that(Object.isAtom(new Number(5)), isTrue());
+		assert.that(Object.isAtom(new Array()), isFalse());
 	},
 
 	function testIsDefined() {

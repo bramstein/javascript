@@ -30,7 +30,7 @@
 		isAtom: function (value) {
 			return ((typeof value !== 'object' || value === null) && 
 				typeof value !== 'function') || 
-				Object.isBoolean(value);
+				Object.isBoolean(value) || Object.isNumber(value) || Object.isString(value);
 		},
 
 		isNumber: function (value) {
