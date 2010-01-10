@@ -5,11 +5,33 @@ eval(loadFile("src/core/fun.js"));
 
 var $;
 var _;
+var channels;
 
 testCases(test, 
 	function setUp() {
 		$ = fun.parameter;
 		_ = fun.wildcard;
+		channels = {
+   1: { station:   "NBC",
+         showTitle: "Saturday Night Live",
+         genre:     "comedy",
+         repeat:    true },
+ 
+   2: { station:   "FOX",
+         showTitle: "Cops",
+         genre:     "crime",
+         repeat:    true },
+ 
+   3: { station:   "ESPN",
+         showTitle: "College Football",
+         genre:     "football",
+         repeat:    false },
+ 
+   4: { station:   "HBO",
+         showTitle: "Curb Your Enthusiasm",
+         genre:     "comedy",
+         repeat:    false }
+};
 	},
 
 	function checkParameterType() {
@@ -157,6 +179,23 @@ testCases(test,
 		assert.that(f(Point(20,20)), eq('point: 20, 20'));
 	},
 
+
+	function checkChannels() {
+		function record(channel) {
+			project.log("recording channel: " + channel);
+		}
+
+		var surf = fun(
+			[{genre: 'football', showTitle: _, repeat: _, station: _}, $, record],
+			[{genre: 'comedy', showTitle: _, repeat: false, station: _}, $, record],
+			[{genre: 'crime', showTitle: 'Cops', repeat: _, station: _}, $, record],
+			[{genre: _, showTitle: _, repeat: _, station: _}, $, function () {}]
+		);
+
+		Object.forEach(channels, surf);
+	},
+
+
 	/**
 	 * Extract
 	 */
@@ -214,5 +253,6 @@ testCases(test,
 	function tearDown() {
 		$ = null;
 		_ = null;
+		channels = null;
 	}
 );
