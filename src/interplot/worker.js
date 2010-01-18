@@ -1,4 +1,4 @@
-/*global importScripts, postMessage, quadtree, expression, Interval, onmessage*/
+/*global importScripts, postMessage, quadtree, expression, TInterval, onmessage*/
 importScripts('../core/object.js', '../core/array.js', '../core/math.js', '../core/interval.js', '../parser/lexer.js', '../parser/parser.js', 'expression.js');
 
 var buffer = [];
