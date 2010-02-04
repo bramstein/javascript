@@ -13,6 +13,12 @@ function LinkedList() {
 		}
 	});
 
+	Object.extend(LinkedList.Node.prototype, {
+		toString: function () {
+			return this.data.toString();
+		}
+	});
+
 	function isLinked(list, node) {
 		return !((node && node.prev === null && node.next === null && list.tail !== node && list.head !== node) || list.isEmpty());
 	}
@@ -24,6 +30,28 @@ function LinkedList() {
 
 		isEmpty: function () {
 			return this.listSize === 0;
+		},
+
+		first: function () {
+			return this.head;
+		},
+
+		last: function () {
+			return this.last;
+		},
+
+		toString: function () {
+			return this.toArray().toString();
+		},
+
+		toArray: function () {
+			var node = this.head,
+				result = [];
+			while (node !== null) {
+				result.push(node);
+				node = node.next;
+			}
+			return result;
 		},
 
 		// Note that modifying the list during
