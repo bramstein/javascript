@@ -1,14 +1,15 @@
 /*!
- * jQuery Column cell selector v0.13
+ * jQuery Column cell selector v0.14
  *
  * Licensed under the new BSD License.
- * Copyright 2009, Bram Stein
+ * Copyright 2009-2010, Bram Stein
  * All rights reserved.
  */
 /*global jQuery*/
 (function ($) {
 	var equationRegExp = /([\+\-]?\d*)[nN]([\+\-]?\d*)/,
-		cache, equation;
+		cache, equation,
+		pseudoSelector = jQuery.expr.filter.PSEUDO;
 
 	function parseEquation(str) {
 		var tmp = [],
@@ -97,7 +98,7 @@
 				return nthCol(this, undefined, i);
 			});
 		}
-	});
+	});	
 
 	$.extend(jQuery.expr.match, {
 		COLUMN: /:nth-col\((even|odd|[\dnN\+\-]*)\)/
@@ -112,6 +113,15 @@
 	});
 
 	$.extend(jQuery.expr.filter, {
+		// Override the pseudo selector and go past the "unrecognized
+		// expression" error message if nth-col is part of the 
+		// expression.
+		PSEUDO: function (elem, match, i, array) {
+			var name = match[1];
+			if (name !== 'nth-col') {
+				pseudoSelector(elem, match, i, array);
+			}
+		},
 		COLUMN: nthCol
 	});
 })(jQuery);
