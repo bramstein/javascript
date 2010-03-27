@@ -1,5 +1,5 @@
-/*!
- * JavaScript Core String v0.01
+/**
+ * @preserve JavaScript Core String v0.01
  *
  * Licensed under the new BSD License.
  * Copyright 2008-2009, Bram Stein

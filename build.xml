@@ -88,14 +88,16 @@
 		</copy>
 
 		<apply executable="java" parallel="false" dest="dist/release/">
-	        <fileset dir="dist/preprocessed/" includes="**/*.js"/>
-	        <arg line="-jar"/>
-    	    <arg path="lib/yuicompressor-2.4.2.jar"/>
-    	    <arg line="-o"/>
-    	    <mapper type="glob" from="*.js" to="*.min.js"/>
+			<fileset dir="dist/preprocessed/" includes="**/*.js"/>
+			<arg line="-jar"/>
+    	    <arg path="lib/compiler.jar"/>
+
+			<arg value="--js_output_file"/>
 			<targetfile/>
+			<arg value="--js"/>
+    	    <mapper type="glob" from="*.js" to="*.min.js"/>
 	        <srcfile/>
-    	</apply>
+		</apply>
 	</target>
 
 	<target name="all" depends="init, test, jslint, dist">

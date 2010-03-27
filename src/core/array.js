@@ -1,6 +1,5 @@
-
-/*!
- * JavaScript Core Array v0.39
+/**
+ * @preserve JavaScript Core Array v0.39
  *
  * Licensed under the new BSD License.
  * Copyright 2008-2009, Bram Stein

@@ -1,5 +1,5 @@
-/*!
- * JavaScript Core Math v0.14
+/**
+ * @preserve JavaScript Core Math v0.14
  *
  * Licensed under the new BSD License.
  * Copyright 2008-2009, Bram Stein

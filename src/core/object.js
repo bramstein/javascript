@@ -1,5 +1,5 @@
-/*!
- * JavaScript Core Object v0.53
+/**
+ * @preserve JavaScript Core Object v0.53
  *
  * Licensed under the new BSD License.
  * Copyright 2008-2009, Bram Stein

@@ -1,5 +1,10 @@
-
-
+/**
+ * @preserve JavaScript Core Function v0.15
+ *
+ * Licensed under the new BSD License.
+ * Copyright 2008-2009, Bram Stein
+ * All rights reserved.
+ */
 (function () {
 	Object.extend(Function.prototype, {
 		bind: function (obj) {

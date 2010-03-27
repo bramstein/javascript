@@ -1,6 +1,5 @@
-
-/*!
- * jFun - JavaScript Pattern Matching v0.12
+/**
+ * @preserve jFun - JavaScript Pattern Matching v0.12
  *
  * Licensed under the new BSD License.
  * Copyright 2008, Bram Stein
