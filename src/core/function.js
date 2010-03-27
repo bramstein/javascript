@@ -28,19 +28,19 @@
 		 * Copyright (c) 2008 Ariel Flesler - aflesler(at)gmail(dot)com | http://flesler.blogspot.com
 		 * Licensed under BSD (http://www.opensource.org/licenses/bsd-license.php)
 		 * Date: 1/9/2008 
-		 */
+		 *//*
 		defaults: function () {
 			var method = this,
 				args = arguments;
 			return function () {
-				var i = arguments.length, len = args.length;
+				var i = arguments.length,
+					len = args.length;
 				for (; i < len; i += 1) {
 					arguments[i] = args[i];
 				}
-				arguments.length = i;
-				return method.apply(this, arguments);
+				return method.apply(this, Array.slice(arguments, 0, i));
 			};
-		},
+		},*/
 		/**
 		 * Adapted from Mathieu 'p01' Henri - http://www.p01.org/
 		 */
@@ -55,4 +55,4 @@
 		}
 		
 	});
-})();
+}());

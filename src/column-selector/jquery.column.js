@@ -101,11 +101,11 @@
 	});	
 
 	$.extend(jQuery.expr.match, {
-		COLUMN: /:nth-col\((even|odd|[\dnN\+\-]*)\)(?![^\[]*\])(?![^\(]*\))/
+		COLUMN: new RegExp(":nth-col\\((even|odd|[\\dnN\\+\\-]*)\\)(?![\\^\\[]*\\])(?![\\^\\(]*\\))")
 	});
 
 	$.extend(jQuery.expr.leftMatch, {
-		COLUMN: /(^(?:.|\r|\n)*?):nth-col\((even|odd|[\dnN\+\-]*)\)(?![^\[]*\])(?![^\(]*\))/
+		COLUMN: new RegExp("(^(?:.|\\r|\\n)*?):nth-col\\((even|odd|[\\dnN\\+\\-]*)\\)(?![\\^\\[]*\\])(?![\\^\\(]*\\))")
 	});
 
 	$.extend(jQuery.expr.preFilter, {
@@ -128,4 +128,4 @@
 		},
 		COLUMN: nthCol
 	});
-})(jQuery);
+}(jQuery));

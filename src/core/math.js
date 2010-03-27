@@ -92,4 +92,4 @@
 			return x.toString().length;
 		}
 	});
-})();
+}());

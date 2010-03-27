@@ -50,4 +50,4 @@
 			return items;
 		}
 	});
-})(jQuery);
+}(jQuery));

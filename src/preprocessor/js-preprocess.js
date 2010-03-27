@@ -32,7 +32,7 @@ var preprocess = function (source, definitions) {
     var lines = [],
 		p,
 		lexer = function (lines) {
-			var tokens = /^\s*#(ifdef|ifndef|endif|else|define|undef|.*)\s*(\w*)$/,
+			var tokens = new RegExp("^\\s*#(ifdef|ifndef|endif|else|define|undef|.*)\\s*(\\w*)$"),
 				index = 0, m;
 
 			function token(t, v, p) {
@@ -196,7 +196,8 @@ if (typeof self !== 'undefined' && self.getTaskName !== 'undefined' && self.getT
 			mapping = [], i = 0, j = 0, l = 0, fileset, files = [], def = {},
 			fileToString = function (file) {
 				return '' + FileUtils.readFully(new FileReader(file)).toString();
-			};
+			},
+			out, result = [];
 
 		defines = (defines + '').split(/,\s?/);
 
@@ -232,7 +233,7 @@ if (typeof self !== 'undefined' && self.getTaskName !== 'undefined' && self.getT
 		}
 
 		for (i = 0; i < mapping.length; i += 1) {
-			var out, result = [];
+			result = [];
 			self.log('Preprocessing: ' + mapping[i].dst.toString());
 			try {
 				result = preprocess(fileToString(mapping[i].src), def);

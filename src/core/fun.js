@@ -5,8 +5,8 @@
  * Copyright 2008, Bram Stein
  * All rights reserved.
  */
-/*global fun, buildMatch*/
-var fun = function () {
+/*global buildMatch*/
+var fun = (function () {
 	function matchAtom(patternAtom) {
 		var type = typeof patternAtom,
 			value = patternAtom;
@@ -118,7 +118,7 @@ var fun = function () {
 			throw 'No match for: ' + value;
 		};
 	};
-}();
+}());
 
 /**
  * Parameter
@@ -131,15 +131,15 @@ fun.parameter = function (name, orElse) {
 	return new Parameter(name, orElse);
 };
 
-fun.wildcard = function () {
+fun.wildcard = (function () {
 	function Wildcard() {}
 	return new Wildcard();
-}();
+}());
 
 /**
  * Extract
  */
-var extract = function () {
+var extract = (function () {
 	function bindVariables(pattern, value, result) {
 		if (pattern && pattern.constructor.name === fun.parameter().constructor.name) {
 			result[pattern.name] = pattern.orElse ? value || pattern.orElse : value;
@@ -179,4 +179,4 @@ var extract = function () {
 		bindVariables(pattern, value, result);
 		return result;
 	};
-}();
+}());
