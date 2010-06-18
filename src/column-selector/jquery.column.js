@@ -9,7 +9,8 @@
 (function ($) {
 	var equationRegExp = /([\+\-]?\d*)[nN]([\+\-]?\d*)/,
 		cache, equation,
-		pseudoSelector = jQuery.expr.filter.PSEUDO;
+		pseudoSelector = jQuery.expr.filter.PSEUDO,
+		override = jQuery.fn.jquery.indexOf('1.4') !== -1;
 
 	function parseEquation(str) {
 		var tmp = [],
@@ -116,16 +117,21 @@
 		}
 	});
 
-	$.extend(jQuery.expr.filter, {
-		// Override the pseudo selector and go past the "unrecognized
-		// expression" error message if nth-col is part of the 
-		// expression.
-		PSEUDO: function (elem, match, i, array) {
-			var name = match[1];
-			if (name !== 'nth-col') {
-				pseudoSelector(elem, match, i, array);
+	if (override) {
+		$.extend(jQuery.expr.filter, {
+			// Override the pseudo selector and go past the "unrecognized
+			// expression" error message if nth-col is part of the 
+			// expression. This is only necessary on jQuery >= 1.4.x.
+			PSEUDO: function (elem, match, i, array, not) {
+				var name = match[1];
+				if (name !== 'nth-col') {
+					pseudoSelector(elem, match, i, array);
+				}
 			}
-		},
+		});
+	}
+
+	$.extend(jQuery.expr.filter, {
 		COLUMN: nthCol
 	});
 }(jQuery));
