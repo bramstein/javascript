@@ -181,7 +181,7 @@ var preprocess = function (source, definitions) {
  * everything below this comment if you are not using Ant or the command line.
  */
 /*global importClass, java, Packages, attributes, elements, FileUtils, FileReader, File, self, FileWriter, project, readFile, print*/
-if (typeof self !== 'undefined' && self.getTaskName !== 'undefined' && self.getTaskName() + '' === 'preprocess') {
+if (typeof self !== 'undefined' && typeof self.getTaskName !== 'undefined' && self.getTaskName() + '' === 'preprocess') {
 	var ant = function () {
 		importClass(java.io.FileWriter);
 		importClass(java.io.File);
