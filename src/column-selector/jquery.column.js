@@ -122,10 +122,10 @@
 			// Override the pseudo selector and go past the "unrecognized
 			// expression" error message if nth-col is part of the 
 			// expression. This is only necessary on jQuery >= 1.4.x.
-			PSEUDO: function (elem, match, i, array, not) {
+			PSEUDO: function (elem, match, i, array) {
 				var name = match[1];
 				if (name !== 'nth-col') {
-					pseudoSelector(elem, match, i, array);
+					return pseudoSelector(elem, match, i, array);
 				}
 			}
 		});
