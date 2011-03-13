@@ -10,7 +10,7 @@
 	var equationRegExp = /([\+\-]?\d*)[nN]([\+\-]?\d*)/,
 		cache, equation,
 		pseudoSelector = jQuery.expr.filter.PSEUDO,
-		override = jQuery.fn.jquery.indexOf('1.4') !== -1;
+		override = jQuery.fn.jquery.indexOf('1.4') !== -1 || jQuery.fn.jquery.indexOf('1.5') !== -1;
 
 	function parseEquation(str) {
 		var tmp = [],
